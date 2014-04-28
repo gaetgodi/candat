@@ -1,0 +1,1070 @@
+<?php
+//Include Common Files @1-028B1739
+define("RelativePath", ".");
+define("PathToCurrentPage", "/");
+define("FileName", "FD_GRID.php");
+include_once(RelativePath . "/Common.php");
+include_once(RelativePath . "/Template.php");
+include_once(RelativePath . "/Sorter.php");
+include_once(RelativePath . "/Navigator.php");
+//End Include Common Files
+
+class clsEditableGridFD_NAMES { //FD_NAMES Class @2-1344CF92
+
+//Variables @2-ED4B652F
+
+    // Public variables
+    public $ComponentType = "EditableGrid";
+    public $ComponentName;
+    public $HTMLFormAction;
+    public $PressedButton;
+    public $Errors;
+    public $ErrorBlock;
+    public $FormSubmitted;
+    public $FormParameters;
+    public $FormState;
+    public $FormEnctype;
+    public $CachedColumns;
+    public $TotalRows;
+    public $UpdatedRows;
+    public $EmptyRows;
+    public $Visible;
+    public $RowsErrors;
+    public $ds;
+    public $DataSource;
+    public $PageSize;
+    public $IsEmpty;
+    public $SorterName = "";
+    public $SorterDirection = "";
+    public $PageNumber;
+    public $ControlsVisible = array();
+
+    public $CCSEvents = "";
+    public $CCSEventResult;
+
+    public $RelativePath = "";
+
+    public $InsertAllowed = false;
+    public $UpdateAllowed = false;
+    public $DeleteAllowed = false;
+    public $ReadAllowed   = false;
+    public $EditMode;
+    public $ValidatingControls;
+    public $Controls;
+    public $ControlsErrors;
+    public $RowNumber;
+    public $Attributes;
+    public $PrimaryKeys;
+
+    // Class variables
+    public $Sorter_FD_CODE;
+    public $Sorter_FD_GRP_ID;
+    public $Sorter_FD_NME;
+    public $Sorter_FD_NMF;
+//End Variables
+
+//Class_Initialize Event @2-112E3943
+    function clsEditableGridFD_NAMES($RelativePath, & $Parent)
+    {
+
+        global $FileName;
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->Visible = true;
+        $this->Parent = & $Parent;
+        $this->RelativePath = $RelativePath;
+        $this->Errors = new clsErrors();
+        $this->ErrorBlock = "EditableGrid FD_NAMES/Error";
+        $this->ControlsErrors = array();
+        $this->ComponentName = "FD_NAMES";
+        $this->Attributes = new clsAttributes($this->ComponentName . ":");
+        $this->CachedColumns["FD_CODE"][0] = "FD_CODE";
+        $this->DataSource = new clsFD_NAMESDataSource($this);
+        $this->ds = & $this->DataSource;
+        $this->PageSize = CCGetParam($this->ComponentName . "PageSize", "");
+        if(!is_numeric($this->PageSize) || !strlen($this->PageSize))
+            $this->PageSize = 10;
+        else
+            $this->PageSize = intval($this->PageSize);
+        if ($this->PageSize > 100)
+            $this->PageSize = 100;
+        if($this->PageSize == 0)
+            $this->Errors->addError("<p>Form: EditableGrid " . $this->ComponentName . "<br>Error: (CCS06) Invalid page size.</p>");
+        $this->PageNumber = intval(CCGetParam($this->ComponentName . "Page", 1));
+        if ($this->PageNumber <= 0) $this->PageNumber = 1;
+
+        $this->EmptyRows = 3;
+        $this->InsertAllowed = true;
+        $this->UpdateAllowed = true;
+        $this->DeleteAllowed = true;
+        $this->ReadAllowed = true;
+        if(!$this->Visible) return;
+
+        $CCSForm = CCGetFromGet("ccsForm", "");
+        $this->FormEnctype = "application/x-www-form-urlencoded";
+        $this->FormSubmitted = ($CCSForm == $this->ComponentName);
+        if($this->FormSubmitted) {
+            $this->FormState = CCGetFromPost("FormState", "");
+            $this->SetFormState($this->FormState);
+        } else {
+            $this->FormState = "";
+        }
+        $Method = $this->FormSubmitted ? ccsPost : ccsGet;
+
+        $this->SorterName = CCGetParam("FD_NAMESOrder", "");
+        $this->SorterDirection = CCGetParam("FD_NAMESDir", "");
+
+        $this->FD_NAMES_TotalRecords = new clsControl(ccsLabel, "FD_NAMES_TotalRecords", "FD_NAMES_TotalRecords", ccsText, "", NULL, $this);
+        $this->Sorter_FD_CODE = new clsSorter($this->ComponentName, "Sorter_FD_CODE", $FileName, $this);
+        $this->Sorter_FD_GRP_ID = new clsSorter($this->ComponentName, "Sorter_FD_GRP_ID", $FileName, $this);
+        $this->Sorter_FD_NME = new clsSorter($this->ComponentName, "Sorter_FD_NME", $FileName, $this);
+        $this->Sorter_FD_NMF = new clsSorter($this->ComponentName, "Sorter_FD_NMF", $FileName, $this);
+        $this->FD_CODE = new clsControl(ccsLabel, "FD_CODE", "FD CODE", ccsInteger, "", NULL, $this);
+        $this->FD_GRP_ID = new clsControl(ccsTextBox, "FD_GRP_ID", "FD GRP ID", ccsInteger, "", NULL, $this);
+        $this->FD_NME = new clsControl(ccsTextBox, "FD_NME", "FD NME", ccsText, "", NULL, $this);
+        $this->FD_NMF = new clsControl(ccsTextBox, "FD_NMF", "FD NMF", ccsText, "", NULL, $this);
+        $this->CheckBox_Delete_Panel = new clsPanel("CheckBox_Delete_Panel", $this);
+        $this->CheckBox_Delete = new clsControl(ccsCheckBox, "CheckBox_Delete", "CheckBox_Delete", ccsBoolean, $CCSLocales->GetFormatInfo("BooleanFormat"), NULL, $this);
+        $this->CheckBox_Delete->CheckedValue = true;
+        $this->CheckBox_Delete->UncheckedValue = false;
+        $this->Navigator = new clsNavigator($this->ComponentName, "Navigator", $FileName, 10, tpCentered, $this);
+        $this->Navigator->PageSizes = array("1", "5", "10", "25", "50");
+        $this->Button_Submit = new clsButton("Button_Submit", $Method, $this);
+        $this->Cancel = new clsButton("Cancel", $Method, $this);
+        $this->CheckBox_Delete_Panel->AddComponent("CheckBox_Delete", $this->CheckBox_Delete);
+    }
+//End Class_Initialize Event
+
+//Initialize Method @2-12F2863B
+    function Initialize()
+    {
+        if(!$this->Visible) return;
+
+        $this->DataSource->PageSize = & $this->PageSize;
+        $this->DataSource->AbsolutePage = & $this->PageNumber;
+        $this->DataSource->SetOrder($this->SorterName, $this->SorterDirection);
+
+        $this->DataSource->Parameters["urls_FD_NME"] = CCGetFromGet("s_FD_NME", NULL);
+        $this->DataSource->Parameters["urls_FD_NMF"] = CCGetFromGet("s_FD_NMF", NULL);
+    }
+//End Initialize Method
+
+//SetPrimaryKeys Method @2-EBC3F86C
+    function SetPrimaryKeys($PrimaryKeys) {
+        $this->PrimaryKeys = $PrimaryKeys;
+        return $this->PrimaryKeys;
+    }
+//End SetPrimaryKeys Method
+
+//GetPrimaryKeys Method @2-74F9A772
+    function GetPrimaryKeys() {
+        return $this->PrimaryKeys;
+    }
+//End GetPrimaryKeys Method
+
+//GetFormParameters Method @2-B316BE20
+    function GetFormParameters()
+    {
+        for($RowNumber = 1; $RowNumber <= $this->TotalRows; $RowNumber++)
+        {
+            $this->FormParameters["FD_GRP_ID"][$RowNumber] = CCGetFromPost("FD_GRP_ID_" . $RowNumber, NULL);
+            $this->FormParameters["FD_NME"][$RowNumber] = CCGetFromPost("FD_NME_" . $RowNumber, NULL);
+            $this->FormParameters["FD_NMF"][$RowNumber] = CCGetFromPost("FD_NMF_" . $RowNumber, NULL);
+            $this->FormParameters["CheckBox_Delete"][$RowNumber] = CCGetFromPost("CheckBox_Delete_" . $RowNumber, NULL);
+        }
+    }
+//End GetFormParameters Method
+
+//Validate Method @2-366B005B
+    function Validate()
+    {
+        $Validation = true;
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "OnValidate", $this);
+
+        for($this->RowNumber = 1; $this->RowNumber <= $this->TotalRows; $this->RowNumber++)
+        {
+            $this->DataSource->CachedColumns["FD_CODE"] = $this->CachedColumns["FD_CODE"][$this->RowNumber];
+            $this->DataSource->CurrentRow = $this->RowNumber;
+            $this->FD_GRP_ID->SetText($this->FormParameters["FD_GRP_ID"][$this->RowNumber], $this->RowNumber);
+            $this->FD_NME->SetText($this->FormParameters["FD_NME"][$this->RowNumber], $this->RowNumber);
+            $this->FD_NMF->SetText($this->FormParameters["FD_NMF"][$this->RowNumber], $this->RowNumber);
+            $this->CheckBox_Delete->SetText($this->FormParameters["CheckBox_Delete"][$this->RowNumber], $this->RowNumber);
+            if ($this->UpdatedRows >= $this->RowNumber) {
+                if(!$this->CheckBox_Delete->Value)
+                    $Validation = ($this->ValidateRow() && $Validation);
+            }
+            else if($this->CheckInsert())
+            {
+                $Validation = ($this->ValidateRow() && $Validation);
+            }
+        }
+        return (($this->Errors->Count() == 0) && $Validation);
+    }
+//End Validate Method
+
+//ValidateRow Method @2-AC1861FB
+    function ValidateRow()
+    {
+        global $CCSLocales;
+        $this->FD_GRP_ID->Validate();
+        $this->FD_NME->Validate();
+        $this->FD_NMF->Validate();
+        $this->CheckBox_Delete->Validate();
+        $this->RowErrors = new clsErrors();
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "OnValidateRow", $this);
+        $errors = "";
+        $errors = ComposeStrings($errors, $this->FD_GRP_ID->Errors->ToString());
+        $errors = ComposeStrings($errors, $this->FD_NME->Errors->ToString());
+        $errors = ComposeStrings($errors, $this->FD_NMF->Errors->ToString());
+        $errors = ComposeStrings($errors, $this->CheckBox_Delete->Errors->ToString());
+        $this->FD_GRP_ID->Errors->Clear();
+        $this->FD_NME->Errors->Clear();
+        $this->FD_NMF->Errors->Clear();
+        $this->CheckBox_Delete->Errors->Clear();
+        $errors = ComposeStrings($errors, $this->RowErrors->ToString());
+        $this->RowsErrors[$this->RowNumber] = $errors;
+        return $errors != "" ? 0 : 1;
+    }
+//End ValidateRow Method
+
+//CheckInsert Method @2-922E38CF
+    function CheckInsert()
+    {
+        $filed = false;
+        $filed = ($filed || (is_array($this->FormParameters["FD_GRP_ID"][$this->RowNumber]) && count($this->FormParameters["FD_GRP_ID"][$this->RowNumber])) || strlen($this->FormParameters["FD_GRP_ID"][$this->RowNumber]));
+        $filed = ($filed || (is_array($this->FormParameters["FD_NME"][$this->RowNumber]) && count($this->FormParameters["FD_NME"][$this->RowNumber])) || strlen($this->FormParameters["FD_NME"][$this->RowNumber]));
+        $filed = ($filed || (is_array($this->FormParameters["FD_NMF"][$this->RowNumber]) && count($this->FormParameters["FD_NMF"][$this->RowNumber])) || strlen($this->FormParameters["FD_NMF"][$this->RowNumber]));
+        return $filed;
+    }
+//End CheckInsert Method
+
+//CheckErrors Method @2-F5A3B433
+    function CheckErrors()
+    {
+        $errors = false;
+        $errors = ($errors || $this->Errors->Count());
+        $errors = ($errors || $this->DataSource->Errors->Count());
+        return $errors;
+    }
+//End CheckErrors Method
+
+//Operation Method @2-6B923CC2
+    function Operation()
+    {
+        if(!$this->Visible)
+            return;
+
+        global $Redirect;
+        global $FileName;
+
+        $this->DataSource->Prepare();
+        if(!$this->FormSubmitted)
+            return;
+
+        $this->GetFormParameters();
+        $this->PressedButton = "Button_Submit";
+        if($this->Button_Submit->Pressed) {
+            $this->PressedButton = "Button_Submit";
+        } else if($this->Cancel->Pressed) {
+            $this->PressedButton = "Cancel";
+        }
+
+        $Redirect = $FileName . "?" . CCGetQueryString("QueryString", array("ccsForm"));
+        if($this->PressedButton == "Button_Submit") {
+            if(!CCGetEvent($this->Button_Submit->CCSEvents, "OnClick", $this->Button_Submit) || !$this->UpdateGrid()) {
+                $Redirect = "";
+            }
+        } else if($this->PressedButton == "Cancel") {
+            if(!CCGetEvent($this->Cancel->CCSEvents, "OnClick", $this->Cancel)) {
+                $Redirect = "";
+            }
+        } else {
+            $Redirect = "";
+        }
+        if ($Redirect)
+            $this->DataSource->close();
+    }
+//End Operation Method
+
+//UpdateGrid Method @2-9FA79F56
+    function UpdateGrid()
+    {
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeSubmit", $this);
+        if(!$this->Validate()) return;
+        $Validation = true;
+        for($this->RowNumber = 1; $this->RowNumber <= $this->TotalRows; $this->RowNumber++)
+        {
+            $this->DataSource->CachedColumns["FD_CODE"] = $this->CachedColumns["FD_CODE"][$this->RowNumber];
+            $this->DataSource->CurrentRow = $this->RowNumber;
+            $this->FD_GRP_ID->SetText($this->FormParameters["FD_GRP_ID"][$this->RowNumber], $this->RowNumber);
+            $this->FD_NME->SetText($this->FormParameters["FD_NME"][$this->RowNumber], $this->RowNumber);
+            $this->FD_NMF->SetText($this->FormParameters["FD_NMF"][$this->RowNumber], $this->RowNumber);
+            $this->CheckBox_Delete->SetText($this->FormParameters["CheckBox_Delete"][$this->RowNumber], $this->RowNumber);
+            if ($this->UpdatedRows >= $this->RowNumber) {
+                if($this->CheckBox_Delete->Value) {
+                    if($this->DeleteAllowed) { $Validation = ($this->DeleteRow() && $Validation); }
+                } else if($this->UpdateAllowed) {
+                    $Validation = ($this->UpdateRow() && $Validation);
+                }
+            }
+            else if($this->CheckInsert() && $this->InsertAllowed)
+            {
+                $Validation = ($Validation && $this->InsertRow());
+            }
+        }
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterSubmit", $this);
+        if ($this->Errors->Count() == 0 && $Validation){
+            $this->DataSource->close();
+            return true;
+        }
+        return false;
+    }
+//End UpdateGrid Method
+
+//InsertRow Method @2-0417A786
+    function InsertRow()
+    {
+        if(!$this->InsertAllowed) return false;
+        $this->DataSource->FD_CODE->SetValue($this->FD_CODE->GetValue(true));
+        $this->DataSource->FD_GRP_ID->SetValue($this->FD_GRP_ID->GetValue(true));
+        $this->DataSource->FD_NME->SetValue($this->FD_NME->GetValue(true));
+        $this->DataSource->FD_NMF->SetValue($this->FD_NMF->GetValue(true));
+        $this->DataSource->Insert();
+        $errors = "";
+        if($this->DataSource->Errors->Count() > 0) {
+            $errors = $this->DataSource->Errors->ToString();
+            $this->RowsErrors[$this->RowNumber] = $errors;
+            $this->DataSource->Errors->Clear();
+        }
+        return (($this->Errors->Count() == 0) && !strlen($errors));
+    }
+//End InsertRow Method
+
+//UpdateRow Method @2-6071FFD0
+    function UpdateRow()
+    {
+        if(!$this->UpdateAllowed) return false;
+        $this->DataSource->FD_CODE->SetValue($this->FD_CODE->GetValue(true));
+        $this->DataSource->FD_GRP_ID->SetValue($this->FD_GRP_ID->GetValue(true));
+        $this->DataSource->FD_NME->SetValue($this->FD_NME->GetValue(true));
+        $this->DataSource->FD_NMF->SetValue($this->FD_NMF->GetValue(true));
+        $this->DataSource->Update();
+        $errors = "";
+        if($this->DataSource->Errors->Count() > 0) {
+            $errors = $this->DataSource->Errors->ToString();
+            $this->RowsErrors[$this->RowNumber] = $errors;
+            $this->DataSource->Errors->Clear();
+        }
+        return (($this->Errors->Count() == 0) && !strlen($errors));
+    }
+//End UpdateRow Method
+
+//DeleteRow Method @2-A4A656F6
+    function DeleteRow()
+    {
+        if(!$this->DeleteAllowed) return false;
+        $this->DataSource->Delete();
+        $errors = "";
+        if($this->DataSource->Errors->Count() > 0) {
+            $errors = $this->DataSource->Errors->ToString();
+            $this->RowsErrors[$this->RowNumber] = $errors;
+            $this->DataSource->Errors->Clear();
+        }
+        return (($this->Errors->Count() == 0) && !strlen($errors));
+    }
+//End DeleteRow Method
+
+//FormScript Method @2-59800DB5
+    function FormScript($TotalRows)
+    {
+        $script = "";
+        return $script;
+    }
+//End FormScript Method
+
+//SetFormState Method @2-D154CAC0
+    function SetFormState($FormState)
+    {
+        if(strlen($FormState)) {
+            $FormState = str_replace("\\\\", "\\" . ord("\\"), $FormState);
+            $FormState = str_replace("\\;", "\\" . ord(";"), $FormState);
+            $pieces = explode(";", $FormState);
+            $this->UpdatedRows = $pieces[0];
+            $this->EmptyRows   = $pieces[1];
+            $this->TotalRows = $this->UpdatedRows + $this->EmptyRows;
+            $RowNumber = 0;
+            for($i = 2; $i < sizeof($pieces); $i = $i + 1)  {
+                $piece = $pieces[$i + 0];
+                $piece = str_replace("\\" . ord("\\"), "\\", $piece);
+                $piece = str_replace("\\" . ord(";"), ";", $piece);
+                $this->CachedColumns["FD_CODE"][$RowNumber] = $piece;
+                $RowNumber++;
+            }
+
+            if(!$RowNumber) { $RowNumber = 1; }
+            for($i = 1; $i <= $this->EmptyRows; $i++) {
+                $this->CachedColumns["FD_CODE"][$RowNumber] = "";
+                $RowNumber++;
+            }
+        }
+    }
+//End SetFormState Method
+
+//GetFormState Method @2-F2916714
+    function GetFormState($NonEmptyRows)
+    {
+        if(!$this->FormSubmitted) {
+            $this->FormState  = $NonEmptyRows . ";";
+            $this->FormState .= $this->InsertAllowed ? $this->EmptyRows : "0";
+            if($NonEmptyRows) {
+                for($i = 0; $i <= $NonEmptyRows; $i++) {
+                    $this->FormState .= ";" . str_replace(";", "\\;", str_replace("\\", "\\\\", $this->CachedColumns["FD_CODE"][$i]));
+                }
+            }
+        }
+        return $this->FormState;
+    }
+//End GetFormState Method
+
+//Show Method @2-2BF39838
+    function Show()
+    {
+        global $Tpl;
+        global $FileName;
+        global $CCSLocales;
+        global $CCSUseAmp;
+        $Error = "";
+
+        if(!$this->Visible) { return; }
+
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeSelect", $this);
+
+
+        $this->DataSource->open();
+        $is_next_record = ($this->ReadAllowed && $this->DataSource->next_record());
+        $this->IsEmpty = ! $is_next_record;
+
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeShow", $this);
+        if(!$this->Visible) { return; }
+
+        $this->Attributes->Show();
+        $this->Button_Submit->Visible = $this->Button_Submit->Visible && ($this->InsertAllowed || $this->UpdateAllowed || $this->DeleteAllowed);
+        $ParentPath = $Tpl->block_path;
+        $EditableGridPath = $ParentPath . "/EditableGrid " . $this->ComponentName;
+        $EditableGridRowPath = $ParentPath . "/EditableGrid " . $this->ComponentName . "/Row";
+        $Tpl->block_path = $EditableGridRowPath;
+        $this->RowNumber = 0;
+        $NonEmptyRows = 0;
+        $EmptyRowsLeft = $this->EmptyRows;
+        $this->ControlsVisible["FD_CODE"] = $this->FD_CODE->Visible;
+        $this->ControlsVisible["FD_GRP_ID"] = $this->FD_GRP_ID->Visible;
+        $this->ControlsVisible["FD_NME"] = $this->FD_NME->Visible;
+        $this->ControlsVisible["FD_NMF"] = $this->FD_NMF->Visible;
+        $this->ControlsVisible["CheckBox_Delete_Panel"] = $this->CheckBox_Delete_Panel->Visible;
+        $this->ControlsVisible["CheckBox_Delete"] = $this->CheckBox_Delete->Visible;
+        if ($is_next_record || ($EmptyRowsLeft && $this->InsertAllowed)) {
+            do {
+                // Parse Separator
+                if($this->RowNumber) {
+                    $Tpl->block_path = $EditableGridPath;
+                    $this->Attributes->Show();
+                    $Tpl->parseto("Separator", true, "Row");
+                    $Tpl->block_path = $EditableGridRowPath;
+                }
+                $this->RowNumber++;
+                if($is_next_record) {
+                    $NonEmptyRows++;
+                    $this->DataSource->SetValues();
+                }
+                if (!($is_next_record) || !($this->DeleteAllowed)) {
+                    $this->CheckBox_Delete->Visible = false;
+                    $this->CheckBox_Delete_Panel->Visible = false;
+                }
+                if (!($this->FormSubmitted) && $is_next_record) {
+                    $this->CachedColumns["FD_CODE"][$this->RowNumber] = $this->DataSource->CachedColumns["FD_CODE"];
+                    $this->CheckBox_Delete->SetValue("");
+                    $this->FD_CODE->SetValue($this->DataSource->FD_CODE->GetValue());
+                    $this->FD_GRP_ID->SetValue($this->DataSource->FD_GRP_ID->GetValue());
+                    $this->FD_NME->SetValue($this->DataSource->FD_NME->GetValue());
+                    $this->FD_NMF->SetValue($this->DataSource->FD_NMF->GetValue());
+                } elseif ($this->FormSubmitted && $is_next_record) {
+                    $this->FD_CODE->SetText("");
+                    $this->FD_CODE->SetValue($this->DataSource->FD_CODE->GetValue());
+                    $this->FD_GRP_ID->SetText($this->FormParameters["FD_GRP_ID"][$this->RowNumber], $this->RowNumber);
+                    $this->FD_NME->SetText($this->FormParameters["FD_NME"][$this->RowNumber], $this->RowNumber);
+                    $this->FD_NMF->SetText($this->FormParameters["FD_NMF"][$this->RowNumber], $this->RowNumber);
+                    $this->CheckBox_Delete->SetText($this->FormParameters["CheckBox_Delete"][$this->RowNumber], $this->RowNumber);
+                } elseif (!$this->FormSubmitted) {
+                    $this->CachedColumns["FD_CODE"][$this->RowNumber] = "";
+                    $this->FD_CODE->SetText("");
+                    $this->FD_GRP_ID->SetText("");
+                    $this->FD_NME->SetText("");
+                    $this->FD_NMF->SetText("");
+                } else {
+                    $this->FD_CODE->SetText("");
+                    $this->FD_GRP_ID->SetText($this->FormParameters["FD_GRP_ID"][$this->RowNumber], $this->RowNumber);
+                    $this->FD_NME->SetText($this->FormParameters["FD_NME"][$this->RowNumber], $this->RowNumber);
+                    $this->FD_NMF->SetText($this->FormParameters["FD_NMF"][$this->RowNumber], $this->RowNumber);
+                    $this->CheckBox_Delete->SetText($this->FormParameters["CheckBox_Delete"][$this->RowNumber], $this->RowNumber);
+                }
+                $this->Attributes->SetValue("rowNumber", $this->RowNumber);
+                $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeShowRow", $this);
+                $this->Attributes->Show();
+                $this->FD_CODE->Show($this->RowNumber);
+                $this->FD_GRP_ID->Show($this->RowNumber);
+                $this->FD_NME->Show($this->RowNumber);
+                $this->FD_NMF->Show($this->RowNumber);
+                $this->CheckBox_Delete_Panel->Show($this->RowNumber);
+                if (isset($this->RowsErrors[$this->RowNumber]) && ($this->RowsErrors[$this->RowNumber] != "")) {
+                    $Tpl->setblockvar("RowError", "");
+                    $Tpl->setvar("Error", $this->RowsErrors[$this->RowNumber]);
+                    $this->Attributes->Show();
+                    $Tpl->parse("RowError", false);
+                } else {
+                    $Tpl->setblockvar("RowError", "");
+                }
+                $Tpl->setvar("FormScript", $this->FormScript($this->RowNumber));
+                $Tpl->parse();
+                if ($is_next_record) {
+                    if ($this->FormSubmitted) {
+                        $is_next_record = $this->RowNumber < $this->UpdatedRows;
+                        if (($this->DataSource->CachedColumns["FD_CODE"] == $this->CachedColumns["FD_CODE"][$this->RowNumber])) {
+                            if ($this->ReadAllowed) $this->DataSource->next_record();
+                        }
+                    }else{
+                        $is_next_record = ($this->RowNumber < $this->PageSize) &&  $this->ReadAllowed && $this->DataSource->next_record();
+                    }
+                } else { 
+                    $EmptyRowsLeft--;
+                }
+            } while($is_next_record || ($EmptyRowsLeft && $this->InsertAllowed));
+        } else {
+            $Tpl->block_path = $EditableGridPath;
+            $this->Attributes->Show();
+            $Tpl->parse("NoRecords", false);
+        }
+
+        $Tpl->block_path = $EditableGridPath;
+        $this->Navigator->PageNumber = $this->DataSource->AbsolutePage;
+        $this->Navigator->PageSize = $this->PageSize;
+        if ($this->DataSource->RecordsCount == "CCS not counted")
+            $this->Navigator->TotalPages = $this->DataSource->AbsolutePage + ($this->DataSource->next_record() ? 1 : 0);
+        else
+            $this->Navigator->TotalPages = $this->DataSource->PageCount();
+        if ($this->Navigator->TotalPages <= 1) {
+            $this->Navigator->Visible = false;
+        }
+        $this->FD_NAMES_TotalRecords->Show();
+        $this->Sorter_FD_CODE->Show();
+        $this->Sorter_FD_GRP_ID->Show();
+        $this->Sorter_FD_NME->Show();
+        $this->Sorter_FD_NMF->Show();
+        $this->Navigator->Show();
+        $this->Button_Submit->Show();
+        $this->Cancel->Show();
+
+        if($this->CheckErrors()) {
+            $Error = ComposeStrings($Error, $this->Errors->ToString());
+            $Error = ComposeStrings($Error, $this->DataSource->Errors->ToString());
+            $Tpl->SetVar("Error", $Error);
+            $Tpl->Parse("Error", false);
+        }
+        $CCSForm = $this->ComponentName;
+        $this->HTMLFormAction = $FileName . "?" . CCAddParam(CCGetQueryString("QueryString", ""), "ccsForm", $CCSForm);
+        $Tpl->SetVar("Action", !$CCSUseAmp ? $this->HTMLFormAction : str_replace("&", "&amp;", $this->HTMLFormAction));
+        $Tpl->SetVar("HTMLFormName", $this->ComponentName);
+        $Tpl->SetVar("HTMLFormEnctype", $this->FormEnctype);
+        if (!$CCSUseAmp) {
+            $Tpl->SetVar("HTMLFormProperties", "method=\"POST\" action=\"" . $this->HTMLFormAction . "\" name=\"" . $this->ComponentName . "\"");
+        } else {
+            $Tpl->SetVar("HTMLFormProperties", "method=\"post\" action=\"" . str_replace("&", "&amp;", $this->HTMLFormAction) . "\" id=\"" . $this->ComponentName . "\"");
+        }
+        $Tpl->SetVar("FormState", CCToHTML($this->GetFormState($NonEmptyRows)));
+        $Tpl->parse();
+        $Tpl->block_path = $ParentPath;
+        $this->DataSource->close();
+    }
+//End Show Method
+
+} //End FD_NAMES Class @2-FCB6E20C
+
+class clsFD_NAMESDataSource extends clsDBcandat {  //FD_NAMESDataSource Class @2-174F1E70
+
+//DataSource Variables @2-4150A70C
+    public $Parent = "";
+    public $CCSEvents = "";
+    public $CCSEventResult;
+    public $ErrorBlock;
+    public $CmdExecution;
+
+    public $InsertParameters;
+    public $UpdateParameters;
+    public $DeleteParameters;
+    public $CountSQL;
+    public $wp;
+    public $AllParametersSet;
+
+    public $CachedColumns;
+    public $CurrentRow;
+    public $InsertFields = array();
+    public $UpdateFields = array();
+
+    // Datasource fields
+    public $FD_CODE;
+    public $FD_GRP_ID;
+    public $FD_NME;
+    public $FD_NMF;
+    public $CheckBox_Delete;
+//End DataSource Variables
+
+//DataSourceClass_Initialize Event @2-A9B2737A
+    function clsFD_NAMESDataSource(& $Parent)
+    {
+        $this->Parent = & $Parent;
+        $this->ErrorBlock = "EditableGrid FD_NAMES/Error";
+        $this->Initialize();
+        $this->FD_CODE = new clsField("FD_CODE", ccsInteger, "");
+        
+        $this->FD_GRP_ID = new clsField("FD_GRP_ID", ccsInteger, "");
+        
+        $this->FD_NME = new clsField("FD_NME", ccsText, "");
+        
+        $this->FD_NMF = new clsField("FD_NMF", ccsText, "");
+        
+        $this->CheckBox_Delete = new clsField("CheckBox_Delete", ccsBoolean, $this->BooleanFormat);
+        
+
+        $this->InsertFields["FD_GRP_ID"] = array("Name" => "FD_GRP_ID", "Value" => "", "DataType" => ccsInteger, "OmitIfEmpty" => 1);
+        $this->InsertFields["FD_NME"] = array("Name" => "FD_NME", "Value" => "", "DataType" => ccsText, "OmitIfEmpty" => 1);
+        $this->InsertFields["FD_NMF"] = array("Name" => "FD_NMF", "Value" => "", "DataType" => ccsText, "OmitIfEmpty" => 1);
+        $this->UpdateFields["FD_GRP_ID"] = array("Name" => "FD_GRP_ID", "Value" => "", "DataType" => ccsInteger, "OmitIfEmpty" => 1);
+        $this->UpdateFields["FD_NME"] = array("Name" => "FD_NME", "Value" => "", "DataType" => ccsText, "OmitIfEmpty" => 1);
+        $this->UpdateFields["FD_NMF"] = array("Name" => "FD_NMF", "Value" => "", "DataType" => ccsText, "OmitIfEmpty" => 1);
+    }
+//End DataSourceClass_Initialize Event
+
+//SetOrder Method @2-C65CD69C
+    function SetOrder($SorterName, $SorterDirection)
+    {
+        $this->Order = "";
+        $this->Order = CCGetOrder($this->Order, $SorterName, $SorterDirection, 
+            array("Sorter_FD_CODE" => array("FD_CODE", ""), 
+            "Sorter_FD_GRP_ID" => array("FD_GRP_ID", ""), 
+            "Sorter_FD_NME" => array("FD_NME", ""), 
+            "Sorter_FD_NMF" => array("FD_NMF", "")));
+    }
+//End SetOrder Method
+
+//Prepare Method @2-5B4D4C07
+    function Prepare()
+    {
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->wp = new clsSQLParameters($this->ErrorBlock);
+        $this->wp->AddParameter("1", "urls_FD_NME", ccsText, "", "", $this->Parameters["urls_FD_NME"], "", false);
+        $this->wp->AddParameter("2", "urls_FD_NMF", ccsText, "", "", $this->Parameters["urls_FD_NMF"], "", false);
+        $this->AllParametersSet = $this->wp->AllParamsSet();
+        $this->wp->Criterion[1] = $this->wp->Operation(opContains, "FD_NME", $this->wp->GetDBValue("1"), $this->ToSQL($this->wp->GetDBValue("1"), ccsText),false);
+        $this->wp->Criterion[2] = $this->wp->Operation(opContains, "FD_NMF", $this->wp->GetDBValue("2"), $this->ToSQL($this->wp->GetDBValue("2"), ccsText),false);
+        $this->Where = $this->wp->opAND(
+             false, 
+             $this->wp->Criterion[1], 
+             $this->wp->Criterion[2]);
+    }
+//End Prepare Method
+
+//Open Method @2-C31513A9
+    function Open()
+    {
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeBuildSelect", $this->Parent);
+        $this->CountSQL = "SELECT COUNT(*)\n\n" .
+        "FROM FD_NAMES";
+        $this->SQL = "SELECT * \n\n" .
+        "FROM FD_NAMES {SQL_Where} {SQL_OrderBy}";
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeExecuteSelect", $this->Parent);
+        if ($this->CountSQL) 
+            $this->RecordsCount = CCGetDBValue(CCBuildSQL($this->CountSQL, $this->Where, ""), $this);
+        else
+            $this->RecordsCount = "CCS not counted";
+        $this->query($this->OptimizeSQL(CCBuildSQL($this->SQL, $this->Where, $this->Order)));
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterExecuteSelect", $this->Parent);
+    }
+//End Open Method
+
+//SetValues Method @2-7C92F5D4
+    function SetValues()
+    {
+        $this->CachedColumns["FD_CODE"] = $this->f("FD_CODE");
+        $this->FD_CODE->SetDBValue(trim($this->f("FD_CODE")));
+        $this->FD_GRP_ID->SetDBValue(trim($this->f("FD_GRP_ID")));
+        $this->FD_NME->SetDBValue($this->f("FD_NME"));
+        $this->FD_NMF->SetDBValue($this->f("FD_NMF"));
+    }
+//End SetValues Method
+
+//Insert Method @2-72F6AF4F
+    function Insert()
+    {
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->CmdExecution = true;
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeBuildInsert", $this->Parent);
+        $this->InsertFields["FD_GRP_ID"]["Value"] = $this->FD_GRP_ID->GetDBValue(true);
+        $this->InsertFields["FD_NME"]["Value"] = $this->FD_NME->GetDBValue(true);
+        $this->InsertFields["FD_NMF"]["Value"] = $this->FD_NMF->GetDBValue(true);
+        $this->SQL = CCBuildInsert("FD_NAMES", $this->InsertFields, $this);
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeExecuteInsert", $this->Parent);
+        if($this->Errors->Count() == 0 && $this->CmdExecution) {
+            $this->query($this->SQL);
+            $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterExecuteInsert", $this->Parent);
+        }
+    }
+//End Insert Method
+
+//Update Method @2-491B57E4
+    function Update()
+    {
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->CmdExecution = true;
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeBuildUpdate", $this->Parent);
+        $SelectWhere = $this->Where;
+        $this->Where = "FD_CODE=" . $this->ToSQL($this->CachedColumns["FD_CODE"], ccsInteger);
+        $this->UpdateFields["FD_GRP_ID"]["Value"] = $this->FD_GRP_ID->GetDBValue(true);
+        $this->UpdateFields["FD_NME"]["Value"] = $this->FD_NME->GetDBValue(true);
+        $this->UpdateFields["FD_NMF"]["Value"] = $this->FD_NMF->GetDBValue(true);
+        $this->SQL = CCBuildUpdate("FD_NAMES", $this->UpdateFields, $this);
+        $this->SQL .= strlen($this->Where) ? " WHERE " . $this->Where : $this->Where;
+        if (!strlen($this->Where) && $this->Errors->Count() == 0) 
+            $this->Errors->addError($CCSLocales->GetText("CCS_CustomOperationError_MissingParameters"));
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeExecuteUpdate", $this->Parent);
+        if($this->Errors->Count() == 0 && $this->CmdExecution) {
+            $this->query($this->SQL);
+            $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterExecuteUpdate", $this->Parent);
+        }
+        $this->Where = $SelectWhere;
+    }
+//End Update Method
+
+//Delete Method @2-AC821D16
+    function Delete()
+    {
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->CmdExecution = true;
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeBuildDelete", $this->Parent);
+        $SelectWhere = $this->Where;
+        $this->Where = "FD_CODE=" . $this->ToSQL($this->CachedColumns["FD_CODE"], ccsInteger);
+        $this->SQL = "DELETE FROM FD_NAMES";
+        $this->SQL = CCBuildSQL($this->SQL, $this->Where, "");
+        if (!strlen($this->Where) && $this->Errors->Count() == 0) 
+            $this->Errors->addError($CCSLocales->GetText("CCS_CustomOperationError_MissingParameters"));
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeExecuteDelete", $this->Parent);
+        if($this->Errors->Count() == 0 && $this->CmdExecution) {
+            $this->query($this->SQL);
+            $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterExecuteDelete", $this->Parent);
+        }
+        $this->Where = $SelectWhere;
+    }
+//End Delete Method
+
+} //End FD_NAMESDataSource Class @2-FCB6E20C
+
+class clsRecordFD_NAMESSearch { //FD_NAMESSearch Class @3-AE49E40C
+
+//Variables @3-9E315808
+
+    // Public variables
+    public $ComponentType = "Record";
+    public $ComponentName;
+    public $Parent;
+    public $HTMLFormAction;
+    public $PressedButton;
+    public $Errors;
+    public $ErrorBlock;
+    public $FormSubmitted;
+    public $FormEnctype;
+    public $Visible;
+    public $IsEmpty;
+
+    public $CCSEvents = "";
+    public $CCSEventResult;
+
+    public $RelativePath = "";
+
+    public $InsertAllowed = false;
+    public $UpdateAllowed = false;
+    public $DeleteAllowed = false;
+    public $ReadAllowed   = false;
+    public $EditMode      = false;
+    public $ds;
+    public $DataSource;
+    public $ValidatingControls;
+    public $Controls;
+    public $Attributes;
+
+    // Class variables
+//End Variables
+
+//Class_Initialize Event @3-53CBED69
+    function clsRecordFD_NAMESSearch($RelativePath, & $Parent)
+    {
+
+        global $FileName;
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->Visible = true;
+        $this->Parent = & $Parent;
+        $this->RelativePath = $RelativePath;
+        $this->Errors = new clsErrors();
+        $this->ErrorBlock = "Record FD_NAMESSearch/Error";
+        $this->ReadAllowed = true;
+        if($this->Visible)
+        {
+            $this->ComponentName = "FD_NAMESSearch";
+            $this->Attributes = new clsAttributes($this->ComponentName . ":");
+            $CCSForm = explode(":", CCGetFromGet("ccsForm", ""), 2);
+            if(sizeof($CCSForm) == 1)
+                $CCSForm[1] = "";
+            list($FormName, $FormMethod) = $CCSForm;
+            $this->FormEnctype = "application/x-www-form-urlencoded";
+            $this->FormSubmitted = ($FormName == $this->ComponentName);
+            $Method = $this->FormSubmitted ? ccsPost : ccsGet;
+            $this->Button_DoSearch = new clsButton("Button_DoSearch", $Method, $this);
+            $this->s_FD_NME = new clsControl(ccsTextBox, "s_FD_NME", "s_FD_NME", ccsText, "", CCGetRequestParam("s_FD_NME", $Method, NULL), $this);
+            $this->s_FD_NMF = new clsControl(ccsTextBox, "s_FD_NMF", "s_FD_NMF", ccsText, "", CCGetRequestParam("s_FD_NMF", $Method, NULL), $this);
+        }
+    }
+//End Class_Initialize Event
+
+//Validate Method @3-66848F13
+    function Validate()
+    {
+        global $CCSLocales;
+        $Validation = true;
+        $Where = "";
+        $Validation = ($this->s_FD_NME->Validate() && $Validation);
+        $Validation = ($this->s_FD_NMF->Validate() && $Validation);
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "OnValidate", $this);
+        $Validation =  $Validation && ($this->s_FD_NME->Errors->Count() == 0);
+        $Validation =  $Validation && ($this->s_FD_NMF->Errors->Count() == 0);
+        return (($this->Errors->Count() == 0) && $Validation);
+    }
+//End Validate Method
+
+//CheckErrors Method @3-E04809A2
+    function CheckErrors()
+    {
+        $errors = false;
+        $errors = ($errors || $this->s_FD_NME->Errors->Count());
+        $errors = ($errors || $this->s_FD_NMF->Errors->Count());
+        $errors = ($errors || $this->Errors->Count());
+        return $errors;
+    }
+//End CheckErrors Method
+
+//MasterDetail @3-ED598703
+function SetPrimaryKeys($keyArray)
+{
+    $this->PrimaryKeys = $keyArray;
+}
+function GetPrimaryKeys()
+{
+    return $this->PrimaryKeys;
+}
+function GetPrimaryKey($keyName)
+{
+    return $this->PrimaryKeys[$keyName];
+}
+//End MasterDetail
+
+//Operation Method @3-9A449957
+    function Operation()
+    {
+        if(!$this->Visible)
+            return;
+
+        global $Redirect;
+        global $FileName;
+
+        if(!$this->FormSubmitted) {
+            return;
+        }
+
+        if($this->FormSubmitted) {
+            $this->PressedButton = "Button_DoSearch";
+            if($this->Button_DoSearch->Pressed) {
+                $this->PressedButton = "Button_DoSearch";
+            }
+        }
+        $Redirect = "FD_GRID.php";
+        if($this->Validate()) {
+            if($this->PressedButton == "Button_DoSearch") {
+                $Redirect = "FD_GRID.php" . "?" . CCMergeQueryStrings(CCGetQueryString("Form", array("Button_DoSearch", "Button_DoSearch_x", "Button_DoSearch_y")));
+                if(!CCGetEvent($this->Button_DoSearch->CCSEvents, "OnClick", $this->Button_DoSearch)) {
+                    $Redirect = "";
+                }
+            }
+        } else {
+            $Redirect = "";
+        }
+    }
+//End Operation Method
+
+//Show Method @3-D7014B27
+    function Show()
+    {
+        global $CCSUseAmp;
+        global $Tpl;
+        global $FileName;
+        global $CCSLocales;
+        $Error = "";
+
+        if(!$this->Visible)
+            return;
+
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeSelect", $this);
+
+
+        $RecordBlock = "Record " . $this->ComponentName;
+        $ParentPath = $Tpl->block_path;
+        $Tpl->block_path = $ParentPath . "/" . $RecordBlock;
+        $this->EditMode = $this->EditMode && $this->ReadAllowed;
+        if (!$this->FormSubmitted) {
+        }
+
+        if($this->FormSubmitted || $this->CheckErrors()) {
+            $Error = "";
+            $Error = ComposeStrings($Error, $this->s_FD_NME->Errors->ToString());
+            $Error = ComposeStrings($Error, $this->s_FD_NMF->Errors->ToString());
+            $Error = ComposeStrings($Error, $this->Errors->ToString());
+            $Tpl->SetVar("Error", $Error);
+            $Tpl->Parse("Error", false);
+        }
+        $CCSForm = $this->EditMode ? $this->ComponentName . ":" . "Edit" : $this->ComponentName;
+        $this->HTMLFormAction = $FileName . "?" . CCAddParam(CCGetQueryString("QueryString", ""), "ccsForm", $CCSForm);
+        $Tpl->SetVar("Action", !$CCSUseAmp ? $this->HTMLFormAction : str_replace("&", "&amp;", $this->HTMLFormAction));
+        $Tpl->SetVar("HTMLFormName", $this->ComponentName);
+        $Tpl->SetVar("HTMLFormEnctype", $this->FormEnctype);
+
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeShow", $this);
+        $this->Attributes->Show();
+        if(!$this->Visible) {
+            $Tpl->block_path = $ParentPath;
+            return;
+        }
+
+        $this->Button_DoSearch->Show();
+        $this->s_FD_NME->Show();
+        $this->s_FD_NMF->Show();
+        $Tpl->parse();
+        $Tpl->block_path = $ParentPath;
+    }
+//End Show Method
+
+} //End FD_NAMESSearch Class @3-FCB6E20C
+
+//Initialize Page @1-58FF6B2B
+// Variables
+$FileName = "";
+$Redirect = "";
+$Tpl = "";
+$TemplateFileName = "";
+$BlockToParse = "";
+$ComponentName = "";
+$Attributes = "";
+
+// Events;
+$CCSEvents = "";
+$CCSEventResult = "";
+
+$FileName = FileName;
+$Redirect = "";
+$TemplateFileName = "FD_GRID.html";
+$BlockToParse = "main";
+$TemplateEncoding = "CP1252";
+$ContentType = "text/html";
+$PathToRoot = "./";
+$Charset = $Charset ? $Charset : "windows-1252";
+//End Initialize Page
+
+//Include events file @1-9105B547
+include_once("./FD_GRID_events.php");
+//End Include events file
+
+//Before Initialize @1-E870CEBC
+$CCSEventResult = CCGetEvent($CCSEvents, "BeforeInitialize", $MainPage);
+//End Before Initialize
+
+//Initialize Objects @1-22423676
+$DBcandat = new clsDBcandat();
+$MainPage->Connections["candat"] = & $DBcandat;
+$Attributes = new clsAttributes("page:");
+$MainPage->Attributes = & $Attributes;
+
+// Controls
+$FD_NAMES = new clsEditableGridFD_NAMES("", $MainPage);
+$FD_NAMESSearch = new clsRecordFD_NAMESSearch("", $MainPage);
+$MainPage->FD_NAMES = & $FD_NAMES;
+$MainPage->FD_NAMESSearch = & $FD_NAMESSearch;
+$FD_NAMES->Initialize();
+
+BindEvents();
+
+$CCSEventResult = CCGetEvent($CCSEvents, "AfterInitialize", $MainPage);
+
+if ($Charset) {
+    header("Content-Type: " . $ContentType . "; charset=" . $Charset);
+} else {
+    header("Content-Type: " . $ContentType);
+}
+//End Initialize Objects
+
+//Initialize HTML Template @1-E710DB26
+$CCSEventResult = CCGetEvent($CCSEvents, "OnInitializeView", $MainPage);
+$Tpl = new clsTemplate($FileEncoding, $TemplateEncoding);
+$Tpl->LoadTemplate(PathToCurrentPage . $TemplateFileName, $BlockToParse, "CP1252");
+$Tpl->block_path = "/$BlockToParse";
+$CCSEventResult = CCGetEvent($CCSEvents, "BeforeShow", $MainPage);
+$Attributes->SetValue("pathToRoot", "");
+$Attributes->Show();
+//End Initialize HTML Template
+
+//Execute Components @1-64258490
+$FD_NAMES->Operation();
+$FD_NAMESSearch->Operation();
+//End Execute Components
+
+//Go to destination page @1-E7985387
+if($Redirect)
+{
+    $CCSEventResult = CCGetEvent($CCSEvents, "BeforeUnload", $MainPage);
+    $DBcandat->close();
+    header("Location: " . $Redirect);
+    unset($FD_NAMES);
+    unset($FD_NAMESSearch);
+    unset($Tpl);
+    exit;
+}
+//End Go to destination page
+
+//Show Page @1-C9C9D0EE
+$FD_NAMES->Show();
+$FD_NAMESSearch->Show();
+$Tpl->block_path = "";
+$Tpl->Parse($BlockToParse, false);
+if (!isset($main_block)) $main_block = $Tpl->GetVar($BlockToParse);
+$CCSEventResult = CCGetEvent($CCSEvents, "BeforeOutput", $MainPage);
+if ($CCSEventResult) echo $main_block;
+//End Show Page
+
+//Unload Page @1-C1AB6FE6
+$CCSEventResult = CCGetEvent($CCSEvents, "BeforeUnload", $MainPage);
+$DBcandat->close();
+unset($FD_NAMES);
+unset($FD_NAMESSearch);
+unset($Tpl);
+//End Unload Page
+
+
+?>

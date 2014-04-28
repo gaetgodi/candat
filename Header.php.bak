@@ -1,0 +1,115 @@
+<?php
+class clsHeader { //Header class @1-CC982CB1
+
+//Variables @1-51D7F06F
+    public $ComponentType = "IncludablePage";
+    public $Connections = array();
+    public $FileName = "";
+    public $Redirect = "";
+    public $Tpl = "";
+    public $TemplateFileName = "";
+    public $BlockToParse = "";
+    public $ComponentName = "";
+    public $Attributes = "";
+
+    // Events;
+    public $CCSEvents = "";
+    public $CCSEventResult = "";
+    public $RelativePath;
+    public $Visible;
+    public $Parent;
+//End Variables
+
+//Class_Initialize Event @1-5C4FA0A2
+    function clsHeader($RelativePath, $ComponentName, & $Parent)
+    {
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->ComponentName = $ComponentName;
+        $this->RelativePath = $RelativePath;
+        $this->Visible = true;
+        $this->Parent = & $Parent;
+        $this->FileName = "Header.php";
+        $this->Redirect = "";
+        $this->TemplateFileName = "Header.html";
+        $this->BlockToParse = "main";
+        $this->TemplateEncoding = "CP1252";
+        $this->ContentType = "text/html";
+    }
+//End Class_Initialize Event
+
+//Class_Terminate Event @1-32FD4740
+    function Class_Terminate()
+    {
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeUnload", $this);
+    }
+//End Class_Terminate Event
+
+//BindEvents Method @1-0DAD0D56
+    function BindEvents()
+    {
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterInitialize", $this);
+    }
+//End BindEvents Method
+
+//Operations Method @1-7E2A14CF
+    function Operations()
+    {
+        global $Redirect;
+        if(!$this->Visible)
+            return "";
+    }
+//End Operations Method
+
+//Initialize Method @1-45AC7AFB
+    function Initialize()
+    {
+        global $FileName;
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeInitialize", $this);
+        if(!$this->Visible)
+            return "";
+        $this->Attributes = & $this->Parent->Attributes;
+
+        // Create Components
+        $this->FD_NAMES_list = new clsControl(ccsLink, "FD_NAMES_list", "FD_NAMES_list", ccsText, "", CCGetRequestParam("FD_NAMES_list", ccsGet, NULL), $this);
+        $this->FD_NAMES_list->Page = $this->RelativePath . "FD_NAMES_list.php";
+        $this->UNIT_DESC_list = new clsControl(ccsLink, "UNIT_DESC_list", "UNIT_DESC_list", ccsText, "", CCGetRequestParam("UNIT_DESC_list", ccsGet, NULL), $this);
+        $this->UNIT_DESC_list->Page = $this->RelativePath . "UNIT_DESC_list.php";
+        $this->UNIT_FACT_list = new clsControl(ccsLink, "UNIT_FACT_list", "UNIT_FACT_list", ccsText, "", CCGetRequestParam("UNIT_FACT_list", ccsGet, NULL), $this);
+        $this->UNIT_FACT_list->Page = $this->RelativePath . "UNIT_FACT_list.php";
+        $this->BindEvents();
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "OnInitializeView", $this);
+    }
+//End Initialize Method
+
+//Show Method @1-096F367E
+    function Show()
+    {
+        global $Tpl;
+        global $CCSLocales;
+        $block_path = $Tpl->block_path;
+        $Tpl->LoadTemplate("/" . $this->TemplateFileName, $this->ComponentName, $this->TemplateEncoding, "remove");
+        $Tpl->block_path = $Tpl->block_path . "/" . $this->ComponentName;
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeShow", $this);
+        if(!$this->Visible) {
+            $Tpl->block_path = $block_path;
+            $Tpl->SetVar($this->ComponentName, "");
+            return "";
+        }
+        $this->Attributes->Show();
+        $this->FD_NAMES_list->Show();
+        $this->UNIT_DESC_list->Show();
+        $this->UNIT_FACT_list->Show();
+        $Tpl->Parse();
+        $Tpl->block_path = $block_path;
+            $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeOutput", $this);
+        $Tpl->SetVar($this->ComponentName, $Tpl->GetVar($this->ComponentName));
+    }
+//End Show Method
+
+} //End Header Class @1-FCB6E20C
+
+
+?>

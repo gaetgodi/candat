@@ -1,0 +1,29 @@
+<?php
+//BindEvents Method @1-5188E63B
+function BindEvents()
+{
+    global $SB_VARIABLES2;
+    $SB_VARIABLES2->SB_VARIABLES2_TotalRecords->CCSEvents["BeforeShow"] = "SB_VARIABLES2_SB_VARIABLES2_TotalRecords_BeforeShow";
+}
+//End BindEvents Method
+
+//SB_VARIABLES2_SB_VARIABLES2_TotalRecords_BeforeShow @267-08BE48F2
+function SB_VARIABLES2_SB_VARIABLES2_TotalRecords_BeforeShow(& $sender)
+{
+    $SB_VARIABLES2_SB_VARIABLES2_TotalRecords_BeforeShow = true;
+    $Component = & $sender;
+    $Container = & CCGetParentContainer($sender);
+    global $SB_VARIABLES2; //Compatibility
+//End SB_VARIABLES2_SB_VARIABLES2_TotalRecords_BeforeShow
+
+//Retrieve number of records @268-ABE656B4
+    $Component->SetValue($Container->DataSource->RecordsCount);
+//End Retrieve number of records
+
+//Close SB_VARIABLES2_SB_VARIABLES2_TotalRecords_BeforeShow @267-FE4F3B25
+    return $SB_VARIABLES2_SB_VARIABLES2_TotalRecords_BeforeShow;
+}
+//End Close SB_VARIABLES2_SB_VARIABLES2_TotalRecords_BeforeShow
+
+
+?>

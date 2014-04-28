@@ -1,0 +1,101 @@
+<html>
+<head>
+<title>Implementing dependent drop-down menus (dependent listboxes)</title>
+<link rel="stylesheet" type="text/css" href="../../../../CodeChargeStudio4/Examples/CCSExamplePack2/cchelpstyle.css">
+</head>
+<body>
+<p>{Header}</p>
+<h1>Implementing dependent drop-down menus (dependent listboxes)</h1>
+<h2>Description</h2>
+<p>This <a href="{Link1_Src}" id="Link1">example</a> shows how to implement dependent listboxes.</p>
+<h2>Usage</h2>
+<p>Select a category and then a product to view product details.</p>
+<h2>Steps to recreate</h2>
+<ol>
+  <li>Use Grid Builder to create the&nbsp; <i>store_products</i> grid (based on
+  the <i>store_products</i> table in the <i>Internet</i> database) and the
+  search form that includes <i>category_id</i> and <i>product_id</i> fields. 
+  <ul>
+    <li>On Step 3 select <i>ListBox</i> in the <b>Control Type</b> field for
+    both fields. 
+    <li>On Step 4 select <b>No Sorting</b> and <b>No Page Navigator</b>. Also
+    enter <i>1</i> in the <b>Records Per Page</b> property so that only one
+    record is displayed on a page. 
+    <li>On Step 5 select <i>Columnar</i> in the <b>Grid layout</b> listbox.</li>
+ 
+  </ul>
+ 
+  <li>While in the Design mode, modify properties of the following fields within
+  the search form: 
+  <ul>
+    <li>For the <i><b>s_project_id</b></i> listbox, set the <b>Connection</b> property
+    to <i>InternetDB</i> , select <i>store_categories</i> in the <b>Data Source</b> property, <i>category_id</i> in
+    the <b>Bound Column</b> property, <i>category_name</i> in the <b>Text Column</b> property
+    and <i>integer</i> in the <b>Data Type</b> property. 
+    <li>For the <i><b>s_product_id</b></i> Listbox, set the <b>Connection</b> property
+    to <i>InternetDB</i> , select <i>store_products</i> in the <b>Data Source</b> property, <i>product_id</i> in
+    the <b>Bound Column</b> property, <i>product_name</i> in the <b>Text Column</b> Property
+    and <i>integer</i> in the <b>Data Type</b> property. Then open the 'Data
+    Source' window by clicking on the [...] button next to the <b>Data Source</b> property,
+    add a Where parameter with the condition: <i>category_id equals(=)
+    s_category_id</i> and set the Parameter Source <b>Type</b> to <i>URL</i>.</li>
+ 
+  </ul>
+ 
+  <li>Modfy the grid as follows: 
+  <ul>
+    <li>Open the 'Data Source' window by clicking on the [...] button next to
+    the <b>Data Source</b> property, then change the the <b>Default Value</b>&nbsp;of
+    the Where parameter '<i>product_id equals(=) s_product_id'&nbsp;</i>&nbsp;to <i><strong>-1</strong></i> ,
+    so that no records&nbsp;are shown until&nbsp;product_id is specified in the
+    search form. 
+    <li>Change the label control&nbsp; <i>Image_Url</i> to an image control.</li>
+ 
+  </ul>
+ 
+  <li>Switch to the HTML mode and add&nbsp;the JavaScript&nbsp;code before the
+  &lt;/head&gt; tag as shown in the example, excluding the block of code
+  between&nbsp;&lt;!-- BEGIN Grid store_products1 --&gt; and &lt;!-- END Grid
+  store_products1 --&gt; 
+  <li>Use the following steps to create an invisible grid within the JavaScript
+  section, which will be used to output a JavaScript array with all product
+  categories and product names. 
+  <ul>
+    <li>While in the HTML mode position the cursor before the &lt;/script&gt;
+    tag and use&nbsp; <b>Grid Builder</b> to create the <i>store_products1</i> grid
+    that is based on the <i>store_products</i> table. 
+    <li>On Step 2 of the builder select the fields&nbsp; <i>product_id</i>, <i>category_id</i> and <i>product_name</i> and
+    in the <b>Order By</b> select&nbsp; <i>product_name</i>. 
+    <li>On Step 4 select <b>No Sorting</b> and <b>No Page Navigator</b> . Also
+    leave blank <b>Records Per Page</b> property and <strong>No Records Found
+    Message</strong> options. 
+    <li>Delete all HTML tags from the new grid, then add the&nbsp;code <em><strong>&lt;!--
+    BEGIN Separator --&gt;,&lt;!-- END Separator --&gt;</strong></em> after the <i>Row</i> block. 
+    <li>Enter <b><em>var Product = new Array(</em></b> before the <i>Row</i> block
+    and <i><strong>);</strong></i> after the <i>Separator</i> block. 
+    <li>Inside the <i>Row</i> block add <strong>new Array( )</strong> and comma
+    separators (<strong>,</strong> ). Also enclose the <i>{product_name}</i> label
+    in single quotes as it will output text values.</li>
+ 
+  </ul>
+ 
+  <li>Add <strong>&lt;span id="Products"&gt;</strong> and <strong>&lt;/span&gt;</strong> tags
+  into the <em>store_products</em> grid, as can be seen in the HTML code
+  of the example. 
+  <li>Modify the HTML near the&nbsp;<em>s_category_id</em> listbox by adding the
+  following&nbsp;code included in the example:<em>onchange="set_child_listbox(this,
+  document.store_productsSearch.s_product_id,Product,'Products');"</em>.<br>
+  Similarly, near the <i>s_product_id</i> listbox&nbsp;add <em>onchange="reload_page();"
+  </em> as shown in the example. 
+  <li>Make cosmetic changes as needed by modifying the text and captions within
+  the HTML.</li>
+</ol>
+<h2>Database Tables used</h2>
+<p>Database: <i>Internet</i></p>
+<p>Tables: <i>store_categories, store_products</i></p>
+<h2>Events Used</h2>
+<p>No CCS events were used, however two JavaScript onchange events with
+corresponding JavaScript functions were placed directly in HTML.</p>
+
+</body>
+</html>

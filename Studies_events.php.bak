@@ -1,0 +1,33 @@
+<?php
+//BindEvents Method @1-EB4B6B6C
+function BindEvents()
+{
+    global $STUDIES1;
+    $STUDIES1->Button_Insert->CCSEvents["OnClick"] = "STUDIES1_Button_Insert_OnClick";
+}
+//End BindEvents Method
+
+//STUDIES1_Button_Insert_OnClick @16-707F2DF9
+function STUDIES1_Button_Insert_OnClick(& $sender)
+{
+    $STUDIES1_Button_Insert_OnClick = true;
+    $Component = & $sender;
+    $Container = & CCGetParentContainer($sender);
+    global $STUDIES1; //Compatibility
+//End STUDIES1_Button_Insert_OnClick
+
+//Custom Code @41-2A29BDB7
+// -------------------------
+    // Write your own code here.
+INSERT INTO ST_MEALS SELECT * FROM ADMIN_Meal_NMS;
+
+// -------------------------
+//End Custom Code
+
+//Close STUDIES1_Button_Insert_OnClick @16-5E798B88
+    return $STUDIES1_Button_Insert_OnClick;
+}
+//End Close STUDIES1_Button_Insert_OnClick
+
+
+?>

@@ -1,0 +1,148 @@
+
+<script language="JavaScript" type="text/javascript">
+//Begin CCS script
+//Include Common JSFunctions @1-A2F3288E
+</script>
+<script language="JavaScript" src="{page:pathToRoot}ClientI18N.php?file=Functions.js&amp;locale={res:CCS_LocaleID}" type="text/javascript" charset="utf-8"></script>
+<script language="JavaScript" type="text/javascript">
+//End Include Common JSFunctions
+
+//ADMIN_DAYSADMIN_DAY_NMS1Button_Delete_OnClick @15-7E17FB66
+function ADMIN_DAYSADMIN_DAY_NMS1Button_Delete_OnClick()
+{
+    var result = true;
+//End ADMIN_DAYSADMIN_DAY_NMS1Button_Delete_OnClick
+
+//Confirmation Message @16-8243B274
+    return confirm('Delete record?');
+//End Confirmation Message
+
+//Close ADMIN_DAYSADMIN_DAY_NMS1Button_Delete_OnClick @15-BC33A33A
+    return result;
+}
+//End Close ADMIN_DAYSADMIN_DAY_NMS1Button_Delete_OnClick
+
+//ADMIN_DAYSADMIN_DAY_NMS1Button_Cancel_OnClick @17-E631838C
+function ADMIN_DAYSADMIN_DAY_NMS1Button_Cancel_OnClick()
+{
+    disableValidation = true;
+}
+//End ADMIN_DAYSADMIN_DAY_NMS1Button_Cancel_OnClick
+
+//bind_events @1-471C116F
+function ADMIN_DAYS_bind_events() {
+    addEventHandler("ADMIN_DAYSADMIN_DAY_NMS1Button_Delete", "click", ADMIN_DAYSADMIN_DAY_NMS1Button_Delete_OnClick);
+    addEventHandler("ADMIN_DAYSADMIN_DAY_NMS1Button_Cancel", "click", ADMIN_DAYSADMIN_DAY_NMS1Button_Cancel_OnClick);
+}
+//End bind_events
+
+//End CCS script
+</script>
+<link rel="stylesheet" type="text/css" href="Styles/Manuscript/Style_doctype.css">
+<meta name="GENERATOR" content="CodeCharge Studio 4.3.00.53">
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<!-- BEGIN Grid ADMIN_DAY_NMS -->
+<table cellspacing="0" cellpadding="0" border="0">
+  <tr>
+    <td valign="top">
+      <table class="Header" cellspacing="0" cellpadding="0" border="0">
+        <tr>
+          <td class="HeaderLeft"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td> 
+          <td class="th"><strong>List of ADMIN DAY NMS </strong></td> 
+          <td class="HeaderRight"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td> 
+        </tr>
+ 
+      </table>
+ 
+      <table class="Grid" cellspacing="0" cellpadding="0">
+        <tr class="Caption">
+          <th scope="col">
+          <!-- BEGIN Sorter Sorter_DY_id --><a href="{Sort_URL}" id="ADMIN_DAYSADMIN_DAY_NMSSorter_DY_id">DY Id</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_DY_id --></th>
+ 
+          <th scope="col">
+          <!-- BEGIN Sorter Sorter_DY_NME --><a href="{Sort_URL}" id="ADMIN_DAYSADMIN_DAY_NMSSorter_DY_NME">DY NME</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_DY_NME --></th>
+ 
+        </tr>
+ 
+        <!-- BEGIN Row -->
+        <tr class="Row">
+          <td style="TEXT-ALIGN: right"><a href="{DY_id_Src}" id="ADMIN_DAYSADMIN_DAY_NMSDY_id_{ADMIN_DAY_NMS:rowNumber}">{DY_id}</a>&nbsp;</td> 
+          <td>{DY_NME}&nbsp;</td> 
+        </tr>
+ <!-- END Row -->
+        <!-- BEGIN NoRecords -->
+        <tr class="NoRecords">
+          <td colspan="2">No records</td> 
+        </tr>
+ <!-- END NoRecords -->
+        <tr class="Footer">
+          <td colspan="2"><a href="{ADMIN_DAY_NMS_Insert_Src}" id="ADMIN_DAYSADMIN_DAY_NMSADMIN_DAY_NMS_Insert">Add New</a>&nbsp; 
+            <!-- BEGIN Navigator Navigator -->
+            <!-- BEGIN Page_Parameter --><input type="hidden" value="{Value}" name="{Name}"><!-- END Page_Parameter -->Per page: 
+            <select onchange="CCChangeSize(this, '{FormName}')" name="{FormName}PageSize">
+              <option selected value="">-</option>
+ {PageSize_Options} 
+            </select>
+ 
+            <!-- BEGIN First_On --><a href="{First_URL}">First</a> <!-- END First_On -->
+            <!-- BEGIN First_Off -->First <!-- END First_Off -->
+            <!-- BEGIN Prev_On --><a href="{Prev_URL}">Prev</a> <!-- END Prev_On -->
+            <!-- BEGIN Prev_Off -->Prev <!-- END Prev_Off -->&nbsp; 
+            <!-- BEGIN Pages -->
+            <!-- BEGIN Page_On --><a href="{Page_URL}">{Page_Number}</a>&nbs p;<!-- END Page_On -->
+            <!-- BEGIN Page_Off -->{Page_Number}&nbsp;<!-- END Page_Off --><!-- END Pages -->of &nbsp;{Total_Pages}&nbsp; 
+            <!-- BEGIN Next_On --><a href="{Next_URL}">Next</a> <!-- END Next_On -->
+            <!-- BEGIN Next_Off -->Next <!-- END Next_Off -->
+            <!-- BEGIN Last_On --><a href="{Last_URL}">Last</a> <!-- END Last_On -->
+            <!-- BEGIN Last_Off -->Last <!-- END Last_Off --><!-- END Navigator Navigator -->&nbsp;</td> 
+        </tr>
+ 
+      </table>
+ </td> 
+  </tr>
+</table>
+<!-- END Grid ADMIN_DAY_NMS -->
+<!-- BEGIN Record ADMIN_DAY_NMS1 -->
+<form id="ADMIN_DAYSADMIN_DAY_NMS1" method="post" name="{HTMLFormName}" action="{Action}">
+  <table cellspacing="0" cellpadding="0" border="0">
+    <tr>
+      <td valign="top">
+        <table class="Header" cellspacing="0" cellpadding="0" border="0">
+          <tr>
+            <td class="HeaderLeft"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td> 
+            <td class="th"><strong>Add/Edit ADMIN DAY NMS </strong></td> 
+            <td class="HeaderRight"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td> 
+          </tr>
+ 
+        </table>
+ 
+        <table class="Record" cellspacing="0" cellpadding="0">
+          <!-- BEGIN Error -->
+          <tr class="Error">
+            <td colspan="2">{Error}</td> 
+          </tr>
+ <!-- END Error -->
+          <tr class="Controls">
+            <td class="th"><label for="ADMIN_DAYSADMIN_DAY_NMS1DY_NME">DY NME&nbsp;&nbsp;</label></td> 
+            <td><input id="ADMIN_DAYSADMIN_DAY_NMS1DY_NME" maxlength="25" size="25" value="{DY_NME}" name="{DY_NME_Name}"></td> 
+          </tr>
+ 
+          <tr class="Bottom">
+            <td colspan="2" align="right">
+              <!-- BEGIN Button Button_Insert --><input id="ADMIN_DAYSADMIN_DAY_NMS1Button_Insert" class="Button" alt="Add" type="submit" value="Add" name="{Button_Name}"><!-- END Button Button_Insert -->
+              <!-- BEGIN Button Button_Update --><input id="ADMIN_DAYSADMIN_DAY_NMS1Button_Update" class="Button" alt="Submit" type="submit" value="Submit" name="{Button_Name}"><!-- END Button Button_Update -->
+              <!-- BEGIN Button Button_Delete --><input id="ADMIN_DAYSADMIN_DAY_NMS1Button_Delete" class="Button" alt="Delete" type="submit" value="Delete" name="{Button_Name}"><!-- END Button Button_Delete -->
+              <!-- BEGIN Button Button_Cancel --><input id="ADMIN_DAYSADMIN_DAY_NMS1Button_Cancel" class="Button" alt="Cancel" type="submit" value="Cancel" name="{Button_Name}"><!-- END Button Button_Cancel --></td> 
+          </tr>
+ 
+        </table>
+ </td> 
+    </tr>
+ 
+  </table>
+</form>
+<!-- END Record ADMIN_DAY_NMS1 -->

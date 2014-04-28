@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>An implementation of dependent drop-down menus (dependent listboxes)</title>
+<link rel="stylesheet" type="text/css" href="../../../../CodeChargeStudio4/Examples/CCSExamplePack2/Styles/EXPack/Style.css">
+<script language="JavaScript">
+var DomYes=document.getElementById?1:0;
+
+function set_child_listbox(parentObject,childObject,childArray,spanToHide) {
+
+        //Clear child listbox
+        for(var i=childObject.length;i>0;i--) {
+                childObject.options[i] = null;
+        } 
+        
+        childObject.options[0] = new Option("Select Value","");
+        var sel_index = parentObject.options[parentObject.selectedIndex].value;
+        if (sel_index == "") {
+                childObject.disabled = true;
+        } else {
+                childObject.disabled = false;
+                var childIndex = 1;
+                for (i = 0; i < childArray.length; i++) {
+                        if (childArray[i][1] == sel_index) {
+                                childObject.options[childIndex] = new Option(childArray[i][2], childArray[i][0]);
+                                childIndex++;
+                        }
+                }
+        }
+        //Select first option
+        childObject.selectedIndex = 0;
+
+        //Hide dependent grid
+        if (spanToHide != "") {
+                if (DomYes) {
+                        document.getElementById(spanToHide).style.display="none";
+                } else {
+                        document.all[spanToHide].style.display="none";
+                }
+        }
+}
+
+function reload_page() {
+  var sel_index = document.store_productsSearch.s_category_id.options[document.store_productsSearch.s_category_id.selectedIndex].value;
+  var sel_subindex = document.store_productsSearch.s_product_id.options[document.store_productsSearch.s_product_id.selectedIndex].value;
+  if (sel_subindex != "") {
+         document.location.href = document.location.pathname + "?" + "s_product_id=" + sel_subindex+"&s_category_id=" + sel_index;
+  }
+}
+
+function disable_child_listbox(spanToHide) {
+  
+  //Disable second listbox 
+  if (document.store_productsSearch.s_category_id.selectedIndex == "") {
+     document.store_productsSearch.s_product_id.disabled = true;
+  }     
+
+  //Hide dependent grid 
+  if (document.store_productsSearch.s_product_id.selectedIndex == "") {
+        if (spanToHide != "") {
+                if (DomYes) {
+                        document.getElementById(spanToHide).style.display="none";
+                } else {
+                        document.all[spanToHide].style.display="none";
+                }
+        }
+  }     
+}
+
+window.onload = function() {
+        disable_child_listbox("Products");
+}
+
+<!-- BEGIN Grid store_products1 -->
+var Product = new Array( 
+<!-- BEGIN Row -->
+new Array({product_id},{category_id},"{product_name}")<!-- END Row --><!-- BEGIN Separator -->,<!-- END Separator -->
+);
+<!-- END Grid store_products1 -->
+
+</script>
+<link rel="stylesheet" type="text/css" href="Styles/Manuscript/Style_doctype.css">
+</head>
+<body>
+{Header} 
+<h2>An implementation of dependent drop-down menus (dependent listboxes)</h2>
+<p><a href="{Link1_Src}" id="Link1">View more information about this example</a></p>
+<table border="0">
+  <tr>
+    <td valign="top" width="280">
+      <!-- BEGIN Record store_productsSearch -->
+      <form id="store_productsSearch" method="post" name="{HTMLFormName}" action="{Action}">
+        <table cellspacing="0" cellpadding="0" border="0">
+          <tr>
+            <td valign="top">
+              <table class="Header" cellspacing="0" cellpadding="0" border="0">
+                <tr>
+                  <td class="HeaderLeft"><img border="0" src="../../../../CodeChargeStudio4/Examples/CCSExamplePack2/Styles/Manuscript/Images/Spacer.gif"></td> 
+                  <th>Search Products</th>
+ 
+                  <td class="HeaderRight"><img border="0" src="../../../../CodeChargeStudio4/Examples/CCSExamplePack2/Styles/Manuscript/Images/Spacer.gif"></td>
+                </tr>
+              </table>
+ 
+              <table class="Record" cellspacing="0" cellpadding="0">
+                <tr class="Controls">
+                  <th>Category&nbsp;</th>
+                </tr>
+ 
+                <tr class="Controls">
+                  <td>
+                    <select onchange="set_child_listbox(this, document.store_productsSearch.s_product_id,Product,'Products');" id="store_productsSearchs_category_id" name="{s_category_id_Name}">
+                      <option selected value="">Select Value</option>
+                      {s_category_id_Options}
+                    </select>
+ </td>
+                </tr>
+ 
+                <tr class="Controls">
+                  <th>Product&nbsp;</th>
+                </tr>
+ 
+                <tr class="Controls">
+                  <td>
+                    <select onchange="reload_page();" id="store_productsSearchs_product_id" name="{s_product_id_Name}">
+                      <option selected value="">Select Value</option>
+                      {s_product_id_Options}
+                    </select>
+ </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </form>
+      <!-- END Record store_productsSearch --></td> 
+    <td valign="top"><span id="Products">
+      <!-- BEGIN Grid store_products -->
+      <table cellspacing="0" cellpadding="0" border="0">
+        <tr>
+          <td valign="top">
+            <table class="Grid" cellspacing="0" cellpadding="0">
+              <!-- BEGIN Row -->
+              <tr class="Caption">
+                <td colspan="2"><b>{product_name}</b></td>
+              </tr>
+ 
+              <tr class="Row">
+                <td>Price&nbsp;</td> 
+                <td>{price}&nbsp;</td>
+              </tr>
+ 
+              <tr class="Row">
+                <td>Description&nbsp;</td> 
+                <td>{description1}&nbsp;</td>
+              </tr>
+ <!-- END Row -->
+            </table>
+          </td>
+        </tr>
+      </table>
+      <!-- END Grid store_products --></span> </td>
+  </tr>
+</table>
+{Footer} 
+</body>
+</html>

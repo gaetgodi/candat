@@ -1,0 +1,189 @@
+<?php session_start();?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<title>FD_INTAKE</title>
+<meta name="GENERATOR" content="CodeCharge Studio 4.3.00.53">
+<link rel="stylesheet" type="text/css" href="Styles/Manuscript/Style_doctype.css">
+</head>
+<body>
+<script language="JavaScript" src="jquery.js" type="text/javascript" charset="utf-8"></script>
+<script language="JavaScript" src="myscripts.js" type="text/javascript" charset="utf-8"></script>
+<table cellspacing="0" cellpadding="0" border="0">
+  <tr>
+    <td valign="top">
+      <table class="Header" cellspacing="0" cellpadding="0" border="0">
+        <tr>
+          <td class="HeaderLeft"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td> 
+          <td class="th"><strong>List of INTAKE </strong></td> 
+          <td class="HeaderRight"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td>
+        </tr>
+      </table>
+ 
+      <table class="Grid" cellspacing="0" cellpadding="0">
+        <tr class="Row">
+          <td colspan="8">Total Records:&nbsp;INTAKE_TotalRecords</td>
+        </tr>
+ 
+        <tr class="Caption">
+          <th scope="col"><a href="{Sort_URL}" id="INTAKESorter_SF_id">SF Id</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --></th>
+ 
+          <th scope="col"><a href="{Sort_URL}" id="INTAKESorter_ST_id">ST Id</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --></th>
+ 
+          <th scope="col"><a href="{Sort_URL}" id="INTAKESorter_SB_id">SB Id</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --></th>
+ 
+          <th scope="col"><a href="{Sort_URL}" id="INTAKESorter_DY_id">DY Id</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --></th>
+ 
+          <th scope="col"><a href="{Sort_URL}" id="INTAKESorter_ML_id">ML Id</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --></th>
+ 
+          <th scope="col"><a href="{Sort_URL}" id="INTAKESorter_FD_id">FD Id</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --></th>
+ 
+          <th scope="col"><a href="{Sort_URL}" id="INTAKESorter_UN_id">UN Id</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --></th>
+ 
+          <th scope="col"><a href="{Sort_URL}" id="INTAKESorter_QTY">QTY</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --></th>
+        </tr>
+ 
+        <!-- BEGIN Row -->
+        <tr {INTAKE:rowStyle}>
+          <td style="TEXT-ALIGN: right"><a href="{SF_id_Src}" id="INTAKESF_id_{INTAKE:rowNumber}">{SF_id}</a>&nbsp;</td> 
+          <td style="TEXT-ALIGN: right">ST_id&nbsp;</td> 
+          <td style="TEXT-ALIGN: right">SB_id&nbsp;</td> 
+          <td style="TEXT-ALIGN: right">DY_id&nbsp;</td> 
+          <td style="TEXT-ALIGN: right">ML_id&nbsp;</td> 
+          <td style="TEXT-ALIGN: right">FD_id&nbsp;</td> 
+          <td style="TEXT-ALIGN: right">UN_id&nbsp;</td> 
+          <td style="TEXT-ALIGN: right">QTY&nbsp;</td>
+        </tr>
+ <!-- END Row -->
+        <!-- BEGIN Separator -->
+        <tr class="Separator">
+          <td colspan="8"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td>
+        </tr>
+        <!-- END Separator -->
+        <!-- BEGIN NoRecords -->
+        <tr class="NoRecords">
+          <td colspan="8">No records</td>
+        </tr>
+        <!-- END NoRecords -->
+        <tr class="Footer">
+          <td colspan="8"><a href="{INTAKE_Insert_Src}" id="INTAKEINTAKE_Insert">Add New</a>&nbsp; 
+            <!-- BEGIN Page_Parameter --><input type="hidden" value="{Value}" name="{Name}"><!-- END Page_Parameter -->Per page: 
+            <select onchange="CCChangeSize(this, '{FormName}')" name="{FormName}PageSize">
+              <option selected value="">-</option>
+ {PageSize_Options}
+            </select>
+ 
+            <!-- BEGIN First_On --><a href="{First_URL}">First</a><!-- END First_On -->
+            <!-- BEGIN First_Off -->First<!-- END First_Off -->
+            <!-- BEGIN Prev_On --><a href="{Prev_URL}">Prev</a><!-- END Prev_On -->
+            <!-- BEGIN Prev_Off -->Prev<!-- END Prev_Off -->&nbsp; 
+            <!-- BEGIN Pages -->
+            <!-- BEGIN Page_On --><a href="{Page_URL}">{Page_Number}</a>&amp;nbs p;<!-- END Page_On -->
+            <!-- BEGIN Page_Off -->{Page_Number}&nbsp;<!-- END Page_Off --><!-- END Pages -->of &nbsp;{Total_Pages}&nbsp; 
+            <!-- BEGIN Next_On --><a href="{Next_URL}">Next</a><!-- END Next_On -->
+            <!-- BEGIN Next_Off -->Next<!-- END Next_Off -->
+            <!-- BEGIN Last_On --><a href="{Last_URL}">Last</a><!-- END Last_On -->
+            <!-- BEGIN Last_Off -->Last<!-- END Last_Off -->&nbsp;</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<br>
+<form id="INTAKE1" method="post" name="{HTMLFormName}" action="{Action}">
+  <table cellspacing="0" cellpadding="0" border="0">
+    <tr>
+      <td valign="top">
+        <table class="Header" cellspacing="0" cellpadding="0" border="0">
+          <tr>
+            <td class="HeaderLeft"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td> 
+            <td class="th"><strong>Add/Edit INTAKE </strong></td> 
+            <td class="HeaderRight"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td>
+          </tr>
+        </table>
+ 
+        <table class="Record" cellspacing="0" cellpadding="0" border="1">
+          <!-- BEGIN Error -->
+          <tr class="Error">
+            <td colspan="3">{Error}</td>
+          </tr>
+          <!-- END Error -->
+          <tr class="Controls">
+            <td class="th"><label for="INTAKE1ST_id">ST Id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td> 
+            <td>&nbsp;Study</td> 
+            <td><input id="INTAKE1ST_id" readonly maxlength="10" size="10" value="{ST_id}" name="{ST_id_Name}"></td>
+          </tr>
+ 
+          <tr class="Controls">
+            <td class="th"><label for="INTAKE1SB_id">SB Id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td> 
+            <td>&nbsp;</td> 
+            <td><input id="INTAKE1SB_id" readonly maxlength="10" size="10" value="{SB_id}" name="{SB_id_Name}"></td>
+          </tr>
+ 
+          <tr class="Controls">
+            <td class="th"><label for="INTAKE1DY_id">DY Id&nbsp;&nbsp;&nbsp;&nbsp;</label></td> 
+            <td>&nbsp;</td> 
+            <td><label for="INTAKE1DY_id"><input id="INTAKE1DY_id" size="10" value="{DY_id}" name="{DY_id_Name}"></label></td>
+          </tr>
+ 
+          <tr class="Controls">
+            <td class="th"><label for="INTAKE1MLS_id">ML Id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td> 
+            <td>&nbsp;{Meal}</td> 
+            <td><input id="INTAKE1MLS_id" readonly maxlength="10" size="10" value="{MLS_id}" name="{MLS_id_Name}"></td>
+          </tr>
+ 
+          <tr class="Controls">
+            <td class="th"><label for="INTAKE1FD_id">FD Id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td> 
+            <td><label for="INTAKE1FD_NME" style="DISPLAY: none">Food&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label><input id="INTAKE1FD_NME" readonly size="50" value="{FD_NME}" name="{FD_NME_Name}"></td> 
+            <td><input id="INTAKE1FD_id" readonly maxlength="10" size="10" value="{FD_id}" name="{FD_id_Name}"></td>
+          </tr>
+ 
+          <tr class="Controls">
+            <td class="th"><label for="INTAKE1UN_id">UN Id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td> 
+            <td><label for="INTAKE1Unit" style="DISPLAY: none">TextBox1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label><input id="INTAKE1Unit" readonly value="{Unit}" name="{Unit_Name}"></td> 
+            <td>
+              <select onchange="units();qtys();" id="INTAKE1UN_id" name="{UN_id_Name}">
+                <option selected value="">Select Value</option>
+ {UN_id_Options}
+              </select>
+ </td>
+          </tr>
+ 
+          <tr class="Controls">
+            <td class="th"><label for="INTAKE1QTY">QTY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td> 
+            <td><label for="INTAKE1Grams">Grams&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label><input id="INTAKE1Grams" readonly value="{Grams}" name="{Grams_Name}"></td> 
+            <td><input onkeyup="qtys();" id="INTAKE1QTY" maxlength="10" size="10" value="{QTY}" name="{QTY_Name}"></td>
+          </tr>
+ 
+          <tr class="Bottom">
+            <td colspan="3" align="right">
+              <!-- BEGIN Button Button_Insert --><input id="INTAKE1Button_Insert" class="Button" alt="Add" type="submit" value="Add" name="{Button_Name}"><!-- END Button Button_Insert -->
+              <!-- BEGIN Button Button_Update --><input id="INTAKE1Button_Update" class="Button" alt="Submit" type="submit" value="Submit" name="{Button_Name}"><!-- END Button Button_Update -->
+              <!-- BEGIN Button Button_Delete --><input id="INTAKE1Button_Delete" class="Button" alt="Delete" type="submit" value="Delete" name="{Button_Name}"><!-- END Button Button_Delete -->
+              <!-- BEGIN Button Button_Cancel --><input id="INTAKE1Button_Cancel" class="Button" alt="Cancel" type="submit" value="Cancel" name="{Button_Name}"><!-- END Button Button_Cancel --></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+ 
+</form>
+&nbsp;</span><br>
+</body>
+</html>

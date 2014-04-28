@@ -1,0 +1,509 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<title>Subjects</title>
+<meta name="GENERATOR" content="CodeCharge Studio 4.3.00.53">
+<script language="JavaScript" type="text/javascript">
+//Begin CCS script
+//Include Common JSFunctions @1-56D0AF56
+</script>
+<script language="JavaScript" src="ClientI18N.php?file=Functions.js&amp;locale={res:CCS_LocaleID}" type="text/javascript" charset="utf-8"></script>
+<script language="JavaScript" src="ClientI18N.php?file=DatePicker.js&amp;locale={res:CCS_LocaleID}" type="text/javascript" charset="utf-8"></script>
+<script language="JavaScript" type="text/javascript">
+//End Include Common JSFunctions
+
+//Date Picker Object Definitions @1-B7819D87
+
+var SB_DAYS1_DatePicker_DY_DATE = new Object(); 
+SB_DAYS1_DatePicker_DY_DATE.format           = "yyyymmdd";
+SB_DAYS1_DatePicker_DY_DATE.style            = "Styles/Manuscript/Style.css";
+SB_DAYS1_DatePicker_DY_DATE.relativePathPart = "";
+
+//End Date Picker Object Definitions
+
+//SUBJECTS1Button_Delete_OnClick @172-A0B934DD
+function SUBJECTS1Button_Delete_OnClick()
+{
+    var result = true;
+//End SUBJECTS1Button_Delete_OnClick
+
+//Confirmation Message @173-8243B274
+    return confirm('Delete record?');
+//End Confirmation Message
+
+//Close SUBJECTS1Button_Delete_OnClick @172-BC33A33A
+    return result;
+}
+//End Close SUBJECTS1Button_Delete_OnClick
+
+//SB_DAYS1Button_Delete_OnClick @266-136E6E5E
+function SB_DAYS1Button_Delete_OnClick()
+{
+    var result = true;
+//End SB_DAYS1Button_Delete_OnClick
+
+//Confirmation Message @267-8243B274
+    return confirm('Delete record?');
+//End Confirmation Message
+
+//Close SB_DAYS1Button_Delete_OnClick @266-BC33A33A
+    return result;
+}
+//End Close SB_DAYS1Button_Delete_OnClick
+
+//SUBJECTS1Button_Cancel_OnClick @174-B0265D3B
+function SUBJECTS1Button_Cancel_OnClick()
+{
+    disableValidation = true;
+}
+//End SUBJECTS1Button_Cancel_OnClick
+
+//SUBJECTS1Button_Cancel1_OnClick @180-855977C3
+function SUBJECTS1Button_Cancel1_OnClick()
+{
+    disableValidation = true;
+}
+//End SUBJECTS1Button_Cancel1_OnClick
+
+//SB_VARIABLESCancel_OnClick @207-CCCA9F46
+function SB_VARIABLESCancel_OnClick()
+{
+    disableValidation = true;
+}
+//End SB_VARIABLESCancel_OnClick
+
+//SB_DAYS1Button_Cancel_OnClick @268-D922D2AF
+function SB_DAYS1Button_Cancel_OnClick()
+{
+    disableValidation = true;
+}
+//End SB_DAYS1Button_Cancel_OnClick
+
+//bind_events @1-C29A1D1B
+function bind_events() {
+    if (functionExists("Header_live_bind_events")) Header_live_bind_events();
+    addEventHandler("SUBJECTS1Button_Delete", "click", SUBJECTS1Button_Delete_OnClick);
+    addEventHandler("SB_DAYS1Button_Delete", "click", SB_DAYS1Button_Delete_OnClick);
+    addEventHandler("SUBJECTS1Button_Cancel", "click", SUBJECTS1Button_Cancel_OnClick);
+    addEventHandler("SUBJECTS1Button_Cancel1", "click", SUBJECTS1Button_Cancel1_OnClick);
+    addEventHandler("SB_VARIABLESCancel", "click", SB_VARIABLESCancel_OnClick);
+    addEventHandler("SB_DAYS1Button_Cancel", "click", SB_DAYS1Button_Cancel_OnClick);
+}
+//End bind_events
+
+window.onload = bind_events; //Assign bind_events @1-19F7B649
+
+//End CCS script
+</script>
+<link rel="stylesheet" type="text/css" href="Styles/Manuscript/Style_doctype.css">
+</head>
+<body>
+<p>{Header_live}</p>
+<p>
+<!-- BEGIN Grid STUDIES -->
+<table cellspacing="0" cellpadding="0" border="0">
+  <tr>
+    <td valign="top">
+      <table class="Header" cellspacing="0" cellpadding="0" border="0">
+        <tr>
+          <td class="HeaderLeft"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td> 
+          <td class="th"><strong>Choose Study </strong></td> 
+          <td class="HeaderRight"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td>
+        </tr>
+      </table>
+ 
+      <table class="Grid" cellspacing="0" cellpadding="0">
+        <!-- BEGIN Row -->
+        <tr class="Row">
+          <td><a href="{long_desc_Src}" id="STUDIESlong_desc_{STUDIES:rowNumber}">{long_desc}</a>&nbsp;</td>
+        </tr>
+ <!-- END Row -->
+        <!-- BEGIN NoRecords -->
+        <tr class="NoRecords">
+          <td>No records</td>
+        </tr>
+        <!-- END NoRecords -->
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<!-- END Grid STUDIES --></p>
+<!-- BEGIN Grid SUBJECTS -->
+<table cellspacing="0" cellpadding="0" border="0">
+  <tr>
+    <td valign="top">
+      <table class="Header" cellspacing="0" cellpadding="0" border="0">
+        <tr>
+          <td class="HeaderLeft"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td> 
+          <td class="th"><strong>List of SUBJECTS </strong></td> 
+          <td class="HeaderRight"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td>
+        </tr>
+      </table>
+ 
+      <table class="Grid" cellspacing="0" cellpadding="0">
+        <tr class="Caption">
+          <th scope="col">
+          <!-- BEGIN Sorter Sorter_SB_id --><a href="{Sort_URL}" id="SUBJECTSSorter_SB_id">SB Id</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_SB_id --></th>
+ 
+          <th scope="col">
+          <!-- BEGIN Sorter Sorter_ST_id --><a href="{Sort_URL}" id="SUBJECTSSorter_ST_id">ST Id</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_ST_id --></th>
+ 
+          <th scope="col">
+          <!-- BEGIN Sorter Sorter_SB_CODE --><a href="{Sort_URL}" id="SUBJECTSSorter_SB_CODE">SB CODE</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_SB_CODE --></th>
+ 
+          <th scope="col">
+          <!-- BEGIN Sorter Sorter_SB_short_desc --><a href="{Sort_URL}" id="SUBJECTSSorter_SB_short_desc">SB Short Desc</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_SB_short_desc --></th>
+ 
+          <th scope="col">
+          <!-- BEGIN Sorter Sorter_SB_long_desc --><a href="{Sort_URL}" id="SUBJECTSSorter_SB_long_desc">SB Long Desc</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_SB_long_desc --></th>
+        </tr>
+ 
+        <!-- BEGIN Row -->
+        <tr class="Row">
+          <td style="TEXT-ALIGN: right"><a href="{SB_id_Src}" id="SUBJECTSSB_id_{SUBJECTS:rowNumber}">{SB_id}</a>&nbsp;</td> 
+          <td style="TEXT-ALIGN: right">{ST_id}&nbsp;</td> 
+          <td>{SB_CODE}&nbsp;</td> 
+          <td>{SB_short_desc}&nbsp;</td> 
+          <td>{SB_long_desc}&nbsp;</td>
+        </tr>
+ <!-- END Row -->
+        <!-- BEGIN NoRecords -->
+        <tr class="NoRecords">
+          <td colspan="5">No records</td>
+        </tr>
+        <!-- END NoRecords -->
+        <tr class="Footer">
+          <td colspan="5"><a href="{SUBJECTS_Insert_Src}" id="SUBJECTSSUBJECTS_Insert">Add New</a>&nbsp; 
+            <!-- BEGIN Navigator Navigator -->
+            <!-- BEGIN Page_Parameter --><input type="hidden" value="{Value}" name="{Name}"><!-- END Page_Parameter -->Per page: 
+            <select onchange="CCChangeSize(this, '{FormName}')" name="{FormName}PageSize">
+              <option selected value="">-</option>
+ {PageSize_Options}
+            </select>
+ 
+            <!-- BEGIN First_On --><a href="{First_URL}">First</a> <!-- END First_On -->
+            <!-- BEGIN First_Off -->First <!-- END First_Off -->
+            <!-- BEGIN Prev_On --><a href="{Prev_URL}">Prev</a> <!-- END Prev_On -->
+            <!-- BEGIN Prev_Off -->Prev <!-- END Prev_Off -->&nbsp; 
+            <!-- BEGIN Pages -->
+            <!-- BEGIN Page_On --><a href="{Page_URL}">{Page_Number}</a>&nbsp;<!-- END Page_On -->
+            <!-- BEGIN Page_Off -->{Page_Number}&nbsp;<!-- END Page_Off --><!-- END Pages -->of &nbsp;{Total_Pages}&nbsp; 
+            <!-- BEGIN Next_On --><a href="{Next_URL}">Next</a> <!-- END Next_On -->
+            <!-- BEGIN Next_Off -->Next <!-- END Next_Off -->
+            <!-- BEGIN Last_On --><a href="{Last_URL}">Last</a> <!-- END Last_On -->
+            <!-- BEGIN Last_Off -->Last <!-- END Last_Off --><!-- END Navigator Navigator -->&nbsp;</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- END Grid SUBJECTS -->
+<!-- BEGIN Record SUBJECTS1 -->
+<form id="SUBJECTS1" method="post" name="{HTMLFormName}" action="{Action}">
+  <table cellspacing="0" cellpadding="0" border="0">
+    <tr>
+      <td valign="top">
+        <table class="Header" cellspacing="0" cellpadding="0" border="0">
+          <tr>
+            <td class="HeaderLeft"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td> 
+            <td class="th"><strong>Add/Edit SUBJECTS </strong></td> 
+            <td class="HeaderRight"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td>
+          </tr>
+        </table>
+ 
+        <table class="Record" cellspacing="0" cellpadding="0">
+          <!-- BEGIN Error -->
+          <tr class="Error">
+            <td colspan="2">{Error}</td>
+          </tr>
+          <!-- END Error -->
+          <tr class="Controls">
+            <td class="th"><label for="SUBJECTS1ST_id">ST Id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td> 
+            <td><input id="SUBJECTS1ST_id" readonly maxlength="10" size="10" value="{ST_id}" name="{ST_id_Name}"></td>
+          </tr>
+ 
+          <tr class="Controls">
+            <td class="th"><label for="SUBJECTS1SB_CODE">SB CODE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td> 
+            <td><input id="SUBJECTS1SB_CODE" maxlength="10" size="10" value="{SB_CODE}" name="{SB_CODE_Name}"></td>
+          </tr>
+ 
+          <tr class="Controls">
+            <td class="th"><label for="SUBJECTS1SB_short_desc">SB Short Desc&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td> 
+            <td><input id="SUBJECTS1SB_short_desc" maxlength="40" size="40" value="{SB_short_desc}" name="{SB_short_desc_Name}"></td>
+          </tr>
+ 
+          <tr class="Controls">
+            <td class="th"><label for="SUBJECTS1SB_long_desc">SB Long Desc&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td> 
+            <td><input id="SUBJECTS1SB_long_desc" maxlength="200" size="50" value="{SB_long_desc}" name="{SB_long_desc_Name}"></td>
+          </tr>
+ 
+          <tr class="Bottom">
+            <td colspan="2" align="right">
+              <!-- BEGIN Button Button_Insert --><input id="SUBJECTS1Button_Insert" class="Button" alt="Add" type="submit" value="Add" name="{Button_Name}"><!-- END Button Button_Insert -->
+              <!-- BEGIN Button Button_Update --><input id="SUBJECTS1Button_Update" class="Button" alt="Submit" type="submit" value="Submit" name="{Button_Name}"><!-- END Button Button_Update -->
+              <!-- BEGIN Button Button_Delete --><input id="SUBJECTS1Button_Delete" class="Button" alt="Delete" type="submit" value="Delete" name="{Button_Name}"><!-- END Button Button_Delete -->
+              <!-- BEGIN Button Button_Cancel --><input id="SUBJECTS1Button_Cancel" class="Button" alt="Cancel" type="submit" value="Cancel" name="{Button_Name}"><!-- END Button Button_Cancel -->
+              <!-- BEGIN Button Button_Cancel1 --><input id="SUBJECTS1Button_Cancel1" class="Button" alt="Cancel" type="submit" value="Refresh Studies" name="{Button_Name}"><!-- END Button Button_Cancel1 --></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</form>
+<!-- END Record SUBJECTS1 -->
+<!-- BEGIN EditableGrid SB_VARIABLES -->
+<form id="SB_VARIABLES" method="post" name="{HTMLFormName}" action="{Action}">
+  <input type="hidden" value="{FormState}" name="FormState">{FormScript} 
+  <table cellspacing="0" cellpadding="0" border="0">
+    <tr>
+      <td valign="top">
+        <table class="Header" cellspacing="0" cellpadding="0" border="0">
+          <tr>
+            <td class="HeaderLeft"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td> 
+            <td class="th"><strong>List of SB VARIABLES </strong></td> 
+            <td class="HeaderRight"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td>
+          </tr>
+        </table>
+ 
+        <table class="Grid" cellspacing="0" cellpadding="0">
+          <!-- BEGIN Error -->
+          <tr class="Error">
+            <td colspan="5">{Error}</td>
+          </tr>
+          <!-- END Error -->
+          <tr class="Row">
+            <td colspan="5">Total Records:&nbsp;{SB_VARIABLES_TotalRecords}</td>
+          </tr>
+ 
+          <tr class="Caption">
+            <th scope="col">
+            <!-- BEGIN Sorter Sorter_SBV_id --><a href="{Sort_URL}" id="SB_VARIABLESSorter_SBV_id">SBV Id</a> 
+            <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+            <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_SBV_id --></th>
+ 
+            <th scope="col">
+            <!-- BEGIN Sorter Sorter_SB_id --><a href="{Sort_URL}" id="SB_VARIABLESSorter_SB_id">SB Id</a> 
+            <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+            <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_SB_id --></th>
+ 
+            <th scope="col">
+            <!-- BEGIN Sorter Sorter_VAR_id --><a href="{Sort_URL}" id="SB_VARIABLESSorter_VAR_id">VAR Id</a> 
+            <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+            <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_VAR_id --></th>
+ 
+            <th scope="col">
+            <!-- BEGIN Sorter Sorter_SB_VALUE --><a href="{Sort_URL}" id="SB_VARIABLESSorter_SB_VALUE">SB VALUE</a> 
+            <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+            <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_SB_VALUE --></th>
+ 
+            <th scope="col">Delete</th>
+          </tr>
+ 
+          <!-- BEGIN Row -->
+          <!-- BEGIN RowError -->
+          <tr class="Error">
+            <td colspan="5">{Error}</td>
+          </tr>
+          <!-- END RowError -->
+          <tr class="Row">
+            <td>{SBV_id}&nbsp;</td> 
+            <td><label for="SB_VARIABLESSB_id_{SB_VARIABLES:rowNumber}" style="display: none;">SB Id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label><input id="SB_VARIABLESSB_id_{SB_VARIABLES:rowNumber}" maxlength="10" size="10" value="{SB_id}" name="{SB_id_Name}"></td> 
+            <td><label for="SB_VARIABLESVAR_id_{SB_VARIABLES:rowNumber}" style="display: none;">VAR Id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label> 
+              <select id="SB_VARIABLESVAR_id_{SB_VARIABLES:rowNumber}" name="{VAR_id_Name}">
+                <option selected value="">Select Value</option>
+                {VAR_id_Options}
+              </select>
+ </td> 
+            <td><label for="SB_VARIABLESSB_VALUE_{SB_VARIABLES:rowNumber}" style="display: none;">SB VALUE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label><input id="SB_VARIABLESSB_VALUE_{SB_VARIABLES:rowNumber}" maxlength="25" size="25" value="{SB_VALUE}" name="{SB_VALUE_Name}"></td> 
+            <td>
+              <!-- BEGIN Panel CheckBox_Delete_Panel --><label for="SB_VARIABLESCheckBox_Delete_PanelCheckBox_Delete_{SB_VARIABLES:rowNumber}" style="display: none;">Delete&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label> 
+              <!-- BEGIN CheckBox CheckBox_Delete --><input id="SB_VARIABLESCheckBox_Delete_PanelCheckBox_Delete_{SB_VARIABLES:rowNumber}" type="checkbox" value="1" name="{CheckBox_Delete_Name}" {CheckBox_Delete}><!-- END CheckBox CheckBox_Delete --><!-- END Panel CheckBox_Delete_Panel -->&nbsp;</td>
+          </tr>
+ <!-- END Row -->
+          <!-- BEGIN Separator -->
+          <tr class="Separator">
+            <td colspan="5"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td>
+          </tr>
+          <!-- END Separator -->
+          <!-- BEGIN NoRecords -->
+          <tr class="NoRecords">
+            <td colspan="5">No records</td>
+          </tr>
+          <!-- END NoRecords -->
+          <tr class="Footer">
+            <td style="TEXT-ALIGN: right" colspan="5">
+              <!-- BEGIN Navigator Navigator -->
+              <!-- BEGIN Page_Parameter --><input type="hidden" value="{Value}" name="{Name}"><!-- END Page_Parameter -->Per page: 
+              <select onchange="CCChangeSize(this, '{FormName}')" name="{FormName}PageSize">
+                <option selected value="">-</option>
+ {PageSize_Options}
+              </select>
+ 
+              <!-- BEGIN First_On --><a href="{First_URL}">First</a> <!-- END First_On -->
+              <!-- BEGIN First_Off -->First <!-- END First_Off -->
+              <!-- BEGIN Prev_On --><a href="{Prev_URL}">Prev</a> <!-- END Prev_On -->
+              <!-- BEGIN Prev_Off -->Prev <!-- END Prev_Off -->&nbsp; 
+              <!-- BEGIN Pages -->
+              <!-- BEGIN Page_On --><a href="{Page_URL}">{Page_Number}</a>&nbsp;<!-- END Page_On -->
+              <!-- BEGIN Page_Off -->{Page_Number}&nbsp;<!-- END Page_Off --><!-- END Pages -->of &nbsp;{Total_Pages}&nbsp; 
+              <!-- BEGIN Next_On --><a href="{Next_URL}">Next</a> <!-- END Next_On -->
+              <!-- BEGIN Next_Off -->Next <!-- END Next_Off -->
+              <!-- BEGIN Last_On --><a href="{Last_URL}">Last</a> <!-- END Last_On -->
+              <!-- BEGIN Last_Off -->Last <!-- END Last_Off --><!-- END Navigator Navigator -->
+              <!-- BEGIN Button Button_Submit --><input id="SB_VARIABLESButton_Submit" class="Button" alt="Submit" type="submit" value="Submit" name="{Button_Name}"><!-- END Button Button_Submit -->
+              <!-- BEGIN Button Cancel --><input id="SB_VARIABLESCancel" class="Button" alt="Cancel" type="submit" value="Cancel" name="{Button_Name}"><!-- END Button Cancel --></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</form>
+<!-- END EditableGrid SB_VARIABLES -->
+<!-- BEGIN Grid SB_DAYS -->
+<table cellspacing="0" cellpadding="0" border="0">
+  <tr>
+    <td valign="top">
+      <table class="Header" cellspacing="0" cellpadding="0" border="0">
+        <tr>
+          <td class="HeaderLeft"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td> 
+          <td class="th"><strong>List of SB DAYS </strong></td> 
+          <td class="HeaderRight"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td>
+        </tr>
+      </table>
+ 
+      <table class="Grid" cellspacing="0" cellpadding="0">
+        <tr class="Caption">
+          <th scope="col">
+          <!-- BEGIN Sorter Sorter_SBD_id --><a href="{Sort_URL}" id="SB_DAYSSorter_SBD_id">SBD Id</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_SBD_id --></th>
+ 
+          <th scope="col">
+          <!-- BEGIN Sorter Sorter_SB_id --><a href="{Sort_URL}" id="SB_DAYSSorter_SB_id">SB Id</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_SB_id --></th>
+ 
+          <th scope="col">
+          <!-- BEGIN Sorter Sorter_DY_id --><a href="{Sort_URL}" id="SB_DAYSSorter_DY_id">DY Id</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_DY_id --></th>
+ 
+          <th scope="col">
+          <!-- BEGIN Sorter Sorter_DY_NME --><a href="{Sort_URL}" id="SB_DAYSSorter_DY_NME">DY NME</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_DY_NME --></th>
+ 
+          <th scope="col">
+          <!-- BEGIN Sorter Sorter_DY_DATE --><a href="{Sort_URL}" id="SB_DAYSSorter_DY_DATE">DY DATE</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_DY_DATE --></th>
+        </tr>
+ 
+        <!-- BEGIN Row -->
+        <tr class="Row">
+          <td style="TEXT-ALIGN: right"><a href="{SBD_id_Src}" id="SB_DAYSSBD_id_{SB_DAYS:rowNumber}">{SBD_id}</a>&nbsp;</td> 
+          <td style="TEXT-ALIGN: right">{SB_id}&nbsp;</td> 
+          <td style="TEXT-ALIGN: right">{DY_id}&nbsp;</td> 
+          <td>{DY_NME}&nbsp;</td> 
+          <td>{DY_DATE}&nbsp;</td>
+        </tr>
+ <!-- END Row -->
+        <!-- BEGIN NoRecords -->
+        <tr class="NoRecords">
+          <td colspan="5">No records</td>
+        </tr>
+        <!-- END NoRecords -->
+        <tr class="Footer">
+          <td colspan="5"><a href="{SB_DAYS_Insert_Src}" id="SB_DAYSSB_DAYS_Insert">Add New</a>&nbsp; 
+            <!-- BEGIN Navigator Navigator -->
+            <!-- BEGIN Page_Parameter --><input type="hidden" value="{Value}" name="{Name}"><!-- END Page_Parameter -->Per page: 
+            <select onchange="CCChangeSize(this, '{FormName}')" name="{FormName}PageSize">
+              <option selected value="">-</option>
+ {PageSize_Options}
+            </select>
+ 
+            <!-- BEGIN First_On --><a href="{First_URL}">First</a> <!-- END First_On -->
+            <!-- BEGIN First_Off -->First <!-- END First_Off -->
+            <!-- BEGIN Prev_On --><a href="{Prev_URL}">Prev</a> <!-- END Prev_On -->
+            <!-- BEGIN Prev_Off -->Prev <!-- END Prev_Off -->&nbsp; 
+            <!-- BEGIN Pages -->
+            <!-- BEGIN Page_On --><a href="{Page_URL}">{Page_Number}</a>&nbsp;<!-- END Page_On -->
+            <!-- BEGIN Page_Off -->{Page_Number}&nbsp;<!-- END Page_Off --><!-- END Pages -->of &nbsp;{Total_Pages}&nbsp; 
+            <!-- BEGIN Next_On --><a href="{Next_URL}">Next</a> <!-- END Next_On -->
+            <!-- BEGIN Next_Off -->Next <!-- END Next_Off -->
+            <!-- BEGIN Last_On --><a href="{Last_URL}">Last</a> <!-- END Last_On -->
+            <!-- BEGIN Last_Off -->Last <!-- END Last_Off --><!-- END Navigator Navigator -->&nbsp;</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- END Grid SB_DAYS -->
+<!-- BEGIN Record SB_DAYS1 -->
+<form id="SB_DAYS1" method="post" name="{HTMLFormName}" action="{Action}">
+  <table cellspacing="0" cellpadding="0" border="0">
+    <tr>
+      <td valign="top">
+        <table class="Header" cellspacing="0" cellpadding="0" border="0">
+          <tr>
+            <td class="HeaderLeft"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td> 
+            <td class="th"><strong>Add/Edit SB DAYS </strong></td> 
+            <td class="HeaderRight"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td>
+          </tr>
+        </table>
+ 
+        <table class="Record" cellspacing="0" cellpadding="0">
+          <!-- BEGIN Error -->
+          <tr class="Error">
+            <td colspan="2">{Error}</td>
+          </tr>
+          <!-- END Error -->
+          <tr class="Controls">
+            <td class="th"><label for="SB_DAYS1SB_id">SB Id&nbsp;&nbsp;&nbsp;&nbsp;</label></td> 
+            <td><input id="SB_DAYS1SB_id" readonly maxlength="10" size="10" value="{SB_id}" name="{SB_id_Name}"></td>
+          </tr>
+ 
+          <tr class="Controls">
+            <td class="th"><label for="SB_DAYS1DY_id">DY Id&nbsp;&nbsp;&nbsp;&nbsp;</label></td> 
+            <td><input id="SB_DAYS1DY_id" maxlength="10" size="10" value="{DY_id}" name="{DY_id_Name}"></td>
+          </tr>
+ 
+          <tr class="Controls">
+            <td class="th"><label for="SB_DAYS1DY_NME">DY NME&nbsp;&nbsp;&nbsp;&nbsp;</label></td> 
+            <td><input id="SB_DAYS1DY_NME" maxlength="25" size="25" value="{DY_NME}" name="{DY_NME_Name}"></td>
+          </tr>
+ 
+          <tr class="Controls">
+            <td class="th"><label for="SB_DAYS1DY_DATE">DY DATE (YYYYMMDD)&nbsp;</label></td> 
+            <td><input id="SB_DAYS1DY_DATE" maxlength="100" size="19" value="{DY_DATE}" name="{DY_DATE_Name}">
+              <!-- BEGIN DatePicker DatePicker_DY_DATE --><a href="javascript:showDatePicker('{Name}','{FormName}','{DateControl}');" id="SB_DAYS1DatePicker_DY_DATE"><img id="SB_DAYS1DatePicker_DY_DATE_Image" border="0" alt="Show Date Picker" src="Styles/Manuscript/Images/DatePicker.gif"></a><!-- END DatePicker DatePicker_DY_DATE --></td>
+          </tr>
+ 
+          <tr class="Bottom">
+            <td colspan="2" align="right">
+              <!-- BEGIN Button Button_Insert --><input id="SB_DAYS1Button_Insert" class="Button" alt="Add" type="submit" value="Add" name="{Button_Name}"><!-- END Button Button_Insert -->
+              <!-- BEGIN Button Button_Update --><input id="SB_DAYS1Button_Update" class="Button" alt="Submit" type="submit" value="Submit" name="{Button_Name}"><!-- END Button Button_Update -->
+              <!-- BEGIN Button Button_Delete --><input id="SB_DAYS1Button_Delete" class="Button" alt="Delete" type="submit" value="Delete" name="{Button_Name}"><!-- END Button Button_Delete -->
+              <!-- BEGIN Button Button_Cancel --><input id="SB_DAYS1Button_Cancel" class="Button" alt="Cancel" type="submit" value="Cancel" name="{Button_Name}"><!-- END Button Button_Cancel --></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</form>
+<!-- END Record SB_DAYS1 --><br>
+&nbsp;&nbsp; 
+</body>
+</html>

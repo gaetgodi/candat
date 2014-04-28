@@ -1,0 +1,29 @@
+<?php
+//BindEvents Method @1-5DA4CEB0
+function BindEvents()
+{
+    global $FD_NAMES;
+    $FD_NAMES->FD_NAMES_TotalRecords->CCSEvents["BeforeShow"] = "FD_NAMES_FD_NAMES_TotalRecords_BeforeShow";
+}
+//End BindEvents Method
+
+//FD_NAMES_FD_NAMES_TotalRecords_BeforeShow @8-72B3E579
+function FD_NAMES_FD_NAMES_TotalRecords_BeforeShow(& $sender)
+{
+    $FD_NAMES_FD_NAMES_TotalRecords_BeforeShow = true;
+    $Component = & $sender;
+    $Container = & CCGetParentContainer($sender);
+    global $FD_NAMES; //Compatibility
+//End FD_NAMES_FD_NAMES_TotalRecords_BeforeShow
+
+//Retrieve number of records @9-ABE656B4
+    $Component->SetValue($Container->DataSource->RecordsCount);
+//End Retrieve number of records
+
+//Close FD_NAMES_FD_NAMES_TotalRecords_BeforeShow @8-6B69EF1A
+    return $FD_NAMES_FD_NAMES_TotalRecords_BeforeShow;
+}
+//End Close FD_NAMES_FD_NAMES_TotalRecords_BeforeShow
+
+
+?>

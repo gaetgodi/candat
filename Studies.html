@@ -1,0 +1,480 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<title>Studies</title>
+<meta name="GENERATOR" content="CodeCharge Studio 4.3.00.53">
+<script language="JavaScript" type="text/javascript">
+//Begin CCS script
+//Include Common JSFunctions @1-D3B5F5BF
+</script>
+<script language="JavaScript" src="ClientI18N.php?file=Functions.js&amp;locale={res:CCS_LocaleID}" type="text/javascript" charset="utf-8"></script>
+<script language="JavaScript" type="text/javascript">
+//End Include Common JSFunctions
+
+//STUDIES1Button_Delete_OnClick @18-7F986F86
+function STUDIES1Button_Delete_OnClick()
+{
+    var result = true;
+//End STUDIES1Button_Delete_OnClick
+
+//Confirmation Message @19-8243B274
+    return confirm('Delete record?');
+//End Confirmation Message
+
+//Close STUDIES1Button_Delete_OnClick @18-BC33A33A
+    return result;
+}
+//End Close STUDIES1Button_Delete_OnClick
+
+//ST_VARS1Button_Delete_OnClick @68-F317D2A2
+function ST_VARS1Button_Delete_OnClick()
+{
+    var result = true;
+//End ST_VARS1Button_Delete_OnClick
+
+//Confirmation Message @69-8243B274
+    return confirm('Delete record?');
+//End Confirmation Message
+
+//Close ST_VARS1Button_Delete_OnClick @68-BC33A33A
+    return result;
+}
+//End Close ST_VARS1Button_Delete_OnClick
+
+//ST_MEALS1Button_Delete_OnClick @99-0327D941
+function ST_MEALS1Button_Delete_OnClick()
+{
+    var result = true;
+//End ST_MEALS1Button_Delete_OnClick
+
+//Confirmation Message @100-8243B274
+    return confirm('Delete record?');
+//End Confirmation Message
+
+//Close ST_MEALS1Button_Delete_OnClick @99-BC33A33A
+    return result;
+}
+//End Close ST_MEALS1Button_Delete_OnClick
+
+//STUDIES1Button_Cancel_OnClick @20-C2CFF1D2
+function STUDIES1Button_Cancel_OnClick()
+{
+    disableValidation = true;
+}
+//End STUDIES1Button_Cancel_OnClick
+
+//ST_VARS1Button_Cancel_OnClick @70-470DAFB3
+function ST_VARS1Button_Cancel_OnClick()
+{
+    disableValidation = true;
+}
+//End ST_VARS1Button_Cancel_OnClick
+
+//ST_MEALS1Button_Cancel_OnClick @101-A42DB280
+function ST_MEALS1Button_Cancel_OnClick()
+{
+    disableValidation = true;
+}
+//End ST_MEALS1Button_Cancel_OnClick
+
+//bind_events @1-F24928AA
+function bind_events() {
+    if (functionExists("Header_live_bind_events")) Header_live_bind_events();
+    if (functionExists("Footer_bind_events")) Footer_bind_events();
+    if (functionExists("ADMIN_VARS_bind_events")) ADMIN_VARS_bind_events();
+    if (functionExists("ADMIN_MEALS_bind_events")) ADMIN_MEALS_bind_events();
+    if (functionExists("ADMIN_DAYS_bind_events")) ADMIN_DAYS_bind_events();
+    addEventHandler("STUDIES1Button_Delete", "click", STUDIES1Button_Delete_OnClick);
+    addEventHandler("ST_VARS1Button_Delete", "click", ST_VARS1Button_Delete_OnClick);
+    addEventHandler("ST_MEALS1Button_Delete", "click", ST_MEALS1Button_Delete_OnClick);
+    addEventHandler("STUDIES1Button_Cancel", "click", STUDIES1Button_Cancel_OnClick);
+    addEventHandler("ST_VARS1Button_Cancel", "click", ST_VARS1Button_Cancel_OnClick);
+    addEventHandler("ST_MEALS1Button_Cancel", "click", ST_MEALS1Button_Cancel_OnClick);
+}
+//End bind_events
+
+window.onload = bind_events; //Assign bind_events @1-19F7B649
+
+//End CCS script
+</script>
+<link rel="stylesheet" type="text/css" href="Styles/Manuscript/Style_doctype.css">
+</head>
+<body>
+<p>{Header_live}</p>
+<p>
+<table width="100%" border="0">
+  <tr>
+    <td valign="top">
+      <!-- BEGIN Grid STUDIES2 -->
+      <table cellspacing="0" cellpadding="0" border="0">
+        <tr>
+          <td valign="top">
+            <table class="Header" cellspacing="0" cellpadding="0" border="0">
+              <tr>
+                <td class="HeaderLeft"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td> 
+                <td class="th"><strong>List of STUDIES </strong></td> 
+                <td class="HeaderRight"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td>
+              </tr>
+            </table>
+ 
+            <table class="Grid" cellspacing="0" cellpadding="0">
+              <tr class="Caption">
+                <th scope="col">
+                <!-- BEGIN Sorter Sorter_ST_id --><a href="{Sort_URL}" id="STUDIES2Sorter_ST_id">ST Id</a> 
+                <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+                <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_ST_id --></th>
+ 
+                <th scope="col">
+                <!-- BEGIN Sorter Sorter_short_desc --><a href="{Sort_URL}" id="STUDIES2Sorter_short_desc">Short Desc</a> 
+                <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+                <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_short_desc --></th>
+ 
+                <th scope="col">
+                <!-- BEGIN Sorter Sorter_long_desc --><a href="{Sort_URL}" id="STUDIES2Sorter_long_desc">Long Desc</a> 
+                <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+                <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_long_desc --></th>
+              </tr>
+ 
+              <!-- BEGIN Row -->
+              <tr class="Row">
+                <td style="TEXT-ALIGN: right"><a href="{ST_id_Src}" id="STUDIES2ST_id_{STUDIES2:rowNumber}">{ST_id}</a>&nbsp;</td> 
+                <td>{short_desc}&nbsp;</td> 
+                <td>{long_desc}&nbsp;</td>
+              </tr>
+ <!-- END Row -->
+              <!-- BEGIN NoRecords -->
+              <tr class="NoRecords">
+                <td colspan="3">No records</td>
+              </tr>
+              <!-- END NoRecords -->
+              <tr class="Footer">
+                <td colspan="3"><a href="{STUDIES_Insert_Src}" id="STUDIES2STUDIES_Insert">Add New</a>&nbsp; 
+                  <!-- BEGIN Navigator Navigator -->
+                  <!-- BEGIN Page_Parameter --><input type="hidden" value="{Value}" name="{Name}"><!-- END Page_Parameter -->Per page: 
+                  <select onchange="CCChangeSize(this, '{FormName}')" name="{FormName}PageSize">
+                    <option selected value="">-</option>
+ {PageSize_Options}
+                  </select>
+ 
+                  <!-- BEGIN First_On --><a href="{First_URL}">First</a> <!-- END First_On -->
+                  <!-- BEGIN First_Off -->First <!-- END First_Off -->
+                  <!-- BEGIN Prev_On --><a href="{Prev_URL}">Prev</a> <!-- END Prev_On -->
+                  <!-- BEGIN Prev_Off -->Prev <!-- END Prev_Off -->&nbsp; 
+                  <!-- BEGIN Pages -->
+                  <!-- BEGIN Page_On --><a href="{Page_URL}">{Page_Number}</a>&nbsp;<!-- END Page_On -->
+                  <!-- BEGIN Page_Off -->{Page_Number}&nbsp;<!-- END Page_Off --><!-- END Pages -->of &nbsp;{Total_Pages}&nbsp; 
+                  <!-- BEGIN Next_On --><a href="{Next_URL}">Next</a> <!-- END Next_On -->
+                  <!-- BEGIN Next_Off -->Next <!-- END Next_Off -->
+                  <!-- BEGIN Last_On --><a href="{Last_URL}">Last</a> <!-- END Last_On -->
+                  <!-- BEGIN Last_Off -->Last <!-- END Last_Off --><!-- END Navigator Navigator -->&nbsp;</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+      <!-- END Grid STUDIES2 -->
+      <!-- BEGIN Record STUDIES1 -->
+      <form id="STUDIES1" method="post" name="{HTMLFormName}" action="{Action}">
+        <table cellspacing="0" cellpadding="0" border="0">
+          <tr>
+            <td valign="top">
+              <table class="Header" cellspacing="0" cellpadding="0" border="0">
+                <tr>
+                  <td class="HeaderLeft"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td> 
+                  <td class="th"><strong>Add/Edit STUDIES </strong></td> 
+                  <td class="HeaderRight"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td>
+                </tr>
+              </table>
+ 
+              <table class="Record" cellspacing="0" cellpadding="0">
+                <!-- BEGIN Error -->
+                <tr class="Error">
+                  <td colspan="2">{Error}</td>
+                </tr>
+                <!-- END Error -->
+                <tr class="Controls">
+                  <td class="th"><label for="STUDIES1short_desc">Short Desc&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td> 
+                  <td><input id="STUDIES1short_desc" maxlength="20" value="{short_desc}" name="{short_desc_Name}" size="20"><input id="STUDIES1ST_id" type="hidden" value="{ST_id}" name="{ST_id_Name}"></td>
+                </tr>
+ 
+                <tr class="Controls">
+                  <td class="th"><label for="STUDIES1long_desc">Long Desc&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td> 
+                  <td><input id="STUDIES1long_desc" maxlength="120" size="50" value="{long_desc}" name="{long_desc_Name}"></td>
+                </tr>
+ 
+                <tr class="Bottom">
+                  <td colspan="2" align="right">
+                    <!-- BEGIN Button Button_Insert --><input id="STUDIES1Button_Insert" class="Button" alt="Add" type="submit" value="Add" name="{Button_Name}"><!-- END Button Button_Insert -->
+                    <!-- BEGIN Button Button_Update --><input id="STUDIES1Button_Update" class="Button" alt="Submit" type="submit" value="Submit" name="{Button_Name}"><!-- END Button Button_Update -->
+                    <!-- BEGIN Button Button_Delete --><input id="STUDIES1Button_Delete" class="Button" alt="Delete" type="submit" value="Delete" name="{Button_Name}"><!-- END Button Button_Delete -->
+                    <!-- BEGIN Button Button_Cancel --><input id="STUDIES1Button_Cancel" class="Button" alt="Cancel" type="submit" value="Cancel" name="{Button_Name}"><!-- END Button Button_Cancel --></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </form>
+      <!-- END Record STUDIES1 -->
+      <p>
+      <!-- BEGIN Grid ST_VARS -->
+      <table cellspacing="0" cellpadding="0" border="0">
+        <tr>
+          <td valign="top">
+            <table class="Header" cellspacing="0" cellpadding="0" border="0">
+              <tr>
+                <td class="HeaderLeft"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td> 
+                <td class="th"><strong>List of ST VARS </strong></td> 
+                <td class="HeaderRight"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td>
+              </tr>
+            </table>
+ 
+            <table class="Grid" cellspacing="0" cellpadding="0">
+              <tr class="Row">
+                <td colspan="4">Total Records:&nbsp;{ST_VARS_TotalRecords}</td>
+              </tr>
+ 
+              <tr class="Caption">
+                <th scope="col">
+                <!-- BEGIN Sorter Sorter_STV_id --><a href="{Sort_URL}" id="ST_VARSSorter_STV_id">STV Id</a> 
+                <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+                <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_STV_id --></th>
+ 
+                <th scope="col">
+                <!-- BEGIN Sorter Sorter_ST_id --><a href="{Sort_URL}" id="ST_VARSSorter_ST_id">ST Id</a> 
+                <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+                <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_ST_id --></th>
+ 
+                <th scope="col">
+                <!-- BEGIN Sorter Sorter_VAR_id --><a href="{Sort_URL}" id="ST_VARSSorter_VAR_id">VAR Id</a> 
+                <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+                <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_VAR_id --></th>
+ 
+                <th scope="col">
+                <!-- BEGIN Sorter Sorter_VR_NME --><a href="{Sort_URL}" id="ST_VARSSorter_VR_NME">VR NME</a> 
+                <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+                <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_VR_NME --></th>
+              </tr>
+ 
+              <!-- BEGIN Row -->
+              <tr {ST_VARS:rowStyle}>
+                <td style="TEXT-ALIGN: right"><a href="{STV_id_Src}" id="ST_VARSSTV_id_{ST_VARS:rowNumber}">{STV_id}</a>&nbsp;</td> 
+                <td style="TEXT-ALIGN: right">{ST_id}&nbsp;</td> 
+                <td style="TEXT-ALIGN: right">{VAR_id}&nbsp;</td> 
+                <td>{VR_NME}&nbsp;</td>
+              </tr>
+ <!-- END Row -->
+              <!-- BEGIN NoRecords -->
+              <tr class="NoRecords">
+                <td colspan="4">No records</td>
+              </tr>
+              <!-- END NoRecords -->
+              <tr class="Footer">
+                <td colspan="4"><a href="{ST_VARS_Insert_Src}" id="ST_VARSST_VARS_Insert">Add New</a>&nbsp; 
+                  <!-- BEGIN Navigator Navigator -->
+                  <!-- BEGIN Page_Parameter --><input type="hidden" value="{Value}" name="{Name}"><!-- END Page_Parameter -->Per page: 
+                  <select onchange="CCChangeSize(this, '{FormName}')" name="{FormName}PageSize">
+                    <option selected value="">-</option>
+ {PageSize_Options}
+                  </select>
+ 
+                  <!-- BEGIN First_On --><a href="{First_URL}">First</a> <!-- END First_On -->
+                  <!-- BEGIN First_Off -->First <!-- END First_Off -->
+                  <!-- BEGIN Prev_On --><a href="{Prev_URL}">Prev</a> <!-- END Prev_On -->
+                  <!-- BEGIN Prev_Off -->Prev <!-- END Prev_Off -->&nbsp; 
+                  <!-- BEGIN Pages -->
+                  <!-- BEGIN Page_On --><a href="{Page_URL}">{Page_Number}</a>&nbsp;<!-- END Page_On -->
+                  <!-- BEGIN Page_Off -->{Page_Number}&nbsp;<!-- END Page_Off --><!-- END Pages -->of &nbsp;{Total_Pages}&nbsp; 
+                  <!-- BEGIN Next_On --><a href="{Next_URL}">Next</a> <!-- END Next_On -->
+                  <!-- BEGIN Next_Off -->Next <!-- END Next_Off -->
+                  <!-- BEGIN Last_On --><a href="{Last_URL}">Last</a> <!-- END Last_On -->
+                  <!-- BEGIN Last_Off -->Last <!-- END Last_Off --><!-- END Navigator Navigator -->&nbsp;</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+      <!-- END Grid ST_VARS -->
+      <!-- BEGIN Record ST_VARS1 -->
+      <form id="ST_VARS1" method="post" name="{HTMLFormName}" action="{Action}">
+        <table cellspacing="0" cellpadding="0" border="0">
+          <tr>
+            <td valign="top">
+              <table class="Header" cellspacing="0" cellpadding="0" border="0">
+                <tr>
+                  <td class="HeaderLeft"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td> 
+                  <td class="th"><strong>Add/Edit ST VARS </strong></td> 
+                  <td class="HeaderRight"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td>
+                </tr>
+              </table>
+ 
+              <table class="Record" cellspacing="0" cellpadding="0">
+                <!-- BEGIN Error -->
+                <tr class="Error">
+                  <td colspan="2">{Error}</td>
+                </tr>
+                <!-- END Error -->
+                <tr class="Controls">
+                  <td class="th"><label for="ST_VARS1ST_id">ST Id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td> 
+                  <td><input id="ST_VARS1ST_id" readonly maxlength="10" size="10" value="{ST_id}" name="{ST_id_Name}"></td>
+                </tr>
+ 
+                <tr class="Controls">
+                  <td class="th"><label for="ST_VARS1VAR_id">VAR Id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td> 
+                  <td><input id="ST_VARS1VAR_id" maxlength="10" size="10" value="{VAR_id}" name="{VAR_id_Name}"></td>
+                </tr>
+ 
+                <tr class="Controls">
+                  <td class="th"><label for="ST_VARS1VR_NME">VR NME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td> 
+                  <td><input id="ST_VARS1VR_NME" maxlength="30" size="30" value="{VR_NME}" name="{VR_NME_Name}"></td>
+                </tr>
+ 
+                <tr class="Bottom">
+                  <td colspan="2" align="right">
+                    <!-- BEGIN Button Button_Insert --><input id="ST_VARS1Button_Insert" class="Button" alt="Add" type="submit" value="Add" name="{Button_Name}"><!-- END Button Button_Insert -->
+                    <!-- BEGIN Button Button_Update --><input id="ST_VARS1Button_Update" class="Button" alt="Submit" type="submit" value="Submit" name="{Button_Name}"><!-- END Button Button_Update -->
+                    <!-- BEGIN Button Button_Delete --><input id="ST_VARS1Button_Delete" class="Button" alt="Delete" type="submit" value="Delete" name="{Button_Name}"><!-- END Button Button_Delete -->
+                    <!-- BEGIN Button Button_Cancel --><input id="ST_VARS1Button_Cancel" class="Button" alt="Cancel" type="submit" value="Cancel" name="{Button_Name}"><!-- END Button Button_Cancel --></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </form>
+      <!-- END Record ST_VARS1 --><br>
+      <!-- BEGIN Grid ST_MEALS -->
+      <table cellspacing="0" cellpadding="0" border="0">
+        <tr>
+          <td valign="top">
+            <table class="Header" cellspacing="0" cellpadding="0" border="0">
+              <tr>
+                <td class="HeaderLeft"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td> 
+                <td class="th"><strong>List of ST MEALS </strong></td> 
+                <td class="HeaderRight"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td>
+              </tr>
+            </table>
+ 
+            <table class="Grid" cellspacing="0" cellpadding="0">
+              <tr class="Row">
+                <td colspan="4">Total Records:&nbsp;{ST_MEALS_TotalRecords}</td>
+              </tr>
+ 
+              <tr class="Caption">
+                <th scope="col">
+                <!-- BEGIN Sorter Sorter_MLS_id --><a href="{Sort_URL}" id="ST_MEALSSorter_MLS_id">MLS Id</a> 
+                <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+                <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_MLS_id --></th>
+ 
+                <th scope="col">
+                <!-- BEGIN Sorter Sorter_ML_id --><a href="{Sort_URL}" id="ST_MEALSSorter_ML_id">ML Id</a> 
+                <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+                <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_ML_id --></th>
+ 
+                <th scope="col">
+                <!-- BEGIN Sorter Sorter_ST_id --><a href="{Sort_URL}" id="ST_MEALSSorter_ST_id">ST Id</a> 
+                <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+                <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_ST_id --></th>
+ 
+                <th scope="col">
+                <!-- BEGIN Sorter Sorter_ML_NME --><a href="{Sort_URL}" id="ST_MEALSSorter_ML_NME">ML NME</a> 
+                <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+                <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_ML_NME --></th>
+              </tr>
+ 
+              <!-- BEGIN Row -->
+              <tr {ST_MEALS:rowStyle}>
+                <td style="TEXT-ALIGN: right"><a href="{MLS_id_Src}" id="ST_MEALSMLS_id_{ST_MEALS:rowNumber}">{MLS_id}</a>&nbsp;</td> 
+                <td style="TEXT-ALIGN: right">{ML_id}&nbsp;</td> 
+                <td style="TEXT-ALIGN: right">{ST_id}&nbsp;</td> 
+                <td>{ML_NME}&nbsp;</td>
+              </tr>
+ <!-- END Row -->
+              <!-- BEGIN NoRecords -->
+              <tr class="NoRecords">
+                <td colspan="4">No records</td>
+              </tr>
+              <!-- END NoRecords -->
+              <tr class="Footer">
+                <td colspan="4"><a href="{ST_MEALS_Insert_Src}" id="ST_MEALSST_MEALS_Insert">Add New</a>&nbsp; 
+                  <!-- BEGIN Navigator Navigator -->
+                  <!-- BEGIN Page_Parameter --><input type="hidden" value="{Value}" name="{Name}"><!-- END Page_Parameter -->Per page: 
+                  <select onchange="CCChangeSize(this, '{FormName}')" name="{FormName}PageSize">
+                    <option selected value="">-</option>
+ {PageSize_Options}
+                  </select>
+ 
+                  <!-- BEGIN First_On --><a href="{First_URL}">First</a> <!-- END First_On -->
+                  <!-- BEGIN First_Off -->First <!-- END First_Off -->
+                  <!-- BEGIN Prev_On --><a href="{Prev_URL}">Prev</a> <!-- END Prev_On -->
+                  <!-- BEGIN Prev_Off -->Prev <!-- END Prev_Off -->&nbsp; 
+                  <!-- BEGIN Pages -->
+                  <!-- BEGIN Page_On --><a href="{Page_URL}">{Page_Number}</a>&nbsp;<!-- END Page_On -->
+                  <!-- BEGIN Page_Off -->{Page_Number}&nbsp;<!-- END Page_Off --><!-- END Pages -->of &nbsp;{Total_Pages}&nbsp; 
+                  <!-- BEGIN Next_On --><a href="{Next_URL}">Next</a> <!-- END Next_On -->
+                  <!-- BEGIN Next_Off -->Next <!-- END Next_Off -->
+                  <!-- BEGIN Last_On --><a href="{Last_URL}">Last</a> <!-- END Last_On -->
+                  <!-- BEGIN Last_Off -->Last <!-- END Last_Off --><!-- END Navigator Navigator -->&nbsp;</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+      <!-- END Grid ST_MEALS -->
+      <!-- BEGIN Record ST_MEALS1 -->
+      <form id="ST_MEALS1" method="post" name="{HTMLFormName}" action="{Action}">
+        <table cellspacing="0" cellpadding="0" border="0">
+          <tr>
+            <td valign="top">
+              <table class="Header" cellspacing="0" cellpadding="0" border="0">
+                <tr>
+                  <td class="HeaderLeft"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td> 
+                  <td class="th"><strong>Add/Edit ST MEALS </strong></td> 
+                  <td class="HeaderRight"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td>
+                </tr>
+              </table>
+ 
+              <table class="Record" cellspacing="0" cellpadding="0">
+                <!-- BEGIN Error -->
+                <tr class="Error">
+                  <td colspan="2">{Error}</td>
+                </tr>
+                <!-- END Error -->
+                <tr class="Controls">
+                  <td class="th"><label for="ST_MEALS1ST_id">ST Id&nbsp;&nbsp;&nbsp;</label></td> 
+                  <td><input id="ST_MEALS1ST_id" readonly maxlength="10" size="10" value="{ST_id}" name="{ST_id_Name}"></td>
+                </tr>
+ 
+                <tr class="Controls">
+                  <td class="th"><label for="ST_MEALS1ML_id">ML Id&nbsp;&nbsp;&nbsp;</label></td> 
+                  <td><input id="ST_MEALS1ML_id" maxlength="10" size="10" value="{ML_id}" name="{ML_id_Name}"></td>
+                </tr>
+ 
+                <tr class="Controls">
+                  <td class="th"><label for="ST_MEALS1ML_NME">ML NME&nbsp;&nbsp;&nbsp;</label></td> 
+                  <td><input id="ST_MEALS1ML_NME" maxlength="25" size="25" value="{ML_NME}" name="{ML_NME_Name}"></td>
+                </tr>
+ 
+                <tr class="Bottom">
+                  <td colspan="2" align="right">
+                    <!-- BEGIN Button Button_Insert --><input id="ST_MEALS1Button_Insert" class="Button" alt="Add" type="submit" value="Add" name="{Button_Name}"><!-- END Button Button_Insert -->
+                    <!-- BEGIN Button Button_Update --><input id="ST_MEALS1Button_Update" class="Button" alt="Submit" type="submit" value="Submit" name="{Button_Name}"><!-- END Button Button_Update -->
+                    <!-- BEGIN Button Button_Delete --><input id="ST_MEALS1Button_Delete" class="Button" alt="Delete" type="submit" value="Delete" name="{Button_Name}"><!-- END Button Button_Delete -->
+                    <!-- BEGIN Button Button_Cancel --><input id="ST_MEALS1Button_Cancel" class="Button" alt="Cancel" type="submit" value="Cancel" name="{Button_Name}"><!-- END Button Button_Cancel --></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </form>
+      <!-- END Record ST_MEALS1 -->
+      </p>
+    </td> 
+    <td valign="top">{ADMIN_VARS}</td> 
+    <td valign="top">{ADMIN_MEALS}</td>
+	<td valign="top">{ADMIN_DAYS}</td>
+  </tr>
+</table>
+</p>
+{Footer} 
+</body>
+</html>

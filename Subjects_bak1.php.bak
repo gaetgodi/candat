@@ -1,0 +1,2821 @@
+<?php
+//Include Common Files @1-E8B7DDA1
+define("RelativePath", ".");
+define("PathToCurrentPage", "/");
+define("FileName", "Subjects_bak1.php");
+include_once(RelativePath . "/Common.php");
+include_once(RelativePath . "/Template.php");
+include_once(RelativePath . "/Sorter.php");
+include_once(RelativePath . "/Navigator.php");
+//End Include Common Files
+
+
+
+//Include Page implementation @62-E89C636C
+include_once(RelativePath . "/Header_live.php");
+//End Include Page implementation
+
+class clsGridSTUDIES { //STUDIES class @63-CAB68BD4
+
+//Variables @63-6E51DF5A
+
+    // Public variables
+    public $ComponentType = "Grid";
+    public $ComponentName;
+    public $Visible;
+    public $Errors;
+    public $ErrorBlock;
+    public $ds;
+    public $DataSource;
+    public $PageSize;
+    public $IsEmpty;
+    public $ForceIteration = false;
+    public $HasRecord = false;
+    public $SorterName = "";
+    public $SorterDirection = "";
+    public $PageNumber;
+    public $RowNumber;
+    public $ControlsVisible = array();
+
+    public $CCSEvents = "";
+    public $CCSEventResult;
+
+    public $RelativePath = "";
+    public $Attributes;
+
+    // Grid Controls
+    public $StaticControls;
+    public $RowControls;
+//End Variables
+
+//Class_Initialize Event @63-9FF10F9C
+    function clsGridSTUDIES($RelativePath, & $Parent)
+    {
+        global $FileName;
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->ComponentName = "STUDIES";
+        $this->Visible = True;
+        $this->Parent = & $Parent;
+        $this->RelativePath = $RelativePath;
+        $this->Errors = new clsErrors();
+        $this->ErrorBlock = "Grid STUDIES";
+        $this->Attributes = new clsAttributes($this->ComponentName . ":");
+        $this->DataSource = new clsSTUDIESDataSource($this);
+        $this->ds = & $this->DataSource;
+        $this->PageSize = CCGetParam($this->ComponentName . "PageSize", "");
+        if(!is_numeric($this->PageSize) || !strlen($this->PageSize))
+            $this->PageSize = 10;
+        else
+            $this->PageSize = intval($this->PageSize);
+        if ($this->PageSize > 100)
+            $this->PageSize = 100;
+        if($this->PageSize == 0)
+            $this->Errors->addError("<p>Form: Grid " . $this->ComponentName . "<br>Error: (CCS06) Invalid page size.</p>");
+        $this->PageNumber = intval(CCGetParam($this->ComponentName . "Page", 1));
+        if ($this->PageNumber <= 0) $this->PageNumber = 1;
+
+        $this->long_desc = new clsControl(ccsLink, "long_desc", "long_desc", ccsText, "", CCGetRequestParam("long_desc", ccsGet, NULL), $this);
+        $this->long_desc->Page = ServerURL . "Subjects_bak1.php";
+    }
+//End Class_Initialize Event
+
+//Initialize Method @63-90E704C5
+    function Initialize()
+    {
+        if(!$this->Visible) return;
+
+        $this->DataSource->PageSize = & $this->PageSize;
+        $this->DataSource->AbsolutePage = & $this->PageNumber;
+        $this->DataSource->SetOrder($this->SorterName, $this->SorterDirection);
+    }
+//End Initialize Method
+
+//Show Method @63-6C171D23
+    function Show()
+    {
+        global $Tpl;
+        global $CCSLocales;
+        if(!$this->Visible) return;
+
+        $this->RowNumber = 0;
+
+        $this->DataSource->Parameters["urlST_id"] = CCGetFromGet("ST_id", NULL);
+
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeSelect", $this);
+
+
+        $this->DataSource->Prepare();
+        $this->DataSource->Open();
+        $this->HasRecord = $this->DataSource->has_next_record();
+        $this->IsEmpty = ! $this->HasRecord;
+        $this->Attributes->Show();
+
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeShow", $this);
+        if(!$this->Visible) return;
+
+        $GridBlock = "Grid " . $this->ComponentName;
+        $ParentPath = $Tpl->block_path;
+        $Tpl->block_path = $ParentPath . "/" . $GridBlock;
+
+
+        if (!$this->IsEmpty) {
+            $this->ControlsVisible["long_desc"] = $this->long_desc->Visible;
+            while ($this->ForceIteration || (($this->RowNumber < $this->PageSize) &&  ($this->HasRecord = $this->DataSource->has_next_record()))) {
+                $this->RowNumber++;
+                if ($this->HasRecord) {
+                    $this->DataSource->next_record();
+                    $this->DataSource->SetValues();
+                }
+                $Tpl->block_path = $ParentPath . "/" . $GridBlock . "/Row";
+                $this->long_desc->SetValue($this->DataSource->long_desc->GetValue());
+                $this->long_desc->Parameters = CCGetQueryString("QueryString", array("ccsForm"));
+                $this->long_desc->Parameters = CCAddParam($this->long_desc->Parameters, "ST_id", $this->DataSource->f("ST_id"));
+                $this->Attributes->SetValue("rowNumber", $this->RowNumber);
+                $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeShowRow", $this);
+                $this->Attributes->Show();
+                $this->long_desc->Show();
+                $Tpl->block_path = $ParentPath . "/" . $GridBlock;
+                $Tpl->parse("Row", true);
+            }
+        }
+        else { // Show NoRecords block if no records are found
+            $this->Attributes->Show();
+            $Tpl->parse("NoRecords", false);
+        }
+
+        $errors = $this->GetErrors();
+        if(strlen($errors))
+        {
+            $Tpl->replaceblock("", $errors);
+            $Tpl->block_path = $ParentPath;
+            return;
+        }
+        $Tpl->parse();
+        $Tpl->block_path = $ParentPath;
+        $this->DataSource->close();
+    }
+//End Show Method
+
+//GetErrors Method @63-8B27DDAD
+    function GetErrors()
+    {
+        $errors = "";
+        $errors = ComposeStrings($errors, $this->long_desc->Errors->ToString());
+        $errors = ComposeStrings($errors, $this->Errors->ToString());
+        $errors = ComposeStrings($errors, $this->DataSource->Errors->ToString());
+        return $errors;
+    }
+//End GetErrors Method
+
+} //End STUDIES Class @63-FCB6E20C
+
+class clsSTUDIESDataSource extends clsDBcandat {  //STUDIESDataSource Class @63-AE6E84D7
+
+//DataSource Variables @63-54689347
+    public $Parent = "";
+    public $CCSEvents = "";
+    public $CCSEventResult;
+    public $ErrorBlock;
+    public $CmdExecution;
+
+    public $CountSQL;
+    public $wp;
+
+
+    // Datasource fields
+    public $long_desc;
+//End DataSource Variables
+
+//DataSourceClass_Initialize Event @63-D1F2B770
+    function clsSTUDIESDataSource(& $Parent)
+    {
+        $this->Parent = & $Parent;
+        $this->ErrorBlock = "Grid STUDIES";
+        $this->Initialize();
+        $this->long_desc = new clsField("long_desc", ccsText, "");
+        
+
+    }
+//End DataSourceClass_Initialize Event
+
+//SetOrder Method @63-9E1383D1
+    function SetOrder($SorterName, $SorterDirection)
+    {
+        $this->Order = "";
+        $this->Order = CCGetOrder($this->Order, $SorterName, $SorterDirection, 
+            "");
+    }
+//End SetOrder Method
+
+//Prepare Method @63-4438899F
+    function Prepare()
+    {
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->wp = new clsSQLParameters($this->ErrorBlock);
+        $this->wp->AddParameter("1", "urlST_id", ccsInteger, "", "", $this->Parameters["urlST_id"], "", false);
+        $this->wp->Criterion[1] = $this->wp->Operation(opEqual, "ST_id", $this->wp->GetDBValue("1"), $this->ToSQL($this->wp->GetDBValue("1"), ccsInteger),false);
+        $this->Where = 
+             $this->wp->Criterion[1];
+    }
+//End Prepare Method
+
+//Open Method @63-D6F37B67
+    function Open()
+    {
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeBuildSelect", $this->Parent);
+        $this->CountSQL = "SELECT COUNT(*)\n\n" .
+        "FROM STUDIES";
+        $this->SQL = "SELECT * \n\n" .
+        "FROM STUDIES {SQL_Where} {SQL_OrderBy}";
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeExecuteSelect", $this->Parent);
+        if ($this->CountSQL) 
+            $this->RecordsCount = CCGetDBValue(CCBuildSQL($this->CountSQL, $this->Where, ""), $this);
+        else
+            $this->RecordsCount = "CCS not counted";
+        $this->query($this->OptimizeSQL(CCBuildSQL($this->SQL, $this->Where, $this->Order)));
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterExecuteSelect", $this->Parent);
+    }
+//End Open Method
+
+//SetValues Method @63-80BAB893
+    function SetValues()
+    {
+        $this->long_desc->SetDBValue($this->f("long_desc"));
+    }
+//End SetValues Method
+
+} //End STUDIESDataSource Class @63-FCB6E20C
+
+class clsGridSUBJECTS { //SUBJECTS class @150-78F12E23
+
+//Variables @150-4318626F
+
+    // Public variables
+    public $ComponentType = "Grid";
+    public $ComponentName;
+    public $Visible;
+    public $Errors;
+    public $ErrorBlock;
+    public $ds;
+    public $DataSource;
+    public $PageSize;
+    public $IsEmpty;
+    public $ForceIteration = false;
+    public $HasRecord = false;
+    public $SorterName = "";
+    public $SorterDirection = "";
+    public $PageNumber;
+    public $RowNumber;
+    public $ControlsVisible = array();
+
+    public $CCSEvents = "";
+    public $CCSEventResult;
+
+    public $RelativePath = "";
+    public $Attributes;
+
+    // Grid Controls
+    public $StaticControls;
+    public $RowControls;
+    public $Sorter_SB_id;
+    public $Sorter_ST_id;
+    public $Sorter_SB_CODE;
+    public $Sorter_SB_short_desc;
+    public $Sorter_SB_long_desc;
+//End Variables
+
+//Class_Initialize Event @150-3337102E
+    function clsGridSUBJECTS($RelativePath, & $Parent)
+    {
+        global $FileName;
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->ComponentName = "SUBJECTS";
+        $this->Visible = True;
+        $this->Parent = & $Parent;
+        $this->RelativePath = $RelativePath;
+        $this->Errors = new clsErrors();
+        $this->ErrorBlock = "Grid SUBJECTS";
+        $this->Attributes = new clsAttributes($this->ComponentName . ":");
+        $this->DataSource = new clsSUBJECTSDataSource($this);
+        $this->ds = & $this->DataSource;
+        $this->PageSize = CCGetParam($this->ComponentName . "PageSize", "");
+        if(!is_numeric($this->PageSize) || !strlen($this->PageSize))
+            $this->PageSize = 100;
+        else
+            $this->PageSize = intval($this->PageSize);
+        if ($this->PageSize > 100)
+            $this->PageSize = 100;
+        if($this->PageSize == 0)
+            $this->Errors->addError("<p>Form: Grid " . $this->ComponentName . "<br>Error: (CCS06) Invalid page size.</p>");
+        $this->PageNumber = intval(CCGetParam($this->ComponentName . "Page", 1));
+        if ($this->PageNumber <= 0) $this->PageNumber = 1;
+        $this->SorterName = CCGetParam("SUBJECTSOrder", "");
+        $this->SorterDirection = CCGetParam("SUBJECTSDir", "");
+
+        $this->SB_id = new clsControl(ccsLink, "SB_id", "SB_id", ccsInteger, "", CCGetRequestParam("SB_id", ccsGet, NULL), $this);
+        $this->SB_id->Page = "Subjects_bak1.php";
+        $this->ST_id = new clsControl(ccsLabel, "ST_id", "ST_id", ccsInteger, "", CCGetRequestParam("ST_id", ccsGet, NULL), $this);
+        $this->SB_CODE = new clsControl(ccsLabel, "SB_CODE", "SB_CODE", ccsText, "", CCGetRequestParam("SB_CODE", ccsGet, NULL), $this);
+        $this->SB_short_desc = new clsControl(ccsLabel, "SB_short_desc", "SB_short_desc", ccsText, "", CCGetRequestParam("SB_short_desc", ccsGet, NULL), $this);
+        $this->SB_long_desc = new clsControl(ccsLabel, "SB_long_desc", "SB_long_desc", ccsText, "", CCGetRequestParam("SB_long_desc", ccsGet, NULL), $this);
+        $this->SUBJECTS_Insert = new clsControl(ccsLink, "SUBJECTS_Insert", "SUBJECTS_Insert", ccsText, "", CCGetRequestParam("SUBJECTS_Insert", ccsGet, NULL), $this);
+        $this->SUBJECTS_Insert->Parameters = CCGetQueryString("QueryString", array("SB_id", "ccsForm"));
+        $this->SUBJECTS_Insert->Page = "Subjects_bak1.php";
+        $this->Sorter_SB_id = new clsSorter($this->ComponentName, "Sorter_SB_id", $FileName, $this);
+        $this->Sorter_ST_id = new clsSorter($this->ComponentName, "Sorter_ST_id", $FileName, $this);
+        $this->Sorter_SB_CODE = new clsSorter($this->ComponentName, "Sorter_SB_CODE", $FileName, $this);
+        $this->Sorter_SB_short_desc = new clsSorter($this->ComponentName, "Sorter_SB_short_desc", $FileName, $this);
+        $this->Sorter_SB_long_desc = new clsSorter($this->ComponentName, "Sorter_SB_long_desc", $FileName, $this);
+        $this->Navigator = new clsNavigator($this->ComponentName, "Navigator", $FileName, 10, tpCentered, $this);
+        $this->Navigator->PageSizes = array("1", "5", "10", "25", "50");
+    }
+//End Class_Initialize Event
+
+//Initialize Method @150-90E704C5
+    function Initialize()
+    {
+        if(!$this->Visible) return;
+
+        $this->DataSource->PageSize = & $this->PageSize;
+        $this->DataSource->AbsolutePage = & $this->PageNumber;
+        $this->DataSource->SetOrder($this->SorterName, $this->SorterDirection);
+    }
+//End Initialize Method
+
+//Show Method @150-0918C69C
+    function Show()
+    {
+        global $Tpl;
+        global $CCSLocales;
+        if(!$this->Visible) return;
+
+        $this->RowNumber = 0;
+
+        $this->DataSource->Parameters["urlST_id"] = CCGetFromGet("ST_id", NULL);
+
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeSelect", $this);
+
+
+        $this->DataSource->Prepare();
+        $this->DataSource->Open();
+        $this->HasRecord = $this->DataSource->has_next_record();
+        $this->IsEmpty = ! $this->HasRecord;
+        $this->Attributes->Show();
+
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeShow", $this);
+        if(!$this->Visible) return;
+
+        $GridBlock = "Grid " . $this->ComponentName;
+        $ParentPath = $Tpl->block_path;
+        $Tpl->block_path = $ParentPath . "/" . $GridBlock;
+
+
+        if (!$this->IsEmpty) {
+            $this->ControlsVisible["SB_id"] = $this->SB_id->Visible;
+            $this->ControlsVisible["ST_id"] = $this->ST_id->Visible;
+            $this->ControlsVisible["SB_CODE"] = $this->SB_CODE->Visible;
+            $this->ControlsVisible["SB_short_desc"] = $this->SB_short_desc->Visible;
+            $this->ControlsVisible["SB_long_desc"] = $this->SB_long_desc->Visible;
+            while ($this->ForceIteration || (($this->RowNumber < $this->PageSize) &&  ($this->HasRecord = $this->DataSource->has_next_record()))) {
+                $this->RowNumber++;
+                if ($this->HasRecord) {
+                    $this->DataSource->next_record();
+                    $this->DataSource->SetValues();
+                }
+                $Tpl->block_path = $ParentPath . "/" . $GridBlock . "/Row";
+                $this->SB_id->SetValue($this->DataSource->SB_id->GetValue());
+                $this->SB_id->Parameters = CCGetQueryString("QueryString", array("ccsForm"));
+                $this->SB_id->Parameters = CCAddParam($this->SB_id->Parameters, "SB_id", $this->DataSource->f("SB_id"));
+                $this->ST_id->SetValue($this->DataSource->ST_id->GetValue());
+                $this->SB_CODE->SetValue($this->DataSource->SB_CODE->GetValue());
+                $this->SB_short_desc->SetValue($this->DataSource->SB_short_desc->GetValue());
+                $this->SB_long_desc->SetValue($this->DataSource->SB_long_desc->GetValue());
+                $this->Attributes->SetValue("rowNumber", $this->RowNumber);
+                $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeShowRow", $this);
+                $this->Attributes->Show();
+                $this->SB_id->Show();
+                $this->ST_id->Show();
+                $this->SB_CODE->Show();
+                $this->SB_short_desc->Show();
+                $this->SB_long_desc->Show();
+                $Tpl->block_path = $ParentPath . "/" . $GridBlock;
+                $Tpl->parse("Row", true);
+            }
+        }
+        else { // Show NoRecords block if no records are found
+            $this->Attributes->Show();
+            $Tpl->parse("NoRecords", false);
+        }
+
+        $errors = $this->GetErrors();
+        if(strlen($errors))
+        {
+            $Tpl->replaceblock("", $errors);
+            $Tpl->block_path = $ParentPath;
+            return;
+        }
+        $this->Navigator->PageNumber = $this->DataSource->AbsolutePage;
+        $this->Navigator->PageSize = $this->PageSize;
+        if ($this->DataSource->RecordsCount == "CCS not counted")
+            $this->Navigator->TotalPages = $this->DataSource->AbsolutePage + ($this->DataSource->next_record() ? 1 : 0);
+        else
+            $this->Navigator->TotalPages = $this->DataSource->PageCount();
+        if ($this->Navigator->TotalPages <= 1) {
+            $this->Navigator->Visible = false;
+        }
+        $this->SUBJECTS_Insert->Show();
+        $this->Sorter_SB_id->Show();
+        $this->Sorter_ST_id->Show();
+        $this->Sorter_SB_CODE->Show();
+        $this->Sorter_SB_short_desc->Show();
+        $this->Sorter_SB_long_desc->Show();
+        $this->Navigator->Show();
+        $Tpl->parse();
+        $Tpl->block_path = $ParentPath;
+        $this->DataSource->close();
+    }
+//End Show Method
+
+//GetErrors Method @150-5593BCA1
+    function GetErrors()
+    {
+        $errors = "";
+        $errors = ComposeStrings($errors, $this->SB_id->Errors->ToString());
+        $errors = ComposeStrings($errors, $this->ST_id->Errors->ToString());
+        $errors = ComposeStrings($errors, $this->SB_CODE->Errors->ToString());
+        $errors = ComposeStrings($errors, $this->SB_short_desc->Errors->ToString());
+        $errors = ComposeStrings($errors, $this->SB_long_desc->Errors->ToString());
+        $errors = ComposeStrings($errors, $this->Errors->ToString());
+        $errors = ComposeStrings($errors, $this->DataSource->Errors->ToString());
+        return $errors;
+    }
+//End GetErrors Method
+
+} //End SUBJECTS Class @150-FCB6E20C
+
+class clsSUBJECTSDataSource extends clsDBcandat {  //SUBJECTSDataSource Class @150-2E5B553E
+
+//DataSource Variables @150-810670E9
+    public $Parent = "";
+    public $CCSEvents = "";
+    public $CCSEventResult;
+    public $ErrorBlock;
+    public $CmdExecution;
+
+    public $CountSQL;
+    public $wp;
+
+
+    // Datasource fields
+    public $SB_id;
+    public $ST_id;
+    public $SB_CODE;
+    public $SB_short_desc;
+    public $SB_long_desc;
+//End DataSource Variables
+
+//DataSourceClass_Initialize Event @150-4E9B4A57
+    function clsSUBJECTSDataSource(& $Parent)
+    {
+        $this->Parent = & $Parent;
+        $this->ErrorBlock = "Grid SUBJECTS";
+        $this->Initialize();
+        $this->SB_id = new clsField("SB_id", ccsInteger, "");
+        
+        $this->ST_id = new clsField("ST_id", ccsInteger, "");
+        
+        $this->SB_CODE = new clsField("SB_CODE", ccsText, "");
+        
+        $this->SB_short_desc = new clsField("SB_short_desc", ccsText, "");
+        
+        $this->SB_long_desc = new clsField("SB_long_desc", ccsText, "");
+        
+
+    }
+//End DataSourceClass_Initialize Event
+
+//SetOrder Method @150-6597DCC7
+    function SetOrder($SorterName, $SorterDirection)
+    {
+        $this->Order = "";
+        $this->Order = CCGetOrder($this->Order, $SorterName, $SorterDirection, 
+            array("Sorter_SB_id" => array("SB_id", ""), 
+            "Sorter_ST_id" => array("ST_id", ""), 
+            "Sorter_SB_CODE" => array("SB_CODE", ""), 
+            "Sorter_SB_short_desc" => array("SB_short_desc", ""), 
+            "Sorter_SB_long_desc" => array("SB_long_desc", "")));
+    }
+//End SetOrder Method
+
+//Prepare Method @150-73D75E43
+    function Prepare()
+    {
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->wp = new clsSQLParameters($this->ErrorBlock);
+        $this->wp->AddParameter("1", "urlST_id", ccsInteger, "", "", $this->Parameters["urlST_id"], -999, false);
+        $this->wp->Criterion[1] = $this->wp->Operation(opEqual, "SUBJECTS.ST_id", $this->wp->GetDBValue("1"), $this->ToSQL($this->wp->GetDBValue("1"), ccsInteger),false);
+        $this->Where = 
+             $this->wp->Criterion[1];
+    }
+//End Prepare Method
+
+//Open Method @150-732FD011
+    function Open()
+    {
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeBuildSelect", $this->Parent);
+        $this->CountSQL = "SELECT COUNT(*)\n\n" .
+        "FROM SUBJECTS INNER JOIN STUDIES ON\n\n" .
+        "SUBJECTS.ST_id = STUDIES.ST_id";
+        $this->SQL = "SELECT * \n\n" .
+        "FROM SUBJECTS INNER JOIN STUDIES ON\n\n" .
+        "SUBJECTS.ST_id = STUDIES.ST_id {SQL_Where} {SQL_OrderBy}";
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeExecuteSelect", $this->Parent);
+        if ($this->CountSQL) 
+            $this->RecordsCount = CCGetDBValue(CCBuildSQL($this->CountSQL, $this->Where, ""), $this);
+        else
+            $this->RecordsCount = "CCS not counted";
+        $this->query($this->OptimizeSQL(CCBuildSQL($this->SQL, $this->Where, $this->Order)));
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterExecuteSelect", $this->Parent);
+    }
+//End Open Method
+
+//SetValues Method @150-097D8886
+    function SetValues()
+    {
+        $this->SB_id->SetDBValue(trim($this->f("SB_id")));
+        $this->ST_id->SetDBValue(trim($this->f("ST_id")));
+        $this->SB_CODE->SetDBValue($this->f("SB_CODE"));
+        $this->SB_short_desc->SetDBValue($this->f("SB_short_desc"));
+        $this->SB_long_desc->SetDBValue($this->f("SB_long_desc"));
+    }
+//End SetValues Method
+
+} //End SUBJECTSDataSource Class @150-FCB6E20C
+
+class clsRecordSUBJECTS1 { //SUBJECTS1 Class @169-0367125C
+
+//Variables @169-9E315808
+
+    // Public variables
+    public $ComponentType = "Record";
+    public $ComponentName;
+    public $Parent;
+    public $HTMLFormAction;
+    public $PressedButton;
+    public $Errors;
+    public $ErrorBlock;
+    public $FormSubmitted;
+    public $FormEnctype;
+    public $Visible;
+    public $IsEmpty;
+
+    public $CCSEvents = "";
+    public $CCSEventResult;
+
+    public $RelativePath = "";
+
+    public $InsertAllowed = false;
+    public $UpdateAllowed = false;
+    public $DeleteAllowed = false;
+    public $ReadAllowed   = false;
+    public $EditMode      = false;
+    public $ds;
+    public $DataSource;
+    public $ValidatingControls;
+    public $Controls;
+    public $Attributes;
+
+    // Class variables
+//End Variables
+
+//Class_Initialize Event @169-D7958139
+    function clsRecordSUBJECTS1($RelativePath, & $Parent)
+    {
+
+        global $FileName;
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->Visible = true;
+        $this->Parent = & $Parent;
+        $this->RelativePath = $RelativePath;
+        $this->Errors = new clsErrors();
+        $this->ErrorBlock = "Record SUBJECTS1/Error";
+        $this->DataSource = new clsSUBJECTS1DataSource($this);
+        $this->ds = & $this->DataSource;
+        $this->InsertAllowed = true;
+        $this->UpdateAllowed = true;
+        $this->DeleteAllowed = true;
+        $this->ReadAllowed = true;
+        if($this->Visible)
+        {
+            $this->ComponentName = "SUBJECTS1";
+            $this->Attributes = new clsAttributes($this->ComponentName . ":");
+            $CCSForm = explode(":", CCGetFromGet("ccsForm", ""), 2);
+            if(sizeof($CCSForm) == 1)
+                $CCSForm[1] = "";
+            list($FormName, $FormMethod) = $CCSForm;
+            $this->EditMode = ($FormMethod == "Edit");
+            $this->FormEnctype = "application/x-www-form-urlencoded";
+            $this->FormSubmitted = ($FormName == $this->ComponentName);
+            $Method = $this->FormSubmitted ? ccsPost : ccsGet;
+            $this->Button_Insert = new clsButton("Button_Insert", $Method, $this);
+            $this->Button_Update = new clsButton("Button_Update", $Method, $this);
+            $this->Button_Delete = new clsButton("Button_Delete", $Method, $this);
+            $this->Button_Cancel = new clsButton("Button_Cancel", $Method, $this);
+            $this->ST_id = new clsControl(ccsTextBox, "ST_id", "ST Id", ccsInteger, "", CCGetRequestParam("ST_id", $Method, NULL), $this);
+            $this->ST_id->Required = true;
+            $this->SB_CODE = new clsControl(ccsTextBox, "SB_CODE", "SB CODE", ccsText, "", CCGetRequestParam("SB_CODE", $Method, NULL), $this);
+            $this->SB_short_desc = new clsControl(ccsTextBox, "SB_short_desc", "SB Short Desc", ccsText, "", CCGetRequestParam("SB_short_desc", $Method, NULL), $this);
+            $this->SB_long_desc = new clsControl(ccsTextBox, "SB_long_desc", "SB Long Desc", ccsText, "", CCGetRequestParam("SB_long_desc", $Method, NULL), $this);
+            $this->Button_Cancel1 = new clsButton("Button_Cancel1", $Method, $this);
+        }
+    }
+//End Class_Initialize Event
+
+//Initialize Method @169-87B96B8B
+    function Initialize()
+    {
+
+        if(!$this->Visible)
+            return;
+
+        $this->DataSource->Parameters["urlSB_id"] = CCGetFromGet("SB_id", NULL);
+    }
+//End Initialize Method
+
+//Validate Method @169-5CB83AF0
+    function Validate()
+    {
+        global $CCSLocales;
+        $Validation = true;
+        $Where = "";
+        $Validation = ($this->ST_id->Validate() && $Validation);
+        $Validation = ($this->SB_CODE->Validate() && $Validation);
+        $Validation = ($this->SB_short_desc->Validate() && $Validation);
+        $Validation = ($this->SB_long_desc->Validate() && $Validation);
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "OnValidate", $this);
+        $Validation =  $Validation && ($this->ST_id->Errors->Count() == 0);
+        $Validation =  $Validation && ($this->SB_CODE->Errors->Count() == 0);
+        $Validation =  $Validation && ($this->SB_short_desc->Errors->Count() == 0);
+        $Validation =  $Validation && ($this->SB_long_desc->Errors->Count() == 0);
+        return (($this->Errors->Count() == 0) && $Validation);
+    }
+//End Validate Method
+
+//CheckErrors Method @169-5F29E45D
+    function CheckErrors()
+    {
+        $errors = false;
+        $errors = ($errors || $this->ST_id->Errors->Count());
+        $errors = ($errors || $this->SB_CODE->Errors->Count());
+        $errors = ($errors || $this->SB_short_desc->Errors->Count());
+        $errors = ($errors || $this->SB_long_desc->Errors->Count());
+        $errors = ($errors || $this->Errors->Count());
+        $errors = ($errors || $this->DataSource->Errors->Count());
+        return $errors;
+    }
+//End CheckErrors Method
+
+//MasterDetail @169-ED598703
+function SetPrimaryKeys($keyArray)
+{
+    $this->PrimaryKeys = $keyArray;
+}
+function GetPrimaryKeys()
+{
+    return $this->PrimaryKeys;
+}
+function GetPrimaryKey($keyName)
+{
+    return $this->PrimaryKeys[$keyName];
+}
+//End MasterDetail
+
+//Operation Method @169-B34322C1
+    function Operation()
+    {
+        if(!$this->Visible)
+            return;
+
+        global $Redirect;
+        global $FileName;
+
+        $this->DataSource->Prepare();
+        if(!$this->FormSubmitted) {
+            $this->EditMode = $this->DataSource->AllParametersSet;
+            return;
+        }
+
+        if($this->FormSubmitted) {
+            $this->PressedButton = $this->EditMode ? "Button_Update" : "Button_Insert";
+            if($this->Button_Insert->Pressed) {
+                $this->PressedButton = "Button_Insert";
+            } else if($this->Button_Update->Pressed) {
+                $this->PressedButton = "Button_Update";
+            } else if($this->Button_Delete->Pressed) {
+                $this->PressedButton = "Button_Delete";
+            } else if($this->Button_Cancel->Pressed) {
+                $this->PressedButton = "Button_Cancel";
+            } else if($this->Button_Cancel1->Pressed) {
+                $this->PressedButton = "Button_Cancel1";
+            }
+        }
+        $Redirect = "Subjects_bak1.php" . "?" . CCGetQueryString("QueryString", array("ccsForm"));
+        if($this->PressedButton == "Button_Delete") {
+            if(!CCGetEvent($this->Button_Delete->CCSEvents, "OnClick", $this->Button_Delete) || !$this->DeleteRow()) {
+                $Redirect = "";
+            }
+        } else if($this->PressedButton == "Button_Cancel") {
+            $Redirect = "Subjects_bak1.php" . "?" . CCGetQueryString("QueryString", array("ccsForm", "SB_id"));
+            if(!CCGetEvent($this->Button_Cancel->CCSEvents, "OnClick", $this->Button_Cancel)) {
+                $Redirect = "";
+            }
+        } else if($this->PressedButton == "Button_Cancel1") {
+            $Redirect = "Subjects_bak1.php" . "?" . CCGetQueryString("QueryString", array("ccsForm", "SB_id", "ST_id"));
+            if(!CCGetEvent($this->Button_Cancel1->CCSEvents, "OnClick", $this->Button_Cancel1)) {
+                $Redirect = "";
+            }
+        } else if($this->Validate()) {
+            if($this->PressedButton == "Button_Insert") {
+                if(!CCGetEvent($this->Button_Insert->CCSEvents, "OnClick", $this->Button_Insert) || !$this->InsertRow()) {
+                    $Redirect = "";
+                }
+            } else if($this->PressedButton == "Button_Update") {
+                if(!CCGetEvent($this->Button_Update->CCSEvents, "OnClick", $this->Button_Update) || !$this->UpdateRow()) {
+                    $Redirect = "";
+                }
+            }
+        } else {
+            $Redirect = "";
+        }
+        if ($Redirect)
+            $this->DataSource->close();
+    }
+//End Operation Method
+
+//InsertRow Method @169-FE516005
+    function InsertRow()
+    {
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeInsert", $this);
+        if(!$this->InsertAllowed) return false;
+        $this->DataSource->ST_id->SetValue($this->ST_id->GetValue(true));
+        $this->DataSource->SB_CODE->SetValue($this->SB_CODE->GetValue(true));
+        $this->DataSource->SB_short_desc->SetValue($this->SB_short_desc->GetValue(true));
+        $this->DataSource->SB_long_desc->SetValue($this->SB_long_desc->GetValue(true));
+        $this->DataSource->Insert();
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterInsert", $this);
+        return (!$this->CheckErrors());
+    }
+//End InsertRow Method
+
+//UpdateRow Method @169-5933035D
+    function UpdateRow()
+    {
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeUpdate", $this);
+        if(!$this->UpdateAllowed) return false;
+        $this->DataSource->ST_id->SetValue($this->ST_id->GetValue(true));
+        $this->DataSource->SB_CODE->SetValue($this->SB_CODE->GetValue(true));
+        $this->DataSource->SB_short_desc->SetValue($this->SB_short_desc->GetValue(true));
+        $this->DataSource->SB_long_desc->SetValue($this->SB_long_desc->GetValue(true));
+        $this->DataSource->Update();
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterUpdate", $this);
+        return (!$this->CheckErrors());
+    }
+//End UpdateRow Method
+
+//DeleteRow Method @169-299D98C3
+    function DeleteRow()
+    {
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeDelete", $this);
+        if(!$this->DeleteAllowed) return false;
+        $this->DataSource->Delete();
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterDelete", $this);
+        return (!$this->CheckErrors());
+    }
+//End DeleteRow Method
+
+//Show Method @169-7B07646E
+    function Show()
+    {
+        global $CCSUseAmp;
+        global $Tpl;
+        global $FileName;
+        global $CCSLocales;
+        $Error = "";
+
+        if(!$this->Visible)
+            return;
+
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeSelect", $this);
+
+
+        $RecordBlock = "Record " . $this->ComponentName;
+        $ParentPath = $Tpl->block_path;
+        $Tpl->block_path = $ParentPath . "/" . $RecordBlock;
+        $this->EditMode = $this->EditMode && $this->ReadAllowed;
+        if($this->EditMode) {
+            if($this->DataSource->Errors->Count()){
+                $this->Errors->AddErrors($this->DataSource->Errors);
+                $this->DataSource->Errors->clear();
+            }
+            $this->DataSource->Open();
+            if($this->DataSource->Errors->Count() == 0 && $this->DataSource->next_record()) {
+                $this->DataSource->SetValues();
+                if(!$this->FormSubmitted){
+                    $this->ST_id->SetValue($this->DataSource->ST_id->GetValue());
+                    $this->SB_CODE->SetValue($this->DataSource->SB_CODE->GetValue());
+                    $this->SB_short_desc->SetValue($this->DataSource->SB_short_desc->GetValue());
+                    $this->SB_long_desc->SetValue($this->DataSource->SB_long_desc->GetValue());
+                }
+            } else {
+                $this->EditMode = false;
+            }
+        }
+
+        if($this->FormSubmitted || $this->CheckErrors()) {
+            $Error = "";
+            $Error = ComposeStrings($Error, $this->ST_id->Errors->ToString());
+            $Error = ComposeStrings($Error, $this->SB_CODE->Errors->ToString());
+            $Error = ComposeStrings($Error, $this->SB_short_desc->Errors->ToString());
+            $Error = ComposeStrings($Error, $this->SB_long_desc->Errors->ToString());
+            $Error = ComposeStrings($Error, $this->Errors->ToString());
+            $Error = ComposeStrings($Error, $this->DataSource->Errors->ToString());
+            $Tpl->SetVar("Error", $Error);
+            $Tpl->Parse("Error", false);
+        }
+        $CCSForm = $this->EditMode ? $this->ComponentName . ":" . "Edit" : $this->ComponentName;
+        $this->HTMLFormAction = $FileName . "?" . CCAddParam(CCGetQueryString("QueryString", ""), "ccsForm", $CCSForm);
+        $Tpl->SetVar("Action", !$CCSUseAmp ? $this->HTMLFormAction : str_replace("&", "&amp;", $this->HTMLFormAction));
+        $Tpl->SetVar("HTMLFormName", $this->ComponentName);
+        $Tpl->SetVar("HTMLFormEnctype", $this->FormEnctype);
+        $this->Button_Insert->Visible = !$this->EditMode && $this->InsertAllowed;
+        $this->Button_Update->Visible = $this->EditMode && $this->UpdateAllowed;
+        $this->Button_Delete->Visible = $this->EditMode && $this->DeleteAllowed;
+
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeShow", $this);
+        $this->Attributes->Show();
+        if(!$this->Visible) {
+            $Tpl->block_path = $ParentPath;
+            return;
+        }
+
+        $this->Button_Insert->Show();
+        $this->Button_Update->Show();
+        $this->Button_Delete->Show();
+        $this->Button_Cancel->Show();
+        $this->ST_id->Show();
+        $this->SB_CODE->Show();
+        $this->SB_short_desc->Show();
+        $this->SB_long_desc->Show();
+        $this->Button_Cancel1->Show();
+        $Tpl->parse();
+        $Tpl->block_path = $ParentPath;
+        $this->DataSource->close();
+    }
+//End Show Method
+
+} //End SUBJECTS1 Class @169-FCB6E20C
+
+class clsSUBJECTS1DataSource extends clsDBcandat {  //SUBJECTS1DataSource Class @169-5DAFA953
+
+//DataSource Variables @169-5C7FA857
+    public $Parent = "";
+    public $CCSEvents = "";
+    public $CCSEventResult;
+    public $ErrorBlock;
+    public $CmdExecution;
+
+    public $InsertParameters;
+    public $UpdateParameters;
+    public $DeleteParameters;
+    public $wp;
+    public $AllParametersSet;
+
+    public $InsertFields = array();
+    public $UpdateFields = array();
+
+    // Datasource fields
+    public $ST_id;
+    public $SB_CODE;
+    public $SB_short_desc;
+    public $SB_long_desc;
+//End DataSource Variables
+
+//DataSourceClass_Initialize Event @169-080D3622
+    function clsSUBJECTS1DataSource(& $Parent)
+    {
+        $this->Parent = & $Parent;
+        $this->ErrorBlock = "Record SUBJECTS1/Error";
+        $this->Initialize();
+        $this->ST_id = new clsField("ST_id", ccsInteger, "");
+        
+        $this->SB_CODE = new clsField("SB_CODE", ccsText, "");
+        
+        $this->SB_short_desc = new clsField("SB_short_desc", ccsText, "");
+        
+        $this->SB_long_desc = new clsField("SB_long_desc", ccsText, "");
+        
+
+        $this->InsertFields["ST_id"] = array("Name" => "ST_id", "Value" => "", "DataType" => ccsInteger, "OmitIfEmpty" => 1);
+        $this->InsertFields["SB_CODE"] = array("Name" => "SB_CODE", "Value" => "", "DataType" => ccsText, "OmitIfEmpty" => 1);
+        $this->InsertFields["SB_short_desc"] = array("Name" => "SB_short_desc", "Value" => "", "DataType" => ccsText, "OmitIfEmpty" => 1);
+        $this->InsertFields["SB_long_desc"] = array("Name" => "SB_long_desc", "Value" => "", "DataType" => ccsText, "OmitIfEmpty" => 1);
+        $this->UpdateFields["ST_id"] = array("Name" => "ST_id", "Value" => "", "DataType" => ccsInteger, "OmitIfEmpty" => 1);
+        $this->UpdateFields["SB_CODE"] = array("Name" => "SB_CODE", "Value" => "", "DataType" => ccsText, "OmitIfEmpty" => 1);
+        $this->UpdateFields["SB_short_desc"] = array("Name" => "SB_short_desc", "Value" => "", "DataType" => ccsText, "OmitIfEmpty" => 1);
+        $this->UpdateFields["SB_long_desc"] = array("Name" => "SB_long_desc", "Value" => "", "DataType" => ccsText, "OmitIfEmpty" => 1);
+    }
+//End DataSourceClass_Initialize Event
+
+//Prepare Method @169-805BD8D3
+    function Prepare()
+    {
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->wp = new clsSQLParameters($this->ErrorBlock);
+        $this->wp->AddParameter("1", "urlSB_id", ccsInteger, "", "", $this->Parameters["urlSB_id"], "", false);
+        $this->AllParametersSet = $this->wp->AllParamsSet();
+        $this->wp->Criterion[1] = $this->wp->Operation(opEqual, "SB_id", $this->wp->GetDBValue("1"), $this->ToSQL($this->wp->GetDBValue("1"), ccsInteger),false);
+        $this->Where = 
+             $this->wp->Criterion[1];
+    }
+//End Prepare Method
+
+//Open Method @169-F1EAA979
+    function Open()
+    {
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeBuildSelect", $this->Parent);
+        $this->SQL = "SELECT * \n\n" .
+        "FROM SUBJECTS {SQL_Where} {SQL_OrderBy}";
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeExecuteSelect", $this->Parent);
+        $this->PageSize = 1;
+        $this->query($this->OptimizeSQL(CCBuildSQL($this->SQL, $this->Where, $this->Order)));
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterExecuteSelect", $this->Parent);
+    }
+//End Open Method
+
+//SetValues Method @169-F7FD7A1D
+    function SetValues()
+    {
+        $this->ST_id->SetDBValue(trim($this->f("ST_id")));
+        $this->SB_CODE->SetDBValue($this->f("SB_CODE"));
+        $this->SB_short_desc->SetDBValue($this->f("SB_short_desc"));
+        $this->SB_long_desc->SetDBValue($this->f("SB_long_desc"));
+    }
+//End SetValues Method
+
+//Insert Method @169-60F0D709
+    function Insert()
+    {
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->CmdExecution = true;
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeBuildInsert", $this->Parent);
+        $this->InsertFields["ST_id"]["Value"] = $this->ST_id->GetDBValue(true);
+        $this->InsertFields["SB_CODE"]["Value"] = $this->SB_CODE->GetDBValue(true);
+        $this->InsertFields["SB_short_desc"]["Value"] = $this->SB_short_desc->GetDBValue(true);
+        $this->InsertFields["SB_long_desc"]["Value"] = $this->SB_long_desc->GetDBValue(true);
+        $this->SQL = CCBuildInsert("SUBJECTS", $this->InsertFields, $this);
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeExecuteInsert", $this->Parent);
+        if($this->Errors->Count() == 0 && $this->CmdExecution) {
+            $this->query($this->SQL);
+            $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterExecuteInsert", $this->Parent);
+        }
+    }
+//End Insert Method
+
+//Update Method @169-B7C5D982
+    function Update()
+    {
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->CmdExecution = true;
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeBuildUpdate", $this->Parent);
+        $this->UpdateFields["ST_id"]["Value"] = $this->ST_id->GetDBValue(true);
+        $this->UpdateFields["SB_CODE"]["Value"] = $this->SB_CODE->GetDBValue(true);
+        $this->UpdateFields["SB_short_desc"]["Value"] = $this->SB_short_desc->GetDBValue(true);
+        $this->UpdateFields["SB_long_desc"]["Value"] = $this->SB_long_desc->GetDBValue(true);
+        $this->SQL = CCBuildUpdate("SUBJECTS", $this->UpdateFields, $this);
+        $this->SQL .= strlen($this->Where) ? " WHERE " . $this->Where : $this->Where;
+        if (!strlen($this->Where) && $this->Errors->Count() == 0) 
+            $this->Errors->addError($CCSLocales->GetText("CCS_CustomOperationError_MissingParameters"));
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeExecuteUpdate", $this->Parent);
+        if($this->Errors->Count() == 0 && $this->CmdExecution) {
+            $this->query($this->SQL);
+            $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterExecuteUpdate", $this->Parent);
+        }
+    }
+//End Update Method
+
+//Delete Method @169-575B31F5
+    function Delete()
+    {
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->CmdExecution = true;
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeBuildDelete", $this->Parent);
+        $this->SQL = "DELETE FROM SUBJECTS";
+        $this->SQL = CCBuildSQL($this->SQL, $this->Where, "");
+        if (!strlen($this->Where) && $this->Errors->Count() == 0) 
+            $this->Errors->addError($CCSLocales->GetText("CCS_CustomOperationError_MissingParameters"));
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeExecuteDelete", $this->Parent);
+        if($this->Errors->Count() == 0 && $this->CmdExecution) {
+            $this->query($this->SQL);
+            $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterExecuteDelete", $this->Parent);
+        }
+    }
+//End Delete Method
+
+} //End SUBJECTS1DataSource Class @169-FCB6E20C
+
+class clsGridSB_VARIABLES { //SB_VARIABLES class @189-2A109B50
+
+//Variables @189-37EA67E7
+
+    // Public variables
+    public $ComponentType = "Grid";
+    public $ComponentName;
+    public $Visible;
+    public $Errors;
+    public $ErrorBlock;
+    public $ds;
+    public $DataSource;
+    public $PageSize;
+    public $IsEmpty;
+    public $ForceIteration = false;
+    public $HasRecord = false;
+    public $SorterName = "";
+    public $SorterDirection = "";
+    public $PageNumber;
+    public $RowNumber;
+    public $ControlsVisible = array();
+
+    public $CCSEvents = "";
+    public $CCSEventResult;
+
+    public $RelativePath = "";
+    public $Attributes;
+
+    // Grid Controls
+    public $StaticControls;
+    public $RowControls;
+    public $Sorter_SBV_id;
+    public $Sorter_ST_id;
+    public $Sorter_SB_id;
+    public $Sorter_VAR_id;
+    public $Sorter_SB_VALUE;
+//End Variables
+
+//Class_Initialize Event @189-EEAB3CEC
+    function clsGridSB_VARIABLES($RelativePath, & $Parent)
+    {
+        global $FileName;
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->ComponentName = "SB_VARIABLES";
+        $this->Visible = True;
+        $this->Parent = & $Parent;
+        $this->RelativePath = $RelativePath;
+        $this->Errors = new clsErrors();
+        $this->ErrorBlock = "Grid SB_VARIABLES";
+        $this->Attributes = new clsAttributes($this->ComponentName . ":");
+        $this->DataSource = new clsSB_VARIABLESDataSource($this);
+        $this->ds = & $this->DataSource;
+        $this->PageSize = CCGetParam($this->ComponentName . "PageSize", "");
+        if(!is_numeric($this->PageSize) || !strlen($this->PageSize))
+            $this->PageSize = 100;
+        else
+            $this->PageSize = intval($this->PageSize);
+        if ($this->PageSize > 100)
+            $this->PageSize = 100;
+        if($this->PageSize == 0)
+            $this->Errors->addError("<p>Form: Grid " . $this->ComponentName . "<br>Error: (CCS06) Invalid page size.</p>");
+        $this->PageNumber = intval(CCGetParam($this->ComponentName . "Page", 1));
+        if ($this->PageNumber <= 0) $this->PageNumber = 1;
+        $this->SorterName = CCGetParam("SB_VARIABLESOrder", "");
+        $this->SorterDirection = CCGetParam("SB_VARIABLESDir", "");
+
+        $this->SBV_id = new clsControl(ccsLink, "SBV_id", "SBV_id", ccsInteger, "", CCGetRequestParam("SBV_id", ccsGet, NULL), $this);
+        $this->SBV_id->Page = "Subjects_bak1.php";
+        $this->ST_id = new clsControl(ccsLabel, "ST_id", "ST_id", ccsInteger, "", CCGetRequestParam("ST_id", ccsGet, NULL), $this);
+        $this->SB_id = new clsControl(ccsLabel, "SB_id", "SB_id", ccsInteger, "", CCGetRequestParam("SB_id", ccsGet, NULL), $this);
+        $this->VAR_id = new clsControl(ccsLabel, "VAR_id", "VAR_id", ccsInteger, "", CCGetRequestParam("VAR_id", ccsGet, NULL), $this);
+        $this->SB_VALUE = new clsControl(ccsLabel, "SB_VALUE", "SB_VALUE", ccsText, "", CCGetRequestParam("SB_VALUE", ccsGet, NULL), $this);
+        $this->SB_VARIABLES_Insert = new clsControl(ccsLink, "SB_VARIABLES_Insert", "SB_VARIABLES_Insert", ccsText, "", CCGetRequestParam("SB_VARIABLES_Insert", ccsGet, NULL), $this);
+        $this->SB_VARIABLES_Insert->Parameters = CCGetQueryString("QueryString", array("SBV_id", "ccsForm"));
+        $this->SB_VARIABLES_Insert->Page = "Subjects_bak1.php";
+        $this->Sorter_SBV_id = new clsSorter($this->ComponentName, "Sorter_SBV_id", $FileName, $this);
+        $this->Sorter_ST_id = new clsSorter($this->ComponentName, "Sorter_ST_id", $FileName, $this);
+        $this->Sorter_SB_id = new clsSorter($this->ComponentName, "Sorter_SB_id", $FileName, $this);
+        $this->Sorter_VAR_id = new clsSorter($this->ComponentName, "Sorter_VAR_id", $FileName, $this);
+        $this->Sorter_SB_VALUE = new clsSorter($this->ComponentName, "Sorter_SB_VALUE", $FileName, $this);
+        $this->Navigator = new clsNavigator($this->ComponentName, "Navigator", $FileName, 10, tpCentered, $this);
+        $this->Navigator->PageSizes = array("1", "5", "10", "25", "50");
+    }
+//End Class_Initialize Event
+
+//Initialize Method @189-90E704C5
+    function Initialize()
+    {
+        if(!$this->Visible) return;
+
+        $this->DataSource->PageSize = & $this->PageSize;
+        $this->DataSource->AbsolutePage = & $this->PageNumber;
+        $this->DataSource->SetOrder($this->SorterName, $this->SorterDirection);
+    }
+//End Initialize Method
+
+//Show Method @189-7771DEB4
+    function Show()
+    {
+        global $Tpl;
+        global $CCSLocales;
+        if(!$this->Visible) return;
+
+        $this->RowNumber = 0;
+
+        $this->DataSource->Parameters["urlST_id"] = CCGetFromGet("ST_id", NULL);
+        $this->DataSource->Parameters["urlSB_id"] = CCGetFromGet("SB_id", NULL);
+
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeSelect", $this);
+
+
+        $this->DataSource->Prepare();
+        $this->DataSource->Open();
+        $this->HasRecord = $this->DataSource->has_next_record();
+        $this->IsEmpty = ! $this->HasRecord;
+        $this->Attributes->Show();
+
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeShow", $this);
+        if(!$this->Visible) return;
+
+        $GridBlock = "Grid " . $this->ComponentName;
+        $ParentPath = $Tpl->block_path;
+        $Tpl->block_path = $ParentPath . "/" . $GridBlock;
+
+
+        if (!$this->IsEmpty) {
+            $this->ControlsVisible["SBV_id"] = $this->SBV_id->Visible;
+            $this->ControlsVisible["ST_id"] = $this->ST_id->Visible;
+            $this->ControlsVisible["SB_id"] = $this->SB_id->Visible;
+            $this->ControlsVisible["VAR_id"] = $this->VAR_id->Visible;
+            $this->ControlsVisible["SB_VALUE"] = $this->SB_VALUE->Visible;
+            while ($this->ForceIteration || (($this->RowNumber < $this->PageSize) &&  ($this->HasRecord = $this->DataSource->has_next_record()))) {
+                $this->RowNumber++;
+                if ($this->HasRecord) {
+                    $this->DataSource->next_record();
+                    $this->DataSource->SetValues();
+                }
+                $Tpl->block_path = $ParentPath . "/" . $GridBlock . "/Row";
+                $this->SBV_id->SetValue($this->DataSource->SBV_id->GetValue());
+                $this->SBV_id->Parameters = CCGetQueryString("QueryString", array("ccsForm"));
+                $this->SBV_id->Parameters = CCAddParam($this->SBV_id->Parameters, "SBV_id", $this->DataSource->f("SBV_id"));
+                $this->ST_id->SetValue($this->DataSource->ST_id->GetValue());
+                $this->SB_id->SetValue($this->DataSource->SB_id->GetValue());
+                $this->VAR_id->SetValue($this->DataSource->VAR_id->GetValue());
+                $this->SB_VALUE->SetValue($this->DataSource->SB_VALUE->GetValue());
+                $this->Attributes->SetValue("rowNumber", $this->RowNumber);
+                $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeShowRow", $this);
+                $this->Attributes->Show();
+                $this->SBV_id->Show();
+                $this->ST_id->Show();
+                $this->SB_id->Show();
+                $this->VAR_id->Show();
+                $this->SB_VALUE->Show();
+                $Tpl->block_path = $ParentPath . "/" . $GridBlock;
+                $Tpl->parse("Row", true);
+            }
+        }
+        else { // Show NoRecords block if no records are found
+            $this->Attributes->Show();
+            $Tpl->parse("NoRecords", false);
+        }
+
+        $errors = $this->GetErrors();
+        if(strlen($errors))
+        {
+            $Tpl->replaceblock("", $errors);
+            $Tpl->block_path = $ParentPath;
+            return;
+        }
+        $this->Navigator->PageNumber = $this->DataSource->AbsolutePage;
+        $this->Navigator->PageSize = $this->PageSize;
+        if ($this->DataSource->RecordsCount == "CCS not counted")
+            $this->Navigator->TotalPages = $this->DataSource->AbsolutePage + ($this->DataSource->next_record() ? 1 : 0);
+        else
+            $this->Navigator->TotalPages = $this->DataSource->PageCount();
+        if ($this->Navigator->TotalPages <= 1) {
+            $this->Navigator->Visible = false;
+        }
+        $this->SB_VARIABLES_Insert->Show();
+        $this->Sorter_SBV_id->Show();
+        $this->Sorter_ST_id->Show();
+        $this->Sorter_SB_id->Show();
+        $this->Sorter_VAR_id->Show();
+        $this->Sorter_SB_VALUE->Show();
+        $this->Navigator->Show();
+        $Tpl->parse();
+        $Tpl->block_path = $ParentPath;
+        $this->DataSource->close();
+    }
+//End Show Method
+
+//GetErrors Method @189-99072C9F
+    function GetErrors()
+    {
+        $errors = "";
+        $errors = ComposeStrings($errors, $this->SBV_id->Errors->ToString());
+        $errors = ComposeStrings($errors, $this->ST_id->Errors->ToString());
+        $errors = ComposeStrings($errors, $this->SB_id->Errors->ToString());
+        $errors = ComposeStrings($errors, $this->VAR_id->Errors->ToString());
+        $errors = ComposeStrings($errors, $this->SB_VALUE->Errors->ToString());
+        $errors = ComposeStrings($errors, $this->Errors->ToString());
+        $errors = ComposeStrings($errors, $this->DataSource->Errors->ToString());
+        return $errors;
+    }
+//End GetErrors Method
+
+} //End SB_VARIABLES Class @189-FCB6E20C
+
+class clsSB_VARIABLESDataSource extends clsDBcandat {  //SB_VARIABLESDataSource Class @189-78A0ADAB
+
+//DataSource Variables @189-CC296D34
+    public $Parent = "";
+    public $CCSEvents = "";
+    public $CCSEventResult;
+    public $ErrorBlock;
+    public $CmdExecution;
+
+    public $CountSQL;
+    public $wp;
+
+
+    // Datasource fields
+    public $SBV_id;
+    public $ST_id;
+    public $SB_id;
+    public $VAR_id;
+    public $SB_VALUE;
+//End DataSource Variables
+
+//DataSourceClass_Initialize Event @189-973D3A4C
+    function clsSB_VARIABLESDataSource(& $Parent)
+    {
+        $this->Parent = & $Parent;
+        $this->ErrorBlock = "Grid SB_VARIABLES";
+        $this->Initialize();
+        $this->SBV_id = new clsField("SBV_id", ccsInteger, "");
+        
+        $this->ST_id = new clsField("ST_id", ccsInteger, "");
+        
+        $this->SB_id = new clsField("SB_id", ccsInteger, "");
+        
+        $this->VAR_id = new clsField("VAR_id", ccsInteger, "");
+        
+        $this->SB_VALUE = new clsField("SB_VALUE", ccsText, "");
+        
+
+    }
+//End DataSourceClass_Initialize Event
+
+//SetOrder Method @189-A081CDFB
+    function SetOrder($SorterName, $SorterDirection)
+    {
+        $this->Order = "";
+        $this->Order = CCGetOrder($this->Order, $SorterName, $SorterDirection, 
+            array("Sorter_SBV_id" => array("SBV_id", ""), 
+            "Sorter_ST_id" => array("ST_id", ""), 
+            "Sorter_SB_id" => array("SB_id", ""), 
+            "Sorter_VAR_id" => array("VAR_id", ""), 
+            "Sorter_SB_VALUE" => array("SB_VALUE", "")));
+    }
+//End SetOrder Method
+
+//Prepare Method @189-B4B324B2
+    function Prepare()
+    {
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->wp = new clsSQLParameters($this->ErrorBlock);
+        $this->wp->AddParameter("1", "urlST_id", ccsInteger, "", "", $this->Parameters["urlST_id"], -999, false);
+        $this->wp->AddParameter("2", "urlSB_id", ccsInteger, "", "", $this->Parameters["urlSB_id"], -999, false);
+        $this->wp->Criterion[1] = $this->wp->Operation(opEqual, "SUBJECTS.ST_id", $this->wp->GetDBValue("1"), $this->ToSQL($this->wp->GetDBValue("1"), ccsInteger),false);
+        $this->wp->Criterion[2] = $this->wp->Operation(opEqual, "SB_VARIABLES.SB_id", $this->wp->GetDBValue("2"), $this->ToSQL($this->wp->GetDBValue("2"), ccsInteger),false);
+        $this->Where = $this->wp->opAND(
+             false, 
+             $this->wp->Criterion[1], 
+             $this->wp->Criterion[2]);
+    }
+//End Prepare Method
+
+//Open Method @189-39449EAC
+    function Open()
+    {
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeBuildSelect", $this->Parent);
+        $this->CountSQL = "SELECT COUNT(*)\n\n" .
+        "FROM ((SUBJECTS INNER JOIN SB_VARIABLES ON\n\n" .
+        "SB_VARIABLES.SB_id = SUBJECTS.SB_id AND SUBJECTS.ST_id = SB_VARIABLES.ST_id) INNER JOIN STUDIES ON\n\n" .
+        "SUBJECTS.ST_id = STUDIES.ST_id) INNER JOIN ADMIN_VAR_NMS ON\n\n" .
+        "SB_VARIABLES.VAR_id = ADMIN_VAR_NMS.VAR_id";
+        $this->SQL = "SELECT ADMIN_VAR_NMS.VAR_id AS ADMIN_VAR_NMS_VAR_id, VR_NME, SBV_id, SB_VARIABLES.ST_id AS SB_VARIABLES_ST_id, SB_VARIABLES.SB_id AS SB_VARIABLES_SB_id,\n\n" .
+        "SB_VALUE, SB_VARIABLES.VAR_id AS SB_VARIABLES_VAR_id, SUBJECTS.SB_id AS SUBJECTS_SB_id, SUBJECTS.ST_id AS SUBJECTS_ST_id,\n\n" .
+        "SB_CODE, SB_short_desc, SB_long_desc, STUDIES.ST_id AS STUDIES_ST_id, long_desc, short_desc \n\n" .
+        "FROM ((SUBJECTS INNER JOIN SB_VARIABLES ON\n\n" .
+        "SB_VARIABLES.SB_id = SUBJECTS.SB_id AND SUBJECTS.ST_id = SB_VARIABLES.ST_id) INNER JOIN STUDIES ON\n\n" .
+        "SUBJECTS.ST_id = STUDIES.ST_id) INNER JOIN ADMIN_VAR_NMS ON\n\n" .
+        "SB_VARIABLES.VAR_id = ADMIN_VAR_NMS.VAR_id {SQL_Where} {SQL_OrderBy}";
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeExecuteSelect", $this->Parent);
+        if ($this->CountSQL) 
+            $this->RecordsCount = CCGetDBValue(CCBuildSQL($this->CountSQL, $this->Where, ""), $this);
+        else
+            $this->RecordsCount = "CCS not counted";
+        $this->query($this->OptimizeSQL(CCBuildSQL($this->SQL, $this->Where, $this->Order)));
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterExecuteSelect", $this->Parent);
+    }
+//End Open Method
+
+//SetValues Method @189-B3D8E1D4
+    function SetValues()
+    {
+        $this->SBV_id->SetDBValue(trim($this->f("SBV_id")));
+        $this->ST_id->SetDBValue(trim($this->f("SB_VARIABLES_ST_id")));
+        $this->SB_id->SetDBValue(trim($this->f("SB_VARIABLES_SB_id")));
+        $this->VAR_id->SetDBValue(trim($this->f("VAR_id")));
+        $this->SB_VALUE->SetDBValue($this->f("SB_VALUE"));
+    }
+//End SetValues Method
+
+} //End SB_VARIABLESDataSource Class @189-FCB6E20C
+
+class clsRecordSB_VARIABLES1 { //SB_VARIABLES1 Class @208-0B057D12
+
+//Variables @208-9E315808
+
+    // Public variables
+    public $ComponentType = "Record";
+    public $ComponentName;
+    public $Parent;
+    public $HTMLFormAction;
+    public $PressedButton;
+    public $Errors;
+    public $ErrorBlock;
+    public $FormSubmitted;
+    public $FormEnctype;
+    public $Visible;
+    public $IsEmpty;
+
+    public $CCSEvents = "";
+    public $CCSEventResult;
+
+    public $RelativePath = "";
+
+    public $InsertAllowed = false;
+    public $UpdateAllowed = false;
+    public $DeleteAllowed = false;
+    public $ReadAllowed   = false;
+    public $EditMode      = false;
+    public $ds;
+    public $DataSource;
+    public $ValidatingControls;
+    public $Controls;
+    public $Attributes;
+
+    // Class variables
+//End Variables
+
+//Class_Initialize Event @208-2A4E3F2B
+    function clsRecordSB_VARIABLES1($RelativePath, & $Parent)
+    {
+
+        global $FileName;
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->Visible = true;
+        $this->Parent = & $Parent;
+        $this->RelativePath = $RelativePath;
+        $this->Errors = new clsErrors();
+        $this->ErrorBlock = "Record SB_VARIABLES1/Error";
+        $this->DataSource = new clsSB_VARIABLES1DataSource($this);
+        $this->ds = & $this->DataSource;
+        $this->InsertAllowed = true;
+        $this->UpdateAllowed = true;
+        $this->DeleteAllowed = true;
+        $this->ReadAllowed = true;
+        if($this->Visible)
+        {
+            $this->ComponentName = "SB_VARIABLES1";
+            $this->Attributes = new clsAttributes($this->ComponentName . ":");
+            $CCSForm = explode(":", CCGetFromGet("ccsForm", ""), 2);
+            if(sizeof($CCSForm) == 1)
+                $CCSForm[1] = "";
+            list($FormName, $FormMethod) = $CCSForm;
+            $this->EditMode = ($FormMethod == "Edit");
+            $this->FormEnctype = "application/x-www-form-urlencoded";
+            $this->FormSubmitted = ($FormName == $this->ComponentName);
+            $Method = $this->FormSubmitted ? ccsPost : ccsGet;
+            $this->Button_Insert = new clsButton("Button_Insert", $Method, $this);
+            $this->Button_Update = new clsButton("Button_Update", $Method, $this);
+            $this->Button_Delete = new clsButton("Button_Delete", $Method, $this);
+            $this->Button_Cancel = new clsButton("Button_Cancel", $Method, $this);
+            $this->ST_id = new clsControl(ccsTextBox, "ST_id", "ST Id", ccsInteger, "", CCGetRequestParam("ST_id", $Method, NULL), $this);
+            $this->ST_id->Required = true;
+            $this->SB_id = new clsControl(ccsTextBox, "SB_id", "SB Id", ccsInteger, "", CCGetRequestParam("SB_id", $Method, NULL), $this);
+            $this->SB_VALUE = new clsControl(ccsTextBox, "SB_VALUE", "SB VALUE", ccsText, "", CCGetRequestParam("SB_VALUE", $Method, NULL), $this);
+            $this->vars = new clsControl(ccsListBox, "vars", "vars", ccsText, "", CCGetRequestParam("vars", $Method, NULL), $this);
+            $this->vars->DSType = dsTable;
+            $this->vars->DataSource = new clsDBcandat();
+            $this->vars->ds = & $this->vars->DataSource;
+            $this->vars->DataSource->SQL = "SELECT * \n" .
+"FROM ADMIN_VAR_NMS {SQL_Where} {SQL_OrderBy}";
+            list($this->vars->BoundColumn, $this->vars->TextColumn, $this->vars->DBFormat) = array("VAR_id", "VR_NME", "");
+            $this->vars->Required = true;
+        }
+    }
+//End Class_Initialize Event
+
+//Initialize Method @208-5FD40A70
+    function Initialize()
+    {
+
+        if(!$this->Visible)
+            return;
+
+        $this->DataSource->Parameters["urlSBV_id"] = CCGetFromGet("SBV_id", NULL);
+    }
+//End Initialize Method
+
+//Validate Method @208-22B24F71
+    function Validate()
+    {
+        global $CCSLocales;
+        $Validation = true;
+        $Where = "";
+        $Validation = ($this->ST_id->Validate() && $Validation);
+        $Validation = ($this->SB_id->Validate() && $Validation);
+        $Validation = ($this->SB_VALUE->Validate() && $Validation);
+        $Validation = ($this->vars->Validate() && $Validation);
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "OnValidate", $this);
+        $Validation =  $Validation && ($this->ST_id->Errors->Count() == 0);
+        $Validation =  $Validation && ($this->SB_id->Errors->Count() == 0);
+        $Validation =  $Validation && ($this->SB_VALUE->Errors->Count() == 0);
+        $Validation =  $Validation && ($this->vars->Errors->Count() == 0);
+        return (($this->Errors->Count() == 0) && $Validation);
+    }
+//End Validate Method
+
+//CheckErrors Method @208-EA7AE258
+    function CheckErrors()
+    {
+        $errors = false;
+        $errors = ($errors || $this->ST_id->Errors->Count());
+        $errors = ($errors || $this->SB_id->Errors->Count());
+        $errors = ($errors || $this->SB_VALUE->Errors->Count());
+        $errors = ($errors || $this->vars->Errors->Count());
+        $errors = ($errors || $this->Errors->Count());
+        $errors = ($errors || $this->DataSource->Errors->Count());
+        return $errors;
+    }
+//End CheckErrors Method
+
+//MasterDetail @208-ED598703
+function SetPrimaryKeys($keyArray)
+{
+    $this->PrimaryKeys = $keyArray;
+}
+function GetPrimaryKeys()
+{
+    return $this->PrimaryKeys;
+}
+function GetPrimaryKey($keyName)
+{
+    return $this->PrimaryKeys[$keyName];
+}
+//End MasterDetail
+
+//Operation Method @208-1483EAC3
+    function Operation()
+    {
+        if(!$this->Visible)
+            return;
+
+        global $Redirect;
+        global $FileName;
+
+        $this->DataSource->Prepare();
+        if(!$this->FormSubmitted) {
+            $this->EditMode = $this->DataSource->AllParametersSet;
+            return;
+        }
+
+        if($this->FormSubmitted) {
+            $this->PressedButton = $this->EditMode ? "Button_Update" : "Button_Insert";
+            if($this->Button_Insert->Pressed) {
+                $this->PressedButton = "Button_Insert";
+            } else if($this->Button_Update->Pressed) {
+                $this->PressedButton = "Button_Update";
+            } else if($this->Button_Delete->Pressed) {
+                $this->PressedButton = "Button_Delete";
+            } else if($this->Button_Cancel->Pressed) {
+                $this->PressedButton = "Button_Cancel";
+            }
+        }
+        $Redirect = $FileName . "?" . CCGetQueryString("QueryString", array("ccsForm", "SBV_id"));
+        if($this->PressedButton == "Button_Delete") {
+            if(!CCGetEvent($this->Button_Delete->CCSEvents, "OnClick", $this->Button_Delete) || !$this->DeleteRow()) {
+                $Redirect = "";
+            }
+        } else if($this->PressedButton == "Button_Cancel") {
+            if(!CCGetEvent($this->Button_Cancel->CCSEvents, "OnClick", $this->Button_Cancel)) {
+                $Redirect = "";
+            }
+        } else if($this->Validate()) {
+            if($this->PressedButton == "Button_Insert") {
+                if(!CCGetEvent($this->Button_Insert->CCSEvents, "OnClick", $this->Button_Insert) || !$this->InsertRow()) {
+                    $Redirect = "";
+                }
+            } else if($this->PressedButton == "Button_Update") {
+                if(!CCGetEvent($this->Button_Update->CCSEvents, "OnClick", $this->Button_Update) || !$this->UpdateRow()) {
+                    $Redirect = "";
+                }
+            }
+        } else {
+            $Redirect = "";
+        }
+        if ($Redirect)
+            $this->DataSource->close();
+    }
+//End Operation Method
+
+//InsertRow Method @208-6A7B3657
+    function InsertRow()
+    {
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeInsert", $this);
+        if(!$this->InsertAllowed) return false;
+        $this->DataSource->ST_id->SetValue($this->ST_id->GetValue(true));
+        $this->DataSource->SB_id->SetValue($this->SB_id->GetValue(true));
+        $this->DataSource->SB_VALUE->SetValue($this->SB_VALUE->GetValue(true));
+        $this->DataSource->vars->SetValue($this->vars->GetValue(true));
+        $this->DataSource->Insert();
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterInsert", $this);
+        return (!$this->CheckErrors());
+    }
+//End InsertRow Method
+
+//UpdateRow Method @208-8E6F204E
+    function UpdateRow()
+    {
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeUpdate", $this);
+        if(!$this->UpdateAllowed) return false;
+        $this->DataSource->ST_id->SetValue($this->ST_id->GetValue(true));
+        $this->DataSource->SB_id->SetValue($this->SB_id->GetValue(true));
+        $this->DataSource->SB_VALUE->SetValue($this->SB_VALUE->GetValue(true));
+        $this->DataSource->vars->SetValue($this->vars->GetValue(true));
+        $this->DataSource->Update();
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterUpdate", $this);
+        return (!$this->CheckErrors());
+    }
+//End UpdateRow Method
+
+//DeleteRow Method @208-299D98C3
+    function DeleteRow()
+    {
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeDelete", $this);
+        if(!$this->DeleteAllowed) return false;
+        $this->DataSource->Delete();
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterDelete", $this);
+        return (!$this->CheckErrors());
+    }
+//End DeleteRow Method
+
+//Show Method @208-9A99C00C
+    function Show()
+    {
+        global $CCSUseAmp;
+        global $Tpl;
+        global $FileName;
+        global $CCSLocales;
+        $Error = "";
+
+        if(!$this->Visible)
+            return;
+
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeSelect", $this);
+
+        $this->vars->Prepare();
+
+        $RecordBlock = "Record " . $this->ComponentName;
+        $ParentPath = $Tpl->block_path;
+        $Tpl->block_path = $ParentPath . "/" . $RecordBlock;
+        $this->EditMode = $this->EditMode && $this->ReadAllowed;
+        if($this->EditMode) {
+            if($this->DataSource->Errors->Count()){
+                $this->Errors->AddErrors($this->DataSource->Errors);
+                $this->DataSource->Errors->clear();
+            }
+            $this->DataSource->Open();
+            if($this->DataSource->Errors->Count() == 0 && $this->DataSource->next_record()) {
+                $this->DataSource->SetValues();
+                if(!$this->FormSubmitted){
+                    $this->ST_id->SetValue($this->DataSource->ST_id->GetValue());
+                    $this->SB_id->SetValue($this->DataSource->SB_id->GetValue());
+                    $this->SB_VALUE->SetValue($this->DataSource->SB_VALUE->GetValue());
+                    $this->vars->SetValue($this->DataSource->vars->GetValue());
+                }
+            } else {
+                $this->EditMode = false;
+            }
+        }
+
+        if($this->FormSubmitted || $this->CheckErrors()) {
+            $Error = "";
+            $Error = ComposeStrings($Error, $this->ST_id->Errors->ToString());
+            $Error = ComposeStrings($Error, $this->SB_id->Errors->ToString());
+            $Error = ComposeStrings($Error, $this->SB_VALUE->Errors->ToString());
+            $Error = ComposeStrings($Error, $this->vars->Errors->ToString());
+            $Error = ComposeStrings($Error, $this->Errors->ToString());
+            $Error = ComposeStrings($Error, $this->DataSource->Errors->ToString());
+            $Tpl->SetVar("Error", $Error);
+            $Tpl->Parse("Error", false);
+        }
+        $CCSForm = $this->EditMode ? $this->ComponentName . ":" . "Edit" : $this->ComponentName;
+        $this->HTMLFormAction = $FileName . "?" . CCAddParam(CCGetQueryString("QueryString", ""), "ccsForm", $CCSForm);
+        $Tpl->SetVar("Action", !$CCSUseAmp ? $this->HTMLFormAction : str_replace("&", "&amp;", $this->HTMLFormAction));
+        $Tpl->SetVar("HTMLFormName", $this->ComponentName);
+        $Tpl->SetVar("HTMLFormEnctype", $this->FormEnctype);
+        $this->Button_Insert->Visible = !$this->EditMode && $this->InsertAllowed;
+        $this->Button_Update->Visible = $this->EditMode && $this->UpdateAllowed;
+        $this->Button_Delete->Visible = $this->EditMode && $this->DeleteAllowed;
+
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeShow", $this);
+        $this->Attributes->Show();
+        if(!$this->Visible) {
+            $Tpl->block_path = $ParentPath;
+            return;
+        }
+
+        $this->Button_Insert->Show();
+        $this->Button_Update->Show();
+        $this->Button_Delete->Show();
+        $this->Button_Cancel->Show();
+        $this->ST_id->Show();
+        $this->SB_id->Show();
+        $this->SB_VALUE->Show();
+        $this->vars->Show();
+        $Tpl->parse();
+        $Tpl->block_path = $ParentPath;
+        $this->DataSource->close();
+    }
+//End Show Method
+
+} //End SB_VARIABLES1 Class @208-FCB6E20C
+
+class clsSB_VARIABLES1DataSource extends clsDBcandat {  //SB_VARIABLES1DataSource Class @208-DD9C3560
+
+//DataSource Variables @208-71EFB9EC
+    public $Parent = "";
+    public $CCSEvents = "";
+    public $CCSEventResult;
+    public $ErrorBlock;
+    public $CmdExecution;
+
+    public $InsertParameters;
+    public $UpdateParameters;
+    public $DeleteParameters;
+    public $wp;
+    public $AllParametersSet;
+
+    public $InsertFields = array();
+    public $UpdateFields = array();
+
+    // Datasource fields
+    public $ST_id;
+    public $SB_id;
+    public $SB_VALUE;
+    public $vars;
+//End DataSource Variables
+
+//DataSourceClass_Initialize Event @208-3101D679
+    function clsSB_VARIABLES1DataSource(& $Parent)
+    {
+        $this->Parent = & $Parent;
+        $this->ErrorBlock = "Record SB_VARIABLES1/Error";
+        $this->Initialize();
+        $this->ST_id = new clsField("ST_id", ccsInteger, "");
+        
+        $this->SB_id = new clsField("SB_id", ccsInteger, "");
+        
+        $this->SB_VALUE = new clsField("SB_VALUE", ccsText, "");
+        
+        $this->vars = new clsField("vars", ccsText, "");
+        
+
+        $this->InsertFields["ST_id"] = array("Name" => "ST_id", "Value" => "", "DataType" => ccsInteger, "OmitIfEmpty" => 1);
+        $this->InsertFields["SB_id"] = array("Name" => "SB_id", "Value" => "", "DataType" => ccsInteger, "OmitIfEmpty" => 1);
+        $this->InsertFields["SB_VALUE"] = array("Name" => "SB_VALUE", "Value" => "", "DataType" => ccsText, "OmitIfEmpty" => 1);
+        $this->InsertFields["VAR_id"] = array("Name" => "VAR_id", "Value" => "", "DataType" => ccsText, "OmitIfEmpty" => 1);
+        $this->UpdateFields["ST_id"] = array("Name" => "ST_id", "Value" => "", "DataType" => ccsInteger, "OmitIfEmpty" => 1);
+        $this->UpdateFields["SB_id"] = array("Name" => "SB_id", "Value" => "", "DataType" => ccsInteger, "OmitIfEmpty" => 1);
+        $this->UpdateFields["SB_VALUE"] = array("Name" => "SB_VALUE", "Value" => "", "DataType" => ccsText, "OmitIfEmpty" => 1);
+        $this->UpdateFields["VAR_id"] = array("Name" => "VAR_id", "Value" => "", "DataType" => ccsText, "OmitIfEmpty" => 1);
+    }
+//End DataSourceClass_Initialize Event
+
+//Prepare Method @208-44443BDA
+    function Prepare()
+    {
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->wp = new clsSQLParameters($this->ErrorBlock);
+        $this->wp->AddParameter("1", "urlSBV_id", ccsInteger, "", "", $this->Parameters["urlSBV_id"], "", false);
+        $this->AllParametersSet = $this->wp->AllParamsSet();
+        $this->wp->Criterion[1] = $this->wp->Operation(opEqual, "SBV_id", $this->wp->GetDBValue("1"), $this->ToSQL($this->wp->GetDBValue("1"), ccsInteger),false);
+        $this->Where = 
+             $this->wp->Criterion[1];
+    }
+//End Prepare Method
+
+//Open Method @208-AEF751D0
+    function Open()
+    {
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeBuildSelect", $this->Parent);
+        $this->SQL = "SELECT * \n\n" .
+        "FROM SB_VARIABLES {SQL_Where} {SQL_OrderBy}";
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeExecuteSelect", $this->Parent);
+        $this->PageSize = 1;
+        $this->query($this->OptimizeSQL(CCBuildSQL($this->SQL, $this->Where, $this->Order)));
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterExecuteSelect", $this->Parent);
+    }
+//End Open Method
+
+//SetValues Method @208-234214CC
+    function SetValues()
+    {
+        $this->ST_id->SetDBValue(trim($this->f("ST_id")));
+        $this->SB_id->SetDBValue(trim($this->f("SB_id")));
+        $this->SB_VALUE->SetDBValue($this->f("SB_VALUE"));
+        $this->vars->SetDBValue($this->f("VAR_id"));
+    }
+//End SetValues Method
+
+//Insert Method @208-A745E477
+    function Insert()
+    {
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->CmdExecution = true;
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeBuildInsert", $this->Parent);
+        $this->InsertFields["ST_id"]["Value"] = $this->ST_id->GetDBValue(true);
+        $this->InsertFields["SB_id"]["Value"] = $this->SB_id->GetDBValue(true);
+        $this->InsertFields["SB_VALUE"]["Value"] = $this->SB_VALUE->GetDBValue(true);
+        $this->InsertFields["VAR_id"]["Value"] = $this->vars->GetDBValue(true);
+        $this->SQL = CCBuildInsert("SB_VARIABLES", $this->InsertFields, $this);
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeExecuteInsert", $this->Parent);
+        if($this->Errors->Count() == 0 && $this->CmdExecution) {
+            $this->query($this->SQL);
+            $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterExecuteInsert", $this->Parent);
+        }
+    }
+//End Insert Method
+
+//Update Method @208-059C1215
+    function Update()
+    {
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->CmdExecution = true;
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeBuildUpdate", $this->Parent);
+        $this->UpdateFields["ST_id"]["Value"] = $this->ST_id->GetDBValue(true);
+        $this->UpdateFields["SB_id"]["Value"] = $this->SB_id->GetDBValue(true);
+        $this->UpdateFields["SB_VALUE"]["Value"] = $this->SB_VALUE->GetDBValue(true);
+        $this->UpdateFields["VAR_id"]["Value"] = $this->vars->GetDBValue(true);
+        $this->SQL = CCBuildUpdate("SB_VARIABLES", $this->UpdateFields, $this);
+        $this->SQL .= strlen($this->Where) ? " WHERE " . $this->Where : $this->Where;
+        if (!strlen($this->Where) && $this->Errors->Count() == 0) 
+            $this->Errors->addError($CCSLocales->GetText("CCS_CustomOperationError_MissingParameters"));
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeExecuteUpdate", $this->Parent);
+        if($this->Errors->Count() == 0 && $this->CmdExecution) {
+            $this->query($this->SQL);
+            $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterExecuteUpdate", $this->Parent);
+        }
+    }
+//End Update Method
+
+//Delete Method @208-632E38BE
+    function Delete()
+    {
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->CmdExecution = true;
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeBuildDelete", $this->Parent);
+        $this->SQL = "DELETE FROM SB_VARIABLES";
+        $this->SQL = CCBuildSQL($this->SQL, $this->Where, "");
+        if (!strlen($this->Where) && $this->Errors->Count() == 0) 
+            $this->Errors->addError($CCSLocales->GetText("CCS_CustomOperationError_MissingParameters"));
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeExecuteDelete", $this->Parent);
+        if($this->Errors->Count() == 0 && $this->CmdExecution) {
+            $this->query($this->SQL);
+            $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterExecuteDelete", $this->Parent);
+        }
+    }
+//End Delete Method
+
+} //End SB_VARIABLES1DataSource Class @208-FCB6E20C
+
+class clsEditableGridSB_VARIABLES2 { //SB_VARIABLES2 Class @255-810183E7
+
+//Variables @255-D58474A1
+
+    // Public variables
+    public $ComponentType = "EditableGrid";
+    public $ComponentName;
+    public $HTMLFormAction;
+    public $PressedButton;
+    public $Errors;
+    public $ErrorBlock;
+    public $FormSubmitted;
+    public $FormParameters;
+    public $FormState;
+    public $FormEnctype;
+    public $CachedColumns;
+    public $TotalRows;
+    public $UpdatedRows;
+    public $EmptyRows;
+    public $Visible;
+    public $RowsErrors;
+    public $ds;
+    public $DataSource;
+    public $PageSize;
+    public $IsEmpty;
+    public $SorterName = "";
+    public $SorterDirection = "";
+    public $PageNumber;
+    public $ControlsVisible = array();
+
+    public $CCSEvents = "";
+    public $CCSEventResult;
+
+    public $RelativePath = "";
+
+    public $InsertAllowed = false;
+    public $UpdateAllowed = false;
+    public $DeleteAllowed = false;
+    public $ReadAllowed   = false;
+    public $EditMode;
+    public $ValidatingControls;
+    public $Controls;
+    public $ControlsErrors;
+    public $RowNumber;
+    public $Attributes;
+    public $PrimaryKeys;
+
+    // Class variables
+    public $Sorter_SBV_id;
+    public $Sorter_ST_id;
+    public $Sorter_SB_id;
+    public $Sorter_VAR_id;
+    public $Sorter_SB_VALUE;
+//End Variables
+
+//Class_Initialize Event @255-76FC712A
+    function clsEditableGridSB_VARIABLES2($RelativePath, & $Parent)
+    {
+
+        global $FileName;
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->Visible = true;
+        $this->Parent = & $Parent;
+        $this->RelativePath = $RelativePath;
+        $this->Errors = new clsErrors();
+        $this->ErrorBlock = "EditableGrid SB_VARIABLES2/Error";
+        $this->ControlsErrors = array();
+        $this->ComponentName = "SB_VARIABLES2";
+        $this->Attributes = new clsAttributes($this->ComponentName . ":");
+        $this->CachedColumns["SBV_id"][0] = "SBV_id";
+        $this->CachedColumns["ST_id"][0] = "ST_id";
+        $this->CachedColumns["SB_id"][0] = "SB_id";
+        $this->DataSource = new clsSB_VARIABLES2DataSource($this);
+        $this->ds = & $this->DataSource;
+        $this->PageSize = CCGetParam($this->ComponentName . "PageSize", "");
+        if(!is_numeric($this->PageSize) || !strlen($this->PageSize))
+            $this->PageSize = 100;
+        else
+            $this->PageSize = intval($this->PageSize);
+        if ($this->PageSize > 100)
+            $this->PageSize = 100;
+        if($this->PageSize == 0)
+            $this->Errors->addError("<p>Form: EditableGrid " . $this->ComponentName . "<br>Error: (CCS06) Invalid page size.</p>");
+        $this->PageNumber = intval(CCGetParam($this->ComponentName . "Page", 1));
+        if ($this->PageNumber <= 0) $this->PageNumber = 1;
+
+        $this->EmptyRows = 5;
+        $this->InsertAllowed = true;
+        $this->UpdateAllowed = true;
+        $this->DeleteAllowed = true;
+        $this->ReadAllowed = true;
+        if(!$this->Visible) return;
+
+        $CCSForm = CCGetFromGet("ccsForm", "");
+        $this->FormEnctype = "application/x-www-form-urlencoded";
+        $this->FormSubmitted = ($CCSForm == $this->ComponentName);
+        if($this->FormSubmitted) {
+            $this->FormState = CCGetFromPost("FormState", "");
+            $this->SetFormState($this->FormState);
+        } else {
+            $this->FormState = "";
+        }
+        $Method = $this->FormSubmitted ? ccsPost : ccsGet;
+
+        $this->SorterName = CCGetParam("SB_VARIABLES2Order", "");
+        $this->SorterDirection = CCGetParam("SB_VARIABLES2Dir", "");
+
+        $this->SB_VARIABLES2_TotalRecords = new clsControl(ccsLabel, "SB_VARIABLES2_TotalRecords", "SB_VARIABLES2_TotalRecords", ccsText, "", NULL, $this);
+        $this->Sorter_SBV_id = new clsSorter($this->ComponentName, "Sorter_SBV_id", $FileName, $this);
+        $this->Sorter_ST_id = new clsSorter($this->ComponentName, "Sorter_ST_id", $FileName, $this);
+        $this->Sorter_SB_id = new clsSorter($this->ComponentName, "Sorter_SB_id", $FileName, $this);
+        $this->Sorter_VAR_id = new clsSorter($this->ComponentName, "Sorter_VAR_id", $FileName, $this);
+        $this->Sorter_SB_VALUE = new clsSorter($this->ComponentName, "Sorter_SB_VALUE", $FileName, $this);
+        $this->SBV_id = new clsControl(ccsLabel, "SBV_id", "SBV Id", ccsInteger, "", NULL, $this);
+        $this->ST_id = new clsControl(ccsTextBox, "ST_id", "ST Id", ccsInteger, "", NULL, $this);
+        $this->SB_id = new clsControl(ccsTextBox, "SB_id", "SB Id", ccsInteger, "", NULL, $this);
+        $this->SB_VALUE = new clsControl(ccsTextBox, "SB_VALUE", "SB VALUE", ccsText, "", NULL, $this);
+        $this->CheckBox_Delete_Panel = new clsPanel("CheckBox_Delete_Panel", $this);
+        $this->CheckBox_Delete = new clsControl(ccsCheckBox, "CheckBox_Delete", "CheckBox_Delete", ccsBoolean, $CCSLocales->GetFormatInfo("BooleanFormat"), NULL, $this);
+        $this->CheckBox_Delete->CheckedValue = true;
+        $this->CheckBox_Delete->UncheckedValue = false;
+        $this->Navigator = new clsNavigator($this->ComponentName, "Navigator", $FileName, 10, tpCentered, $this);
+        $this->Navigator->PageSizes = array("1", "5", "10", "25", "50");
+        $this->Button_Submit = new clsButton("Button_Submit", $Method, $this);
+        $this->Cancel = new clsButton("Cancel", $Method, $this);
+        $this->vars = new clsControl(ccsListBox, "vars", "vars", ccsText, "", NULL, $this);
+        $this->vars->DSType = dsTable;
+        $this->vars->DataSource = new clsDBcandat();
+        $this->vars->ds = & $this->vars->DataSource;
+        $this->vars->DataSource->SQL = "SELECT * \n" .
+"FROM ADMIN_VAR_NMS {SQL_Where} {SQL_OrderBy}";
+        list($this->vars->BoundColumn, $this->vars->TextColumn, $this->vars->DBFormat) = array("VAR_id", "VR_NME", "");
+        $this->CheckBox_Delete_Panel->AddComponent("CheckBox_Delete", $this->CheckBox_Delete);
+    }
+//End Class_Initialize Event
+
+//Initialize Method @255-6387AF3B
+    function Initialize()
+    {
+        if(!$this->Visible) return;
+
+        $this->DataSource->PageSize = & $this->PageSize;
+        $this->DataSource->AbsolutePage = & $this->PageNumber;
+        $this->DataSource->SetOrder($this->SorterName, $this->SorterDirection);
+
+        $this->DataSource->Parameters["urlSBV_id"] = CCGetFromGet("SBV_id", NULL);
+    }
+//End Initialize Method
+
+//SetPrimaryKeys Method @255-EBC3F86C
+    function SetPrimaryKeys($PrimaryKeys) {
+        $this->PrimaryKeys = $PrimaryKeys;
+        return $this->PrimaryKeys;
+    }
+//End SetPrimaryKeys Method
+
+//GetPrimaryKeys Method @255-74F9A772
+    function GetPrimaryKeys() {
+        return $this->PrimaryKeys;
+    }
+//End GetPrimaryKeys Method
+
+//GetFormParameters Method @255-53C0C707
+    function GetFormParameters()
+    {
+        for($RowNumber = 1; $RowNumber <= $this->TotalRows; $RowNumber++)
+        {
+            $this->FormParameters["ST_id"][$RowNumber] = CCGetFromPost("ST_id_" . $RowNumber, NULL);
+            $this->FormParameters["SB_id"][$RowNumber] = CCGetFromPost("SB_id_" . $RowNumber, NULL);
+            $this->FormParameters["SB_VALUE"][$RowNumber] = CCGetFromPost("SB_VALUE_" . $RowNumber, NULL);
+            $this->FormParameters["CheckBox_Delete"][$RowNumber] = CCGetFromPost("CheckBox_Delete_" . $RowNumber, NULL);
+            $this->FormParameters["vars"][$RowNumber] = CCGetFromPost("vars_" . $RowNumber, NULL);
+        }
+    }
+//End GetFormParameters Method
+
+//Validate Method @255-6FD7189C
+    function Validate()
+    {
+        $Validation = true;
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "OnValidate", $this);
+
+        for($this->RowNumber = 1; $this->RowNumber <= $this->TotalRows; $this->RowNumber++)
+        {
+            $this->DataSource->CachedColumns["SBV_id"] = $this->CachedColumns["SBV_id"][$this->RowNumber];
+            $this->DataSource->CachedColumns["ST_id"] = $this->CachedColumns["ST_id"][$this->RowNumber];
+            $this->DataSource->CachedColumns["SB_id"] = $this->CachedColumns["SB_id"][$this->RowNumber];
+            $this->DataSource->CurrentRow = $this->RowNumber;
+            $this->ST_id->SetText($this->FormParameters["ST_id"][$this->RowNumber], $this->RowNumber);
+            $this->SB_id->SetText($this->FormParameters["SB_id"][$this->RowNumber], $this->RowNumber);
+            $this->SB_VALUE->SetText($this->FormParameters["SB_VALUE"][$this->RowNumber], $this->RowNumber);
+            $this->CheckBox_Delete->SetText($this->FormParameters["CheckBox_Delete"][$this->RowNumber], $this->RowNumber);
+            $this->vars->SetText($this->FormParameters["vars"][$this->RowNumber], $this->RowNumber);
+            if ($this->UpdatedRows >= $this->RowNumber) {
+                if(!$this->CheckBox_Delete->Value)
+                    $Validation = ($this->ValidateRow() && $Validation);
+            }
+            else if($this->CheckInsert())
+            {
+                $Validation = ($this->ValidateRow() && $Validation);
+            }
+        }
+        return (($this->Errors->Count() == 0) && $Validation);
+    }
+//End Validate Method
+
+//ValidateRow Method @255-6195B769
+    function ValidateRow()
+    {
+        global $CCSLocales;
+        $this->ST_id->Validate();
+        $this->SB_id->Validate();
+        $this->SB_VALUE->Validate();
+        $this->CheckBox_Delete->Validate();
+        $this->vars->Validate();
+        $this->RowErrors = new clsErrors();
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "OnValidateRow", $this);
+        $errors = "";
+        $errors = ComposeStrings($errors, $this->ST_id->Errors->ToString());
+        $errors = ComposeStrings($errors, $this->SB_id->Errors->ToString());
+        $errors = ComposeStrings($errors, $this->SB_VALUE->Errors->ToString());
+        $errors = ComposeStrings($errors, $this->CheckBox_Delete->Errors->ToString());
+        $errors = ComposeStrings($errors, $this->vars->Errors->ToString());
+        $this->ST_id->Errors->Clear();
+        $this->SB_id->Errors->Clear();
+        $this->SB_VALUE->Errors->Clear();
+        $this->CheckBox_Delete->Errors->Clear();
+        $this->vars->Errors->Clear();
+        $errors = ComposeStrings($errors, $this->RowErrors->ToString());
+        $this->RowsErrors[$this->RowNumber] = $errors;
+        return $errors != "" ? 0 : 1;
+    }
+//End ValidateRow Method
+
+//CheckInsert Method @255-1BEE363F
+    function CheckInsert()
+    {
+        $filed = false;
+        $filed = ($filed || (is_array($this->FormParameters["ST_id"][$this->RowNumber]) && count($this->FormParameters["ST_id"][$this->RowNumber])) || strlen($this->FormParameters["ST_id"][$this->RowNumber]));
+        $filed = ($filed || (is_array($this->FormParameters["SB_id"][$this->RowNumber]) && count($this->FormParameters["SB_id"][$this->RowNumber])) || strlen($this->FormParameters["SB_id"][$this->RowNumber]));
+        $filed = ($filed || (is_array($this->FormParameters["SB_VALUE"][$this->RowNumber]) && count($this->FormParameters["SB_VALUE"][$this->RowNumber])) || strlen($this->FormParameters["SB_VALUE"][$this->RowNumber]));
+        $filed = ($filed || (is_array($this->FormParameters["vars"][$this->RowNumber]) && count($this->FormParameters["vars"][$this->RowNumber])) || strlen($this->FormParameters["vars"][$this->RowNumber]));
+        return $filed;
+    }
+//End CheckInsert Method
+
+//CheckErrors Method @255-F5A3B433
+    function CheckErrors()
+    {
+        $errors = false;
+        $errors = ($errors || $this->Errors->Count());
+        $errors = ($errors || $this->DataSource->Errors->Count());
+        return $errors;
+    }
+//End CheckErrors Method
+
+//Operation Method @255-ED34EAA0
+    function Operation()
+    {
+        if(!$this->Visible)
+            return;
+
+        global $Redirect;
+        global $FileName;
+
+        $this->DataSource->Prepare();
+        if(!$this->FormSubmitted)
+            return;
+
+        $this->GetFormParameters();
+        $this->PressedButton = "Button_Submit";
+        if($this->Button_Submit->Pressed) {
+            $this->PressedButton = "Button_Submit";
+        } else if($this->Cancel->Pressed) {
+            $this->PressedButton = "Cancel";
+        }
+
+        $Redirect = "Subjects_bak1.php" . "?" . CCGetQueryString("QueryString", array("ccsForm", "SBV_id"));
+        if($this->PressedButton == "Button_Submit") {
+            if(!CCGetEvent($this->Button_Submit->CCSEvents, "OnClick", $this->Button_Submit) || !$this->UpdateGrid()) {
+                $Redirect = "";
+            }
+        } else if($this->PressedButton == "Cancel") {
+            if(!CCGetEvent($this->Cancel->CCSEvents, "OnClick", $this->Cancel)) {
+                $Redirect = "";
+            }
+        } else {
+            $Redirect = "";
+        }
+        if ($Redirect)
+            $this->DataSource->close();
+    }
+//End Operation Method
+
+//UpdateGrid Method @255-F9885A82
+    function UpdateGrid()
+    {
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeSubmit", $this);
+        if(!$this->Validate()) return;
+        $Validation = true;
+        for($this->RowNumber = 1; $this->RowNumber <= $this->TotalRows; $this->RowNumber++)
+        {
+            $this->DataSource->CachedColumns["SBV_id"] = $this->CachedColumns["SBV_id"][$this->RowNumber];
+            $this->DataSource->CachedColumns["ST_id"] = $this->CachedColumns["ST_id"][$this->RowNumber];
+            $this->DataSource->CachedColumns["SB_id"] = $this->CachedColumns["SB_id"][$this->RowNumber];
+            $this->DataSource->CurrentRow = $this->RowNumber;
+            $this->ST_id->SetText($this->FormParameters["ST_id"][$this->RowNumber], $this->RowNumber);
+            $this->SB_id->SetText($this->FormParameters["SB_id"][$this->RowNumber], $this->RowNumber);
+            $this->SB_VALUE->SetText($this->FormParameters["SB_VALUE"][$this->RowNumber], $this->RowNumber);
+            $this->CheckBox_Delete->SetText($this->FormParameters["CheckBox_Delete"][$this->RowNumber], $this->RowNumber);
+            $this->vars->SetText($this->FormParameters["vars"][$this->RowNumber], $this->RowNumber);
+            if ($this->UpdatedRows >= $this->RowNumber) {
+                if($this->CheckBox_Delete->Value) {
+                    if($this->DeleteAllowed) { $Validation = ($this->DeleteRow() && $Validation); }
+                } else if($this->UpdateAllowed) {
+                    $Validation = ($this->UpdateRow() && $Validation);
+                }
+            }
+            else if($this->CheckInsert() && $this->InsertAllowed)
+            {
+                $Validation = ($Validation && $this->InsertRow());
+            }
+        }
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterSubmit", $this);
+        if ($this->Errors->Count() == 0 && $Validation){
+            $this->DataSource->close();
+            return true;
+        }
+        return false;
+    }
+//End UpdateGrid Method
+
+//InsertRow Method @255-43A800DA
+    function InsertRow()
+    {
+        if(!$this->InsertAllowed) return false;
+        $this->DataSource->VAR_id->SetValue($this->VAR_id->GetValue(true));
+        $this->DataSource->SB_VALUE->SetValue($this->SB_VALUE->GetValue(true));
+        $this->DataSource->Insert();
+        $errors = "";
+        if($this->DataSource->Errors->Count() > 0) {
+            $errors = $this->DataSource->Errors->ToString();
+            $this->RowsErrors[$this->RowNumber] = $errors;
+            $this->DataSource->Errors->Clear();
+        }
+        return (($this->Errors->Count() == 0) && !strlen($errors));
+    }
+//End InsertRow Method
+
+//UpdateRow Method @255-83923777
+    function UpdateRow()
+    {
+        if(!$this->UpdateAllowed) return false;
+        $this->DataSource->VAR_id->SetValue($this->VAR_id->GetValue(true));
+        $this->DataSource->SB_VALUE->SetValue($this->SB_VALUE->GetValue(true));
+        $this->DataSource->Update();
+        $errors = "";
+        if($this->DataSource->Errors->Count() > 0) {
+            $errors = $this->DataSource->Errors->ToString();
+            $this->RowsErrors[$this->RowNumber] = $errors;
+            $this->DataSource->Errors->Clear();
+        }
+        return (($this->Errors->Count() == 0) && !strlen($errors));
+    }
+//End UpdateRow Method
+
+//DeleteRow Method @255-A4A656F6
+    function DeleteRow()
+    {
+        if(!$this->DeleteAllowed) return false;
+        $this->DataSource->Delete();
+        $errors = "";
+        if($this->DataSource->Errors->Count() > 0) {
+            $errors = $this->DataSource->Errors->ToString();
+            $this->RowsErrors[$this->RowNumber] = $errors;
+            $this->DataSource->Errors->Clear();
+        }
+        return (($this->Errors->Count() == 0) && !strlen($errors));
+    }
+//End DeleteRow Method
+
+//FormScript Method @255-59800DB5
+    function FormScript($TotalRows)
+    {
+        $script = "";
+        return $script;
+    }
+//End FormScript Method
+
+//SetFormState Method @255-5C9BF61A
+    function SetFormState($FormState)
+    {
+        if(strlen($FormState)) {
+            $FormState = str_replace("\\\\", "\\" . ord("\\"), $FormState);
+            $FormState = str_replace("\\;", "\\" . ord(";"), $FormState);
+            $pieces = explode(";", $FormState);
+            $this->UpdatedRows = $pieces[0];
+            $this->EmptyRows   = $pieces[1];
+            $this->TotalRows = $this->UpdatedRows + $this->EmptyRows;
+            $RowNumber = 0;
+            for($i = 2; $i < sizeof($pieces); $i = $i + 3)  {
+                $piece = $pieces[$i + 0];
+                $piece = str_replace("\\" . ord("\\"), "\\", $piece);
+                $piece = str_replace("\\" . ord(";"), ";", $piece);
+                $this->CachedColumns["SBV_id"][$RowNumber] = $piece;
+                $piece = $pieces[$i + 1];
+                $piece = str_replace("\\" . ord("\\"), "\\", $piece);
+                $piece = str_replace("\\" . ord(";"), ";", $piece);
+                $this->CachedColumns["ST_id"][$RowNumber] = $piece;
+                $piece = $pieces[$i + 2];
+                $piece = str_replace("\\" . ord("\\"), "\\", $piece);
+                $piece = str_replace("\\" . ord(";"), ";", $piece);
+                $this->CachedColumns["SB_id"][$RowNumber] = $piece;
+                $RowNumber++;
+            }
+
+            if(!$RowNumber) { $RowNumber = 1; }
+            for($i = 1; $i <= $this->EmptyRows; $i++) {
+                $this->CachedColumns["SBV_id"][$RowNumber] = "";
+                $this->CachedColumns["ST_id"][$RowNumber] = "";
+                $this->CachedColumns["SB_id"][$RowNumber] = "";
+                $RowNumber++;
+            }
+        }
+    }
+//End SetFormState Method
+
+//GetFormState Method @255-BB6D99A3
+    function GetFormState($NonEmptyRows)
+    {
+        if(!$this->FormSubmitted) {
+            $this->FormState  = $NonEmptyRows . ";";
+            $this->FormState .= $this->InsertAllowed ? $this->EmptyRows : "0";
+            if($NonEmptyRows) {
+                for($i = 0; $i <= $NonEmptyRows; $i++) {
+                    $this->FormState .= ";" . str_replace(";", "\\;", str_replace("\\", "\\\\", $this->CachedColumns["SBV_id"][$i]));
+                    $this->FormState .= ";" . str_replace(";", "\\;", str_replace("\\", "\\\\", $this->CachedColumns["ST_id"][$i]));
+                    $this->FormState .= ";" . str_replace(";", "\\;", str_replace("\\", "\\\\", $this->CachedColumns["SB_id"][$i]));
+                }
+            }
+        }
+        return $this->FormState;
+    }
+//End GetFormState Method
+
+//Show Method @255-7BD0390A
+    function Show()
+    {
+        global $Tpl;
+        global $FileName;
+        global $CCSLocales;
+        global $CCSUseAmp;
+        $Error = "";
+
+        if(!$this->Visible) { return; }
+
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeSelect", $this);
+
+        $this->vars->Prepare();
+
+        $this->DataSource->open();
+        $is_next_record = ($this->ReadAllowed && $this->DataSource->next_record());
+        $this->IsEmpty = ! $is_next_record;
+
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeShow", $this);
+        if(!$this->Visible) { return; }
+
+        $this->Attributes->Show();
+        $this->Button_Submit->Visible = $this->Button_Submit->Visible && ($this->InsertAllowed || $this->UpdateAllowed || $this->DeleteAllowed);
+        $ParentPath = $Tpl->block_path;
+        $EditableGridPath = $ParentPath . "/EditableGrid " . $this->ComponentName;
+        $EditableGridRowPath = $ParentPath . "/EditableGrid " . $this->ComponentName . "/Row";
+        $Tpl->block_path = $EditableGridRowPath;
+        $this->RowNumber = 0;
+        $NonEmptyRows = 0;
+        $EmptyRowsLeft = $this->EmptyRows;
+        $this->ControlsVisible["SBV_id"] = $this->SBV_id->Visible;
+        $this->ControlsVisible["ST_id"] = $this->ST_id->Visible;
+        $this->ControlsVisible["SB_id"] = $this->SB_id->Visible;
+        $this->ControlsVisible["SB_VALUE"] = $this->SB_VALUE->Visible;
+        $this->ControlsVisible["CheckBox_Delete_Panel"] = $this->CheckBox_Delete_Panel->Visible;
+        $this->ControlsVisible["CheckBox_Delete"] = $this->CheckBox_Delete->Visible;
+        $this->ControlsVisible["vars"] = $this->vars->Visible;
+        if ($is_next_record || ($EmptyRowsLeft && $this->InsertAllowed)) {
+            do {
+                // Parse Separator
+                if($this->RowNumber) {
+                    $Tpl->block_path = $EditableGridPath;
+                    $this->Attributes->Show();
+                    $Tpl->parseto("Separator", true, "Row");
+                    $Tpl->block_path = $EditableGridRowPath;
+                }
+                $this->RowNumber++;
+                if($is_next_record) {
+                    $NonEmptyRows++;
+                    $this->DataSource->SetValues();
+                }
+                if (!($is_next_record) || !($this->DeleteAllowed)) {
+                    $this->CheckBox_Delete->Visible = false;
+                    $this->CheckBox_Delete_Panel->Visible = false;
+                }
+                if (!($this->FormSubmitted) && $is_next_record) {
+                    $this->CachedColumns["SBV_id"][$this->RowNumber] = $this->DataSource->CachedColumns["SBV_id"];
+                    $this->CachedColumns["ST_id"][$this->RowNumber] = $this->DataSource->CachedColumns["ST_id"];
+                    $this->CachedColumns["SB_id"][$this->RowNumber] = $this->DataSource->CachedColumns["SB_id"];
+                    $this->CheckBox_Delete->SetValue("");
+                    $this->SBV_id->SetValue($this->DataSource->SBV_id->GetValue());
+                    $this->ST_id->SetValue($this->DataSource->ST_id->GetValue());
+                    $this->SB_id->SetValue($this->DataSource->SB_id->GetValue());
+                    $this->SB_VALUE->SetValue($this->DataSource->SB_VALUE->GetValue());
+                    $this->vars->SetValue($this->DataSource->vars->GetValue());
+                } elseif ($this->FormSubmitted && $is_next_record) {
+                    $this->SBV_id->SetText("");
+                    $this->SBV_id->SetValue($this->DataSource->SBV_id->GetValue());
+                    $this->ST_id->SetText($this->FormParameters["ST_id"][$this->RowNumber], $this->RowNumber);
+                    $this->SB_id->SetText($this->FormParameters["SB_id"][$this->RowNumber], $this->RowNumber);
+                    $this->SB_VALUE->SetText($this->FormParameters["SB_VALUE"][$this->RowNumber], $this->RowNumber);
+                    $this->CheckBox_Delete->SetText($this->FormParameters["CheckBox_Delete"][$this->RowNumber], $this->RowNumber);
+                    $this->vars->SetText($this->FormParameters["vars"][$this->RowNumber], $this->RowNumber);
+                } elseif (!$this->FormSubmitted) {
+                    $this->CachedColumns["SBV_id"][$this->RowNumber] = "";
+                    $this->CachedColumns["ST_id"][$this->RowNumber] = "";
+                    $this->CachedColumns["SB_id"][$this->RowNumber] = "";
+                    $this->SBV_id->SetText("");
+                    $this->ST_id->SetText("");
+                    $this->SB_id->SetText("");
+                    $this->SB_VALUE->SetText("");
+                    $this->vars->SetText("");
+                } else {
+                    $this->SBV_id->SetText("");
+                    $this->ST_id->SetText($this->FormParameters["ST_id"][$this->RowNumber], $this->RowNumber);
+                    $this->SB_id->SetText($this->FormParameters["SB_id"][$this->RowNumber], $this->RowNumber);
+                    $this->SB_VALUE->SetText($this->FormParameters["SB_VALUE"][$this->RowNumber], $this->RowNumber);
+                    $this->CheckBox_Delete->SetText($this->FormParameters["CheckBox_Delete"][$this->RowNumber], $this->RowNumber);
+                    $this->vars->SetText($this->FormParameters["vars"][$this->RowNumber], $this->RowNumber);
+                }
+                $this->Attributes->SetValue("rowNumber", $this->RowNumber);
+                $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeShowRow", $this);
+                $this->Attributes->Show();
+                $this->SBV_id->Show($this->RowNumber);
+                $this->ST_id->Show($this->RowNumber);
+                $this->SB_id->Show($this->RowNumber);
+                $this->SB_VALUE->Show($this->RowNumber);
+                $this->CheckBox_Delete_Panel->Show($this->RowNumber);
+                $this->vars->Show($this->RowNumber);
+                if (isset($this->RowsErrors[$this->RowNumber]) && ($this->RowsErrors[$this->RowNumber] != "")) {
+                    $Tpl->setblockvar("RowError", "");
+                    $Tpl->setvar("Error", $this->RowsErrors[$this->RowNumber]);
+                    $this->Attributes->Show();
+                    $Tpl->parse("RowError", false);
+                } else {
+                    $Tpl->setblockvar("RowError", "");
+                }
+                $Tpl->setvar("FormScript", $this->FormScript($this->RowNumber));
+                $Tpl->parse();
+                if ($is_next_record) {
+                    if ($this->FormSubmitted) {
+                        $is_next_record = $this->RowNumber < $this->UpdatedRows;
+                        if (($this->DataSource->CachedColumns["SBV_id"] == $this->CachedColumns["SBV_id"][$this->RowNumber]) && ($this->DataSource->CachedColumns["ST_id"] == $this->CachedColumns["ST_id"][$this->RowNumber]) && ($this->DataSource->CachedColumns["SB_id"] == $this->CachedColumns["SB_id"][$this->RowNumber])) {
+                            if ($this->ReadAllowed) $this->DataSource->next_record();
+                        }
+                    }else{
+                        $is_next_record = ($this->RowNumber < $this->PageSize) &&  $this->ReadAllowed && $this->DataSource->next_record();
+                    }
+                } else { 
+                    $EmptyRowsLeft--;
+                }
+            } while($is_next_record || ($EmptyRowsLeft && $this->InsertAllowed));
+        } else {
+            $Tpl->block_path = $EditableGridPath;
+            $this->Attributes->Show();
+            $Tpl->parse("NoRecords", false);
+        }
+
+        $Tpl->block_path = $EditableGridPath;
+        $this->Navigator->PageNumber = $this->DataSource->AbsolutePage;
+        $this->Navigator->PageSize = $this->PageSize;
+        if ($this->DataSource->RecordsCount == "CCS not counted")
+            $this->Navigator->TotalPages = $this->DataSource->AbsolutePage + ($this->DataSource->next_record() ? 1 : 0);
+        else
+            $this->Navigator->TotalPages = $this->DataSource->PageCount();
+        if ($this->Navigator->TotalPages <= 1) {
+            $this->Navigator->Visible = false;
+        }
+        $this->SB_VARIABLES2_TotalRecords->Show();
+        $this->Sorter_SBV_id->Show();
+        $this->Sorter_ST_id->Show();
+        $this->Sorter_SB_id->Show();
+        $this->Sorter_VAR_id->Show();
+        $this->Sorter_SB_VALUE->Show();
+        $this->Navigator->Show();
+        $this->Button_Submit->Show();
+        $this->Cancel->Show();
+
+        if($this->CheckErrors()) {
+            $Error = ComposeStrings($Error, $this->Errors->ToString());
+            $Error = ComposeStrings($Error, $this->DataSource->Errors->ToString());
+            $Tpl->SetVar("Error", $Error);
+            $Tpl->Parse("Error", false);
+        }
+        $CCSForm = $this->ComponentName;
+        $this->HTMLFormAction = $FileName . "?" . CCAddParam(CCGetQueryString("QueryString", ""), "ccsForm", $CCSForm);
+        $Tpl->SetVar("Action", !$CCSUseAmp ? $this->HTMLFormAction : str_replace("&", "&amp;", $this->HTMLFormAction));
+        $Tpl->SetVar("HTMLFormName", $this->ComponentName);
+        $Tpl->SetVar("HTMLFormEnctype", $this->FormEnctype);
+        if (!$CCSUseAmp) {
+            $Tpl->SetVar("HTMLFormProperties", "method=\"POST\" action=\"" . $this->HTMLFormAction . "\" name=\"" . $this->ComponentName . "\"");
+        } else {
+            $Tpl->SetVar("HTMLFormProperties", "method=\"post\" action=\"" . str_replace("&", "&amp;", $this->HTMLFormAction) . "\" id=\"" . $this->ComponentName . "\"");
+        }
+        $Tpl->SetVar("FormState", CCToHTML($this->GetFormState($NonEmptyRows)));
+        $Tpl->parse();
+        $Tpl->block_path = $ParentPath;
+        $this->DataSource->close();
+    }
+//End Show Method
+
+} //End SB_VARIABLES2 Class @255-FCB6E20C
+
+class clsSB_VARIABLES2DataSource extends clsDBcandat {  //SB_VARIABLES2DataSource Class @255-993D1078
+
+//DataSource Variables @255-8B87CCE9
+    public $Parent = "";
+    public $CCSEvents = "";
+    public $CCSEventResult;
+    public $ErrorBlock;
+    public $CmdExecution;
+
+    public $InsertParameters;
+    public $UpdateParameters;
+    public $DeleteParameters;
+    public $CountSQL;
+    public $wp;
+    public $AllParametersSet;
+
+    public $CachedColumns;
+    public $CurrentRow;
+    public $InsertFields = array();
+    public $UpdateFields = array();
+
+    // Datasource fields
+    public $SBV_id;
+    public $ST_id;
+    public $SB_id;
+    public $SB_VALUE;
+    public $CheckBox_Delete;
+    public $vars;
+//End DataSource Variables
+
+//DataSourceClass_Initialize Event @255-40A0E6C8
+    function clsSB_VARIABLES2DataSource(& $Parent)
+    {
+        $this->Parent = & $Parent;
+        $this->ErrorBlock = "EditableGrid SB_VARIABLES2/Error";
+        $this->Initialize();
+        $this->SBV_id = new clsField("SBV_id", ccsInteger, "");
+        
+        $this->ST_id = new clsField("ST_id", ccsInteger, "");
+        
+        $this->SB_id = new clsField("SB_id", ccsInteger, "");
+        
+        $this->SB_VALUE = new clsField("SB_VALUE", ccsText, "");
+        
+        $this->CheckBox_Delete = new clsField("CheckBox_Delete", ccsBoolean, $this->BooleanFormat);
+        
+        $this->vars = new clsField("vars", ccsText, "");
+        
+
+        $this->InsertFields["SB_VARIABLES.ST_id"] = array("Name" => "ST_id", "Value" => "", "DataType" => ccsInteger, "OmitIfEmpty" => 1);
+        $this->InsertFields["SB_VARIABLES.SB_id"] = array("Name" => "SB_id", "Value" => "", "DataType" => ccsInteger, "OmitIfEmpty" => 1);
+        $this->InsertFields["VAR_id"] = array("Name" => "VAR_id", "Value" => "", "DataType" => ccsInteger, "OmitIfEmpty" => 1);
+        $this->InsertFields["SB_VALUE"] = array("Name" => "SB_VALUE", "Value" => "", "DataType" => ccsText);
+        $this->UpdateFields["SB_VARIABLES.ST_id"] = array("Name" => "ST_id", "Value" => "", "DataType" => ccsInteger, "OmitIfEmpty" => 1);
+        $this->UpdateFields["SB_VARIABLES.SB_id"] = array("Name" => "SB_id", "Value" => "", "DataType" => ccsInteger, "OmitIfEmpty" => 1);
+        $this->UpdateFields["VAR_id"] = array("Name" => "VAR_id", "Value" => "", "DataType" => ccsInteger);
+        $this->UpdateFields["SB_VALUE"] = array("Name" => "SB_VALUE", "Value" => "", "DataType" => ccsText);
+    }
+//End DataSourceClass_Initialize Event
+
+//SetOrder Method @255-A081CDFB
+    function SetOrder($SorterName, $SorterDirection)
+    {
+        $this->Order = "";
+        $this->Order = CCGetOrder($this->Order, $SorterName, $SorterDirection, 
+            array("Sorter_SBV_id" => array("SBV_id", ""), 
+            "Sorter_ST_id" => array("ST_id", ""), 
+            "Sorter_SB_id" => array("SB_id", ""), 
+            "Sorter_VAR_id" => array("VAR_id", ""), 
+            "Sorter_SB_VALUE" => array("SB_VALUE", "")));
+    }
+//End SetOrder Method
+
+//Prepare Method @255-3593922A
+    function Prepare()
+    {
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->wp = new clsSQLParameters($this->ErrorBlock);
+        $this->wp->AddParameter("1", "urlSBV_id", ccsInteger, "", "", $this->Parameters["urlSBV_id"], -999, false);
+        $this->AllParametersSet = $this->wp->AllParamsSet();
+        $this->wp->Criterion[1] = $this->wp->Operation(opEqual, "SBV_id", $this->wp->GetDBValue("1"), $this->ToSQL($this->wp->GetDBValue("1"), ccsInteger),false);
+        $this->Where = 
+             $this->wp->Criterion[1];
+    }
+//End Prepare Method
+
+//Open Method @255-5E17B4C2
+    function Open()
+    {
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeBuildSelect", $this->Parent);
+        $this->CountSQL = "SELECT COUNT(*)\n\n" .
+        "FROM SB_VARIABLES";
+        $this->SQL = "SELECT * \n\n" .
+        "FROM SB_VARIABLES {SQL_Where} {SQL_OrderBy}";
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeExecuteSelect", $this->Parent);
+        if ($this->CountSQL) 
+            $this->RecordsCount = CCGetDBValue(CCBuildSQL($this->CountSQL, $this->Where, ""), $this);
+        else
+            $this->RecordsCount = "CCS not counted";
+        $this->query($this->OptimizeSQL(CCBuildSQL($this->SQL, $this->Where, $this->Order)));
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterExecuteSelect", $this->Parent);
+    }
+//End Open Method
+
+//SetValues Method @255-5DDC5CE6
+    function SetValues()
+    {
+        $this->CachedColumns["SBV_id"] = $this->f("SBV_id");
+        $this->CachedColumns["ST_id"] = $this->f("ST_id");
+        $this->CachedColumns["SB_id"] = $this->f("SB_id");
+        $this->SBV_id->SetDBValue(trim($this->f("SBV_id")));
+        $this->ST_id->SetDBValue(trim($this->f("ST_id")));
+        $this->SB_id->SetDBValue(trim($this->f("SB_id")));
+        $this->SB_VALUE->SetDBValue($this->f("SB_VALUE"));
+        $this->vars->SetDBValue($this->f("VAR_id"));
+    }
+//End SetValues Method
+
+//Insert Method @255-63436A3B
+    function Insert()
+    {
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->CmdExecution = true;
+        $this->cp["SB_VARIABLES.ST_id"] = new clsSQLParameter("urlST_id", ccsInteger, "", "", CCGetFromGet("ST_id", NULL), NULL, false, $this->ErrorBlock);
+        $this->cp["SB_VARIABLES.SB_id"] = new clsSQLParameter("urlSB_id", ccsInteger, "", "", CCGetFromGet("SB_id", NULL), NULL, false, $this->ErrorBlock);
+        $this->cp["VAR_id"] = new clsSQLParameter("ctrlVAR_id", ccsInteger, "", "", $this->VAR_id->GetValue(true), NULL, false, $this->ErrorBlock);
+        $this->cp["SB_VALUE"] = new clsSQLParameter("ctrlSB_VALUE", ccsText, "", "", $this->SB_VALUE->GetValue(true), "", false, $this->ErrorBlock);
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeBuildInsert", $this->Parent);
+        if (!is_null($this->cp["SB_VARIABLES.ST_id"]->GetValue()) and !strlen($this->cp["SB_VARIABLES.ST_id"]->GetText()) and !is_bool($this->cp["SB_VARIABLES.ST_id"]->GetValue())) 
+            $this->cp["SB_VARIABLES.ST_id"]->SetText(CCGetFromGet("ST_id", NULL));
+        if (!is_null($this->cp["SB_VARIABLES.SB_id"]->GetValue()) and !strlen($this->cp["SB_VARIABLES.SB_id"]->GetText()) and !is_bool($this->cp["SB_VARIABLES.SB_id"]->GetValue())) 
+            $this->cp["SB_VARIABLES.SB_id"]->SetText(CCGetFromGet("SB_id", NULL));
+        if (!is_null($this->cp["VAR_id"]->GetValue()) and !strlen($this->cp["VAR_id"]->GetText()) and !is_bool($this->cp["VAR_id"]->GetValue())) 
+            $this->cp["VAR_id"]->SetValue($this->VAR_id->GetValue(true));
+        if (!is_null($this->cp["SB_VALUE"]->GetValue()) and !strlen($this->cp["SB_VALUE"]->GetText()) and !is_bool($this->cp["SB_VALUE"]->GetValue())) 
+            $this->cp["SB_VALUE"]->SetValue($this->SB_VALUE->GetValue(true));
+        $this->InsertFields["SB_VARIABLES.ST_id"]["Value"] = $this->cp["SB_VARIABLES.ST_id"]->GetDBValue(true);
+        $this->InsertFields["SB_VARIABLES.SB_id"]["Value"] = $this->cp["SB_VARIABLES.SB_id"]->GetDBValue(true);
+        $this->InsertFields["VAR_id"]["Value"] = $this->cp["VAR_id"]->GetDBValue(true);
+        $this->InsertFields["SB_VALUE"]["Value"] = $this->cp["SB_VALUE"]->GetDBValue(true);
+        $this->SQL = CCBuildInsert("SB_VARIABLES", $this->InsertFields, $this);
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeExecuteInsert", $this->Parent);
+        if($this->Errors->Count() == 0 && $this->CmdExecution) {
+            $this->query($this->SQL);
+            $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterExecuteInsert", $this->Parent);
+        }
+    }
+//End Insert Method
+
+//Update Method @255-B2C4BA93
+    function Update()
+    {
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->CmdExecution = true;
+        $this->cp["SB_VARIABLES.ST_id"] = new clsSQLParameter("urlST_id", ccsInteger, "", "", CCGetFromGet("ST_id", NULL), NULL, false, $this->ErrorBlock);
+        $this->cp["SB_VARIABLES.SB_id"] = new clsSQLParameter("urlSB_id", ccsInteger, "", "", CCGetFromGet("SB_id", NULL), NULL, false, $this->ErrorBlock);
+        $this->cp["VAR_id"] = new clsSQLParameter("ctrlVAR_id", ccsInteger, "", "", $this->VAR_id->GetValue(true), "", false, $this->ErrorBlock);
+        $this->cp["SB_VALUE"] = new clsSQLParameter("ctrlSB_VALUE", ccsText, "", "", $this->SB_VALUE->GetValue(true), "", false, $this->ErrorBlock);
+        $wp = new clsSQLParameters($this->ErrorBlock);
+        $wp->AddParameter("1", "dsSBV_id", ccsInteger, "", "", $this->CachedColumns["SBV_id"], "", false);
+        if(!$wp->AllParamsSet()) {
+            $this->Errors->addError($CCSLocales->GetText("CCS_CustomOperationError_MissingParameters"));
+        }
+        $wp->AddParameter("2", "dsST_id", ccsInteger, "", "", $this->CachedColumns["ST_id"], "", false);
+        if(!$wp->AllParamsSet()) {
+            $this->Errors->addError($CCSLocales->GetText("CCS_CustomOperationError_MissingParameters"));
+        }
+        $wp->AddParameter("3", "dsSB_id", ccsInteger, "", "", $this->CachedColumns["SB_id"], "", false);
+        if(!$wp->AllParamsSet()) {
+            $this->Errors->addError($CCSLocales->GetText("CCS_CustomOperationError_MissingParameters"));
+        }
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeBuildUpdate", $this->Parent);
+        if (!is_null($this->cp["SB_VARIABLES.ST_id"]->GetValue()) and !strlen($this->cp["SB_VARIABLES.ST_id"]->GetText()) and !is_bool($this->cp["SB_VARIABLES.ST_id"]->GetValue())) 
+            $this->cp["SB_VARIABLES.ST_id"]->SetText(CCGetFromGet("ST_id", NULL));
+        if (!is_null($this->cp["SB_VARIABLES.SB_id"]->GetValue()) and !strlen($this->cp["SB_VARIABLES.SB_id"]->GetText()) and !is_bool($this->cp["SB_VARIABLES.SB_id"]->GetValue())) 
+            $this->cp["SB_VARIABLES.SB_id"]->SetText(CCGetFromGet("SB_id", NULL));
+        if (!is_null($this->cp["VAR_id"]->GetValue()) and !strlen($this->cp["VAR_id"]->GetText()) and !is_bool($this->cp["VAR_id"]->GetValue())) 
+            $this->cp["VAR_id"]->SetValue($this->VAR_id->GetValue(true));
+        if (!is_null($this->cp["SB_VALUE"]->GetValue()) and !strlen($this->cp["SB_VALUE"]->GetText()) and !is_bool($this->cp["SB_VALUE"]->GetValue())) 
+            $this->cp["SB_VALUE"]->SetValue($this->SB_VALUE->GetValue(true));
+        $wp->Criterion[1] = $wp->Operation(opEqual, "SBV_id", $wp->GetDBValue("1"), $this->ToSQL($wp->GetDBValue("1"), ccsInteger),false);
+        $wp->Criterion[2] = $wp->Operation(opEqual, "ST_id", $wp->GetDBValue("2"), $this->ToSQL($wp->GetDBValue("2"), ccsInteger),false);
+        $wp->Criterion[3] = $wp->Operation(opEqual, "SB_id", $wp->GetDBValue("3"), $this->ToSQL($wp->GetDBValue("3"), ccsInteger),false);
+        $Where = $wp->opAND(
+             false, $wp->opAND(
+             false, 
+             $wp->Criterion[1], 
+             $wp->Criterion[2]), 
+             $wp->Criterion[3]);
+        $this->UpdateFields["SB_VARIABLES.ST_id"]["Value"] = $this->cp["SB_VARIABLES.ST_id"]->GetDBValue(true);
+        $this->UpdateFields["SB_VARIABLES.SB_id"]["Value"] = $this->cp["SB_VARIABLES.SB_id"]->GetDBValue(true);
+        $this->UpdateFields["VAR_id"]["Value"] = $this->cp["VAR_id"]->GetDBValue(true);
+        $this->UpdateFields["SB_VALUE"]["Value"] = $this->cp["SB_VALUE"]->GetDBValue(true);
+        $this->SQL = CCBuildUpdate("SB_VARIABLES", $this->UpdateFields, $this);
+        $this->SQL .= strlen($Where) ? " WHERE " . $Where : $Where;
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeExecuteUpdate", $this->Parent);
+        if($this->Errors->Count() == 0 && $this->CmdExecution) {
+            $this->query($this->SQL);
+            $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterExecuteUpdate", $this->Parent);
+        }
+    }
+//End Update Method
+
+//Delete Method @255-B3A82A45
+    function Delete()
+    {
+        global $CCSLocales;
+        global $DefaultDateFormat;
+        $this->CmdExecution = true;
+        $wp = new clsSQLParameters($this->ErrorBlock);
+        $wp->AddParameter("1", "dsSBV_id", ccsInteger, "", "", $this->CachedColumns["SBV_id"], "", false);
+        if(!$wp->AllParamsSet()) {
+            $this->Errors->addError($CCSLocales->GetText("CCS_CustomOperationError_MissingParameters"));
+        }
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeBuildDelete", $this->Parent);
+        $wp->Criterion[1] = $wp->Operation(opEqual, "SBV_id", $wp->GetDBValue("1"), $this->ToSQL($wp->GetDBValue("1"), ccsInteger),false);
+        $Where = 
+             $wp->Criterion[1];
+        $this->SQL = "DELETE FROM SB_VARIABLES";
+        $this->SQL = CCBuildSQL($this->SQL, $Where, "");
+        $this->CCSEventResult = CCGetEvent($this->CCSEvents, "BeforeExecuteDelete", $this->Parent);
+        if($this->Errors->Count() == 0 && $this->CmdExecution) {
+            $this->query($this->SQL);
+            $this->CCSEventResult = CCGetEvent($this->CCSEvents, "AfterExecuteDelete", $this->Parent);
+        }
+    }
+//End Delete Method
+
+} //End SB_VARIABLES2DataSource Class @255-FCB6E20C
+
+
+
+//Initialize Page @1-5F8A731E
+// Variables
+$FileName = "";
+$Redirect = "";
+$Tpl = "";
+$TemplateFileName = "";
+$BlockToParse = "";
+$ComponentName = "";
+$Attributes = "";
+
+// Events;
+$CCSEvents = "";
+$CCSEventResult = "";
+
+$FileName = FileName;
+$Redirect = "";
+$TemplateFileName = "Subjects_bak1.html";
+$BlockToParse = "main";
+$TemplateEncoding = "CP1252";
+$ContentType = "text/html";
+$PathToRoot = "./";
+$Charset = $Charset ? $Charset : "windows-1252";
+//End Initialize Page
+
+//Include events file @1-C851E959
+include_once("./Subjects_bak1_events.php");
+//End Include events file
+
+//Before Initialize @1-E870CEBC
+$CCSEventResult = CCGetEvent($CCSEvents, "BeforeInitialize", $MainPage);
+//End Before Initialize
+
+//Initialize Objects @1-A3929556
+$DBcandat = new clsDBcandat();
+$MainPage->Connections["candat"] = & $DBcandat;
+$Attributes = new clsAttributes("page:");
+$MainPage->Attributes = & $Attributes;
+
+// Controls
+$Header_live = new clsHeader_live("", "Header_live", $MainPage);
+$Header_live->Initialize();
+$STUDIES = new clsGridSTUDIES("", $MainPage);
+$SUBJECTS = new clsGridSUBJECTS("", $MainPage);
+$SUBJECTS1 = new clsRecordSUBJECTS1("", $MainPage);
+$SB_VARIABLES = new clsGridSB_VARIABLES("", $MainPage);
+$SB_VARIABLES1 = new clsRecordSB_VARIABLES1("", $MainPage);
+$SB_VARIABLES2 = new clsEditableGridSB_VARIABLES2("", $MainPage);
+$MainPage->Header_live = & $Header_live;
+$MainPage->STUDIES = & $STUDIES;
+$MainPage->SUBJECTS = & $SUBJECTS;
+$MainPage->SUBJECTS1 = & $SUBJECTS1;
+$MainPage->SB_VARIABLES = & $SB_VARIABLES;
+$MainPage->SB_VARIABLES1 = & $SB_VARIABLES1;
+$MainPage->SB_VARIABLES2 = & $SB_VARIABLES2;
+$STUDIES->Initialize();
+$SUBJECTS->Initialize();
+$SUBJECTS1->Initialize();
+$SB_VARIABLES->Initialize();
+$SB_VARIABLES1->Initialize();
+$SB_VARIABLES2->Initialize();
+
+BindEvents();
+
+$CCSEventResult = CCGetEvent($CCSEvents, "AfterInitialize", $MainPage);
+
+if ($Charset) {
+    header("Content-Type: " . $ContentType . "; charset=" . $Charset);
+} else {
+    header("Content-Type: " . $ContentType);
+}
+//End Initialize Objects
+
+//Initialize HTML Template @1-E710DB26
+$CCSEventResult = CCGetEvent($CCSEvents, "OnInitializeView", $MainPage);
+$Tpl = new clsTemplate($FileEncoding, $TemplateEncoding);
+$Tpl->LoadTemplate(PathToCurrentPage . $TemplateFileName, $BlockToParse, "CP1252");
+$Tpl->block_path = "/$BlockToParse";
+$CCSEventResult = CCGetEvent($CCSEvents, "BeforeShow", $MainPage);
+$Attributes->SetValue("pathToRoot", "");
+$Attributes->Show();
+//End Initialize HTML Template
+
+//Execute Components @1-83D3FD7C
+$Header_live->Operations();
+$SUBJECTS1->Operation();
+$SB_VARIABLES1->Operation();
+$SB_VARIABLES2->Operation();
+//End Execute Components
+
+//Go to destination page @1-3CA2B9CE
+if($Redirect)
+{
+    $CCSEventResult = CCGetEvent($CCSEvents, "BeforeUnload", $MainPage);
+    $DBcandat->close();
+    header("Location: " . $Redirect);
+    $Header_live->Class_Terminate();
+    unset($Header_live);
+    unset($STUDIES);
+    unset($SUBJECTS);
+    unset($SUBJECTS1);
+    unset($SB_VARIABLES);
+    unset($SB_VARIABLES1);
+    unset($SB_VARIABLES2);
+    unset($Tpl);
+    exit;
+}
+//End Go to destination page
+
+//Show Page @1-E774126E
+$Header_live->Show();
+$STUDIES->Show();
+$SUBJECTS->Show();
+$SUBJECTS1->Show();
+$SB_VARIABLES->Show();
+$SB_VARIABLES1->Show();
+$SB_VARIABLES2->Show();
+$Tpl->block_path = "";
+$Tpl->Parse($BlockToParse, false);
+if (!isset($main_block)) $main_block = $Tpl->GetVar($BlockToParse);
+$CCSEventResult = CCGetEvent($CCSEvents, "BeforeOutput", $MainPage);
+if ($CCSEventResult) echo $main_block;
+//End Show Page
+
+//Unload Page @1-06697361
+$CCSEventResult = CCGetEvent($CCSEvents, "BeforeUnload", $MainPage);
+$DBcandat->close();
+$Header_live->Class_Terminate();
+unset($Header_live);
+unset($STUDIES);
+unset($SUBJECTS);
+unset($SUBJECTS1);
+unset($SB_VARIABLES);
+unset($SB_VARIABLES1);
+unset($SB_VARIABLES2);
+unset($Tpl);
+//End Unload Page
+
+
+?>

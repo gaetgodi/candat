@@ -1,0 +1,310 @@
+<?php session_start();?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<title>FD_INTAKE</title>
+<meta name="GENERATOR" content="CodeCharge Studio 4.3.00.53">
+<link rel="stylesheet" type="text/css" href="Styles/Manuscript/Style_doctype.css">
+<script language="JavaScript" type="text/javascript">
+//Begin CCS script
+//Include Common JSFunctions @1-56D0AF56
+</script>
+<script language="JavaScript" src="ClientI18N.php?file=Functions.js&amp;locale={res:CCS_LocaleID}" type="text/javascript" charset="utf-8"></script>
+<script language="JavaScript" src="ClientI18N.php?file=DatePicker.js&amp;locale={res:CCS_LocaleID}" type="text/javascript" charset="utf-8"></script>
+<script language="JavaScript" type="text/javascript">
+//End Include Common JSFunctions
+
+//Date Picker Object Definitions @1-88774435
+
+var INTAKE1_DatePicker_DY_id = new Object(); 
+INTAKE1_DatePicker_DY_id.format           = "yyyymmdd";
+INTAKE1_DatePicker_DY_id.style            = "Styles/Manuscript/Style.css";
+INTAKE1_DatePicker_DY_id.relativePathPart = "";
+
+//End Date Picker Object Definitions
+
+//INTAKE1Button_Delete_OnClick @40-69493EE9
+function INTAKE1Button_Delete_OnClick()
+{
+    var result = true;
+//End INTAKE1Button_Delete_OnClick
+
+//Confirmation Message @41-8243B274
+    return confirm('Delete record?');
+//End Confirmation Message
+
+//Close INTAKE1Button_Delete_OnClick @40-BC33A33A
+    return result;
+}
+//End Close INTAKE1Button_Delete_OnClick
+
+//INTAKE1UN_id_OnChange @50-DAC04AD0
+function INTAKE1UN_id_OnChange()
+{
+    var result = true;
+//End INTAKE1UN_id_OnChange
+
+//DEL      // -------------------------
+//DEL      // Write your own code here.
+//DEL      // -------------------------
+//DEL          confirm('Got here');
+
+//Custom Code @90-2A29BDB7
+    // -------------------------
+    // Write your own code here.
+    // -------------------------
+//End Custom Code
+
+//Close INTAKE1UN_id_OnChange @50-BC33A33A
+    return result;
+}
+//End Close INTAKE1UN_id_OnChange
+
+//DEL  //
+
+//INTAKE1Button_Cancel_OnClick @42-00A2A588
+function INTAKE1Button_Cancel_OnClick()
+{
+    disableValidation = true;
+}
+//End INTAKE1Button_Cancel_OnClick
+
+//bind_events @1-CB554C05
+function bind_events() {
+    addEventHandler("INTAKE1Button_Delete", "click", INTAKE1Button_Delete_OnClick);
+    addEventHandler("INTAKE1UN_id", "change", INTAKE1UN_id_OnChange);
+    addEventHandler("INTAKE1Button_Cancel", "click", INTAKE1Button_Cancel_OnClick);
+}
+//End bind_events
+
+window.onload = bind_events; //Assign bind_events @1-19F7B649
+
+//End CCS script
+</script>
+</head>
+<body>
+<script language="JavaScript" src="jquery.js" type="text/javascript" charset="utf-8"></script>
+<script language="JavaScript" src="myscripts.js" type="text/javascript" charset="utf-8"></script>
+<!-- BEGIN Record INTAKESearch -->
+<form id="INTAKESearch" method="post" name="{HTMLFormName}" action="{Action}">
+  <table cellspacing="0" cellpadding="0" border="0">
+    <tr>
+      <td valign="top">
+        <table class="Header" cellspacing="0" cellpadding="0" border="0">
+          <tr>
+            <td class="HeaderLeft"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td> 
+            <td class="th"><strong>Search INTAKE </strong></td> 
+            <td class="HeaderRight"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td>
+          </tr>
+        </table>
+ 
+        <table class="Record" cellspacing="0" cellpadding="0">
+          <!-- BEGIN Error -->
+          <tr class="Error">
+            <td colspan="2">{Error}</td>
+          </tr>
+          <!-- END Error -->
+          <tr class="Controls">
+            <td class="th"><label for="INTAKESearchs_FD_id">FD Id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td> 
+            <td><input id="INTAKESearchs_FD_id" maxlength="10" size="10" value="{s_FD_id}" name="{s_FD_id_Name}"></td>
+          </tr>
+ 
+          <tr class="Bottom">
+            <td colspan="2" align="right">
+              <!-- BEGIN Button Button_DoSearch --><input id="INTAKESearchButton_DoSearch" class="Button" alt="Search" type="submit" value="Search" name="{Button_Name}"><!-- END Button Button_DoSearch --></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</form>
+<!-- END Record INTAKESearch --><br>
+<!-- BEGIN Grid INTAKE -->
+<table cellspacing="0" cellpadding="0" border="0">
+  <tr>
+    <td valign="top">
+      <table class="Header" cellspacing="0" cellpadding="0" border="0">
+        <tr>
+          <td class="HeaderLeft"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td> 
+          <td class="th"><strong>List of INTAKE </strong></td> 
+          <td class="HeaderRight"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td>
+        </tr>
+      </table>
+ 
+      <table class="Grid" cellspacing="0" cellpadding="0">
+        <tr class="Row">
+          <td colspan="8">Total Records:&nbsp;{INTAKE_TotalRecords}</td>
+        </tr>
+ 
+        <tr class="Caption">
+          <th scope="col">
+          <!-- BEGIN Sorter Sorter_SF_id --><a href="{Sort_URL}" id="INTAKESorter_SF_id">SF Id</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_SF_id --></th>
+ 
+          <th scope="col">
+          <!-- BEGIN Sorter Sorter_ST_id --><a href="{Sort_URL}" id="INTAKESorter_ST_id">ST Id</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_ST_id --></th>
+ 
+          <th scope="col">
+          <!-- BEGIN Sorter Sorter_SB_id --><a href="{Sort_URL}" id="INTAKESorter_SB_id">SB Id</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_SB_id --></th>
+ 
+          <th scope="col">
+          <!-- BEGIN Sorter Sorter_DY_id --><a href="{Sort_URL}" id="INTAKESorter_DY_id">DY Id</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_DY_id --></th>
+ 
+          <th scope="col">
+          <!-- BEGIN Sorter Sorter_ML_id --><a href="{Sort_URL}" id="INTAKESorter_ML_id">ML Id</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_ML_id --></th>
+ 
+          <th scope="col">
+          <!-- BEGIN Sorter Sorter_FD_id --><a href="{Sort_URL}" id="INTAKESorter_FD_id">FD Id</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_FD_id --></th>
+ 
+          <th scope="col">
+          <!-- BEGIN Sorter Sorter_UN_id --><a href="{Sort_URL}" id="INTAKESorter_UN_id">UN Id</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_UN_id --></th>
+ 
+          <th scope="col">
+          <!-- BEGIN Sorter Sorter_QTY --><a href="{Sort_URL}" id="INTAKESorter_QTY">QTY</a> 
+          <!-- BEGIN Asc_On --><img border="0" alt="Ascending" src="Styles/Manuscript/Images/Asc.gif"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" alt="Descending" src="Styles/Manuscript/Images/Desc.gif"><!-- END Desc_On --><!-- END Sorter Sorter_QTY --></th>
+        </tr>
+ 
+        <!-- BEGIN Row -->
+        <tr {INTAKE:rowStyle}>
+          <td style="TEXT-ALIGN: right"><a href="{SF_id_Src}" id="INTAKESF_id_{INTAKE:rowNumber}">{SF_id}</a>&nbsp;</td> 
+          <td style="TEXT-ALIGN: right">{ST_id}&nbsp;</td> 
+          <td style="TEXT-ALIGN: right">{SB_id}&nbsp;</td> 
+          <td>{DY_id}&nbsp;</td> 
+          <td style="TEXT-ALIGN: right">{ML_id}&nbsp;</td> 
+          <td style="TEXT-ALIGN: right">{FD_id}&nbsp;</td> 
+          <td style="TEXT-ALIGN: right">{UN_id}&nbsp;</td> 
+          <td style="TEXT-ALIGN: right">{QTY}&nbsp;</td>
+        </tr>
+ <!-- END Row -->
+        <!-- BEGIN Separator -->
+        <tr class="Separator">
+          <td colspan="8"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td>
+        </tr>
+        <!-- END Separator -->
+        <!-- BEGIN NoRecords -->
+        <tr class="NoRecords">
+          <td colspan="8">No records</td>
+        </tr>
+        <!-- END NoRecords -->
+        <tr class="Footer">
+          <td colspan="8"><a href="{INTAKE_Insert_Src}" id="INTAKEINTAKE_Insert">Add New</a>&nbsp; 
+            <!-- BEGIN Navigator Navigator -->
+            <!-- BEGIN Page_Parameter --><input type="hidden" value="{Value}" name="{Name}"><!-- END Page_Parameter -->Per page: 
+            <select onchange="CCChangeSize(this, '{FormName}')" name="{FormName}PageSize">
+              <option selected value="">-</option>
+ {PageSize_Options}
+            </select>
+ 
+            <!-- BEGIN First_On --><a href="{First_URL}">First</a> <!-- END First_On -->
+            <!-- BEGIN First_Off -->First <!-- END First_Off -->
+            <!-- BEGIN Prev_On --><a href="{Prev_URL}">Prev</a> <!-- END Prev_On -->
+            <!-- BEGIN Prev_Off -->Prev <!-- END Prev_Off -->&nbsp; 
+            <!-- BEGIN Pages -->
+            <!-- BEGIN Page_On --><a href="{Page_URL}">{Page_Number}</a>&nbsp;<!-- END Page_On -->
+            <!-- BEGIN Page_Off -->{Page_Number}&nbsp;<!-- END Page_Off --><!-- END Pages -->of &nbsp;{Total_Pages}&nbsp; 
+            <!-- BEGIN Next_On --><a href="{Next_URL}">Next</a> <!-- END Next_On -->
+            <!-- BEGIN Next_Off -->Next <!-- END Next_Off -->
+            <!-- BEGIN Last_On --><a href="{Last_URL}">Last</a> <!-- END Last_On -->
+            <!-- BEGIN Last_Off -->Last <!-- END Last_Off --><!-- END Navigator Navigator -->&nbsp;</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- END Grid INTAKE --><br>
+<!-- BEGIN Record INTAKE1 -->
+<form id="INTAKE1" method="post" name="{HTMLFormName}" action="{Action}">
+  <table cellspacing="0" cellpadding="0" border="0">
+    <tr>
+      <td valign="top">
+        <table class="Header" cellspacing="0" cellpadding="0" border="0">
+          <tr>
+            <td class="HeaderLeft"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td> 
+            <td class="th"><strong>Add/Edit INTAKE </strong></td> 
+            <td class="HeaderRight"><img border="0" alt="" src="Styles/Manuscript/Images/Spacer.gif"></td>
+          </tr>
+        </table>
+ 
+        <table class="Record" cellspacing="0" cellpadding="0" border="1">
+          <!-- BEGIN Error -->
+          <tr class="Error">
+            <td colspan="3">{Error}</td>
+          </tr>
+          <!-- END Error -->
+          <tr class="Controls">
+            <td class="th"><label for="INTAKE1ST_id">ST Id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td> 
+            <td>&nbsp;{Study}</td> 
+            <td><input id="INTAKE1ST_id" readonly maxlength="10" size="10" value="{ST_id}" name="{ST_id_Name}"></td>
+          </tr>
+ 
+          <tr class="Controls">
+            <td class="th"><label for="INTAKE1SB_id">SB Id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td> 
+            <td>&nbsp;</td> 
+            <td><input id="INTAKE1SB_id" readonly maxlength="10" size="10" value="{SB_id}" name="{SB_id_Name}"></td>
+          </tr>
+ 
+          <tr class="Controls">
+            <td class="th"><label for="INTAKE1DY_id">DY Id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td> 
+            <td>&nbsp;</td> 
+            <td><input id="INTAKE1DY_id" maxlength="100" size="19" value="{DY_id}" name="{DY_id_Name}">
+              <!-- BEGIN DatePicker DatePicker_DY_id --><a href="javascript:showDatePicker('{Name}','{FormName}','{DateControl}');" id="INTAKE1DatePicker_DY_id"><img id="INTAKE1DatePicker_DY_id_Image" border="0" alt="Show Date Picker" src="Styles/Manuscript/Images/DatePicker.gif"></a><!-- END DatePicker DatePicker_DY_id --></td>
+          </tr>
+ 
+          <tr class="Controls">
+            <td class="th"><label for="INTAKE1MLS_id">ML Id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td> 
+            <td>&nbsp;{Meal}</td> 
+            <td><input id="INTAKE1MLS_id" readonly maxlength="10" size="10" value="{MLS_id}" name="{MLS_id_Name}"></td>
+          </tr>
+ 
+          <tr class="Controls">
+            <td class="th"><label for="INTAKE1FD_id">FD Id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td> 
+            <td>&nbsp;<label for="INTAKE1FD_NME" style="display: none;">Food&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label><input id="INTAKE1FD_NME" readonly size="25" value="{FD_NME}" name="{FD_NME_Name}"></td> 
+            <td><input id="INTAKE1FD_id" readonly maxlength="10" size="10" value="{FD_id}" name="{FD_id_Name}"></td>
+          </tr>
+ 
+          <tr class="Controls">
+            <td class="th"><label for="INTAKE1UN_id">UN Id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td> 
+            <td><label for="INTAKE1Unit" style="display: none;">TextBox1&nbsp;&nbsp;</label><input id="INTAKE1Unit" readonly value="{Unit}" name="{Unit_Name}"></td> 
+            <td>
+              <select onchange="units();qtys();" id="INTAKE1UN_id" name="{UN_id_Name}">
+                <option selected value="">Select Value</option>
+                {UN_id_Options}
+              </select>
+ </td>
+          </tr>
+ 
+          <tr class="Controls">
+            <td class="th"><label for="INTAKE1QTY">QTY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td> 
+            <td><label for="INTAKE1Grams">Grams&nbsp;&nbsp;&nbsp;&nbsp;</label><input id="INTAKE1Grams" readonly value="{Grams}" name="{Grams_Name}"></td> 
+            <td><input onkeyup="qtys();" id="INTAKE1QTY" maxlength="10" size="10" value="{QTY}" name="{QTY_Name}"></td>
+          </tr>
+ 
+          <tr class="Bottom">
+            <td colspan="3" align="right">
+              <!-- BEGIN Button Button_Insert --><input id="INTAKE1Button_Insert" class="Button" alt="Add" type="submit" value="Add" name="{Button_Name}"><!-- END Button Button_Insert -->
+              <!-- BEGIN Button Button_Update --><input id="INTAKE1Button_Update" class="Button" alt="Submit" type="submit" value="Submit" name="{Button_Name}"><!-- END Button Button_Update -->
+              <!-- BEGIN Button Button_Delete --><input id="INTAKE1Button_Delete" class="Button" alt="Delete" type="submit" value="Delete" name="{Button_Name}"><!-- END Button Button_Delete -->
+              <!-- BEGIN Button Button_Cancel --><input id="INTAKE1Button_Cancel" class="Button" alt="Cancel" type="submit" value="Cancel" name="{Button_Name}"><!-- END Button Button_Cancel --></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</form>
+<!-- END Record INTAKE1 --><br>
+</body>
+</html>

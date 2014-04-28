@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta name="GENERATOR" content="CodeCharge Studio 4.3.00.53">
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<title>UNIT DESC</title>
+<link rel="stylesheet" type="text/css" href="Styles/Compact/Style_doctype.css">
+</head>
+<body>
+{Header}
+<!-- BEGIN Record UNIT_DESCSearch -->
+<form id="UNIT_DESCSearch" method="post" action="{Action}" name="{HTMLFormName}">
+  <table cellspacing="0" cellpadding="0" border="0">
+    <tr>
+      <td valign="top">
+        <table cellspacing="0" cellpadding="0" border="0" class="Header">
+          <tr>
+            <td class="HeaderLeft"><img border="0" src="Styles/Compact/Images/Spacer.gif" alt=""></td> 
+            <td class="th"><strong>Search UNIT DESC </strong></td> 
+            <td class="HeaderRight"><img border="0" src="Styles/Compact/Images/Spacer.gif" alt=""></td> 
+          </tr>
+ 
+        </table>
+ 
+        <table class="Record" cellspacing="0" cellpadding="0">
+          <!-- BEGIN Error -->
+          <tr class="Error">
+            <td colspan="2">{Error}</td> 
+          </tr>
+ <!-- END Error -->
+          <tr class="Controls">
+            <td class="th"><label for="UNIT_DESCSearchs_keyword">Keyword</label></td> 
+            <td><input type="text" name="{s_keyword_Name}" value="{s_keyword}" maxlength="45" size="45" id="UNIT_DESCSearchs_keyword"></td> 
+          </tr>
+ 
+          <tr class="Bottom">
+            <td colspan="2" align="right">
+              <!-- BEGIN Button Button_DoSearch --><input name="{Button_Name}" type="submit" value="Search" alt="Search" id="UNIT_DESCSearchButton_DoSearch" class="Button"><!-- END Button Button_DoSearch --></td> 
+          </tr>
+ 
+        </table>
+ </td> 
+    </tr>
+ 
+  </table>
+</form>
+<!-- END Record UNIT_DESCSearch --><br>
+<!-- BEGIN Grid UNIT_DESC -->
+<table cellspacing="0" cellpadding="0" border="0">
+  <tr>
+    <td valign="top">
+      <table cellspacing="0" cellpadding="0" border="0" class="Header">
+        <tr>
+          <td class="HeaderLeft"><img border="0" src="Styles/Compact/Images/Spacer.gif" alt=""></td> 
+          <td class="th"><strong>List of UNIT DESC</strong></td> 
+          <td class="HeaderRight"><img border="0" src="Styles/Compact/Images/Spacer.gif" alt=""></td> 
+        </tr>
+ 
+      </table>
+ 
+      <table class="Grid" cellspacing="0" cellpadding="0">
+        <tr class="Caption">
+          <th scope="col">
+          <!-- BEGIN Sorter Sorter_MSR_ID --><a href="{Sort_URL}" id="UNIT_DESCSorter_MSR_ID">MSR ID</a> 
+          <!-- BEGIN Asc_On --><img border="0" src="Styles/Compact/Images/Asc.gif" alt="Ascending"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" src="Styles/Compact/Images/Desc.gif" alt="Descending"><!-- END Desc_On --><!-- END Sorter Sorter_MSR_ID --></th>
+ 
+          <th scope="col">
+          <!-- BEGIN Sorter Sorter_MSR_NME --><a href="{Sort_URL}" id="UNIT_DESCSorter_MSR_NME">MSR NME</a> 
+          <!-- BEGIN Asc_On --><img border="0" src="Styles/Compact/Images/Asc.gif" alt="Ascending"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" src="Styles/Compact/Images/Desc.gif" alt="Descending"><!-- END Desc_On --><!-- END Sorter Sorter_MSR_NME --></th>
+ 
+          <th scope="col">
+          <!-- BEGIN Sorter Sorter_MSR_NMF --><a href="{Sort_URL}" id="UNIT_DESCSorter_MSR_NMF">MSR NMF</a> 
+          <!-- BEGIN Asc_On --><img border="0" src="Styles/Compact/Images/Asc.gif" alt="Ascending"><!-- END Asc_On -->
+          <!-- BEGIN Desc_On --><img border="0" src="Styles/Compact/Images/Desc.gif" alt="Descending"><!-- END Desc_On --><!-- END Sorter Sorter_MSR_NMF --></th>
+ 
+        </tr>
+ 
+        <!-- BEGIN Row -->
+        <tr class="Row">
+          <td style="text-align:right;">{MSR_ID}&nbsp;</td> 
+          <td>{MSR_NME}&nbsp;</td> 
+          <td>{MSR_NMF}&nbsp;</td> 
+        </tr>
+ <!-- END Row -->
+        <!-- BEGIN NoRecords -->
+        <tr class="NoRecords">
+          <td colspan="3">No records</td> 
+        </tr>
+ <!-- END NoRecords -->
+        <tr class="Footer">
+          <td colspan="3">
+            <!-- BEGIN Navigator Navigator -->
+            <!-- BEGIN First_On --><a href="{First_URL}">|&lt; </a> <!-- END First_On -->
+            <!-- BEGIN Prev_On --><a href="{Prev_URL}">&lt;&lt; </a> <!-- END Prev_On -->&nbsp;{Page_Number} of&nbsp;{Total_Pages}&nbsp; 
+            <!-- BEGIN Next_On --><a href="{Next_URL}">&gt;&gt; </a> <!-- END Next_On -->
+            <!-- BEGIN Last_On --><a href="{Last_URL}">&gt;| </a> <!-- END Last_On --><!-- END Navigator Navigator -->&nbsp;</td> 
+        </tr>
+ 
+      </table>
+ </td> 
+  </tr>
+</table>
+<!-- END Grid UNIT_DESC --><br>
+{Footer}
+</body>
+</html>
